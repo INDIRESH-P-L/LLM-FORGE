@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LegalMind AI — Indian Legal Research Assistant</title>
+  <meta name="description" content="LegalMind AI is an intelligent legal research assistant powered by Qwen3.6-35B, specialising in Indian law, Supreme Court judgments, and legal provisions.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ── Design tokens ─────────────────────────────────────────────────── */
+    :root {
+      --bg-primary:    #0a0e1a;
+      --bg-card:       #111827;
+      --bg-card2:      #1a2236;
+      --bg-input:      #0f1623;
+      --accent:        #4f7af8;
+      --accent-2:      #7c3aed;
+      --accent-glow:   rgba(79, 122, 248, 0.18);
+      --gold:          #f5c842;
+      --text-primary:  #e8ecf4;
+      --text-muted:    #8b98b8;
+      --text-dim:      #4a5568;
+      --border:        rgba(79, 122, 248, 0.18);
+      --border-light:  rgba(255,255,255,0.06);
+      --success:       #22c55e;
+      --warn:          #f59e0b;
+      --danger:        #ef4444;
+      --radius:        12px;
+      --radius-lg:     18px;
+      --shadow:        0 8px 32px rgba(0,0,0,0.45);
+      --transition:    0.22s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ── Reset ─────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Background orbs ───────────────────────────────────────────────── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 { width: 600px; height: 600px; background: var(--accent); top: -200px; left: -100px; }
+    .orb-2 { width: 500px; height: 500px; background: var(--accent-2); bottom: -150px; right: -100px; }
+    .orb-3 { width: 300px; height: 300px; background: var(--gold); top: 40%; left: 50%; opacity: 0.06; }
+
+    /* ── Layout ────────────────────────────────────────────────────────── */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── Header ────────────────────────────────────────────────────────── */
+    header {
+      padding: 48px 0 36px;
+      text-align: center;
+    }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, rgba(79,122,248,0.15), rgba(124,58,237,0.15));
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 20px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .logo-badge .dot {
+      width: 8px; height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    h1 {
+      font-family: 'Crimson Text', serif;
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 600;
+      background: linear-gradient(135deg, #ffffff 30%, #c7d3ff 60%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    .tagline {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* ── Query card ────────────────────────────────────────────────────── */
+    .query-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow), 0 0 0 1px rgba(79,122,248,0.05);
+      margin-bottom: 28px;
+      transition: border-color var(--transition);
+    }
+    .query-card:focus-within {
+      border-color: rgba(79, 122, 248, 0.5);
+      box-shadow: var(--shadow), 0 0 0 3px var(--accent-glow);
+    }
+
+    .query-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    textarea#query-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem;
+      line-height: 1.65;
+      padding: 16px;
+      resize: vertical;
+      min-height: 110px;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+    textarea#query-input::placeholder { color: var(--text-dim); }
+    textarea#query-input:focus { border-color: rgba(79,122,248,0.4); }
+
+    .query-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    #ask-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 28px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+      box-shadow: 0 4px 20px rgba(79,122,248,0.4);
+    }
+    #ask-btn:hover:not(:disabled) {
+      opacity: 0.92;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 28px rgba(79,122,248,0.5);
+    }
+    #ask-btn:active:not(:disabled) { transform: translateY(0); }
+    #ask-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    #clear-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-muted);
+      padding: 12px 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    #clear-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .top-k-label {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .top-k-label select {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      padding: 4px 8px;
+      font-size: 13px;
+    }
+
+    /* ── Sample queries ─────────────────────────────────────────────────── */
+    .samples {
+      margin-bottom: 28px;
+    }
+    .samples-label {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .samples-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .sample-chip {
+      background: var(--bg-card2);
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      color: var(--text-muted);
+      font-size: 13px;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .sample-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    /* ── Status / Loading ────────────────────────────────────────────────── */
+    #status-bar {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    #status-bar.visible { display: flex; }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Results ────────────────────────────────────────────────────────── */
+    #results-container { display: none; }
+    #results-container.visible { display: block; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .result-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .latency-badge {
+      font-size: 12px;
+      background: var(--bg-card2);
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      padding: 4px 12px;
+      color: var(--text-dim);
+    }
+
+    /* Section cards */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-bottom: 16px;
+      transition: border-color var(--transition);
+    }
+    .section-card:hover { border-color: var(--border); }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+    .section-icon {
+      width: 28px; height: 28px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    /* Answer section */
+    .answer-card {
+      background: linear-gradient(135deg, rgba(79,122,248,0.08), rgba(124,58,237,0.06));
+      border-color: rgba(79,122,248,0.25);
+    }
+    .answer-text {
+      font-family: 'Crimson Text', serif;
+      font-size: 1.15rem;
+      line-height: 1.75;
+      color: #d4daf5;
+      white-space: pre-wrap;
+    }
+
+    /* Confidence badge */
+    .confidence-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .conf-high   { background: rgba(34,197,94,0.12);  color: var(--success); border: 1px solid rgba(34,197,94,0.25); }
+    .conf-medium { background: rgba(245,158,11,0.12); color: var(--warn);    border: 1px solid rgba(245,158,11,0.25); }
+    .conf-low    { background: rgba(239,68,68,0.12);  color: var(--danger);  border: 1px solid rgba(239,68,68,0.25); }
+
+    /* Lists */
+    .provision-list, .judgment-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .provision-item, .judgment-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text-primary);
+      padding: 8px 12px;
+      background: var(--bg-input);
+      border-radius: 8px;
+      border: 1px solid var(--border-light);
+    }
+    .provision-item::before { content: "§"; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+    .judgment-item::before  { content: "⚖"; font-size: 13px; flex-shrink: 0; }
+
+    /* Citations */
+    .citation-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .citation-item {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: 'Inter', monospace;
+      padding: 6px 10px;
+      background: var(--bg-input);
+      border-radius: 6px;
+      border-left: 2px solid var(--accent);
+    }
+
+    /* Reasoning text */
+    .reasoning-text {
+      font-size: 14.5px;
+      line-height: 1.8;
+      color: var(--text-muted);
+      white-space: pre-wrap;
+    }
+
+    /* Limitations */
+    .limitations-text {
+      font-size: 13.5px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      font-style: italic;
+      white-space: pre-wrap;
+    }
+
+    /* Retrieved docs accordion */
+    .docs-toggle {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+      transition: color var(--transition);
+    }
+    .docs-toggle:hover { color: var(--accent); }
+    .docs-list { margin-top: 14px; display: none; flex-direction: column; gap: 8px; }
+    .docs-list.open { display: flex; }
+    .doc-item {
+      background: var(--bg-input);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+    }
+    .doc-title { font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+    .doc-meta  { color: var(--text-dim); font-size: 12px; margin-bottom: 6px; }
+    .doc-preview { color: var(--text-muted); font-size: 12px; font-style: italic; }
+    .doc-score { float: right; font-size: 11px; color: var(--accent); }
+
+    /* Error state */
+    .error-card {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+      color: #fca5a5;
+      font-size: 14px;
+    }
+
+    /* ── Footer ────────────────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding-top: 48px;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── Responsive ────────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .query-actions { flex-direction: column; align-items: stretch; }
+      #ask-btn { width: 100%; justify-content: center; }
+      .top-k-label { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="logo-badge">
+        <span class="dot"></span>
+        Powered by Qwen3.6-35B-A3B · DGX B200
+      </div>
+      <h1>LegalMind AI</h1>
+      <p class="tagline">Intelligent legal research assistant for Indian law, Supreme Court judgments & constitutional provisions</p>
+    </header>
+
+    <!-- Sample queries -->
+    <div class="samples">
+      <div class="samples-label">Try a sample question</div>
+      <div class="samples-grid" id="samples-grid">
+        <button class="sample-chip" onclick="setQuery(this.textContent)">Explain Article 21 of the Constitution of India</button>
+        <button class="sample-chip" onclick="setQuery(this.textContent)">What are the conditions for anticipatory bail under Section 438 CrPC?</button>
+        <button class="sample-chip" onclick="setQuery(this.textContent)">Explain the right to equality under Article 14</button>
+        <button class="sample-chip" onclick="setQuery(this.textContent)">What constitutes mens rea in Indian criminal law?</button>
+        <button class="sample-chip" onclick="setQuery(this.textContent)">Explain habeas corpus and its scope in India</button>
+        <button class="sample-chip" onclick="setQuery(this.textContent)">What is the scope of judicial review in India?</button>
+      </div>
+    </div>
+
+    <!-- Query card -->
+    <div class="query-card">
+      <div class="query-label">Your Legal Question</div>
+      <textarea
+        id="query-input"
+        placeholder="Ask any Indian legal question — Acts, constitutional provisions, Supreme Court judgments, bail conditions, criminal law principles…"
+        rows="4"
+      ></textarea>
+      <div class="query-actions">
+        <button id="ask-btn" onclick="askQuery()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          Ask LegalMind AI
+        </button>
+        <button id="clear-btn" onclick="clearAll()">Clear</button>
+        <div class="top-k-label">
+          Retrieve
+          <select id="top-k-select">
+            <option value="5">5 sources</option>
+            <option value="7" selected>7 sources</option>
+            <option value="10">10 sources</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status bar -->
+    <div id="status-bar">
+      <div class="spinner"></div>
+      <span id="status-text">Retrieving relevant legal documents…</span>
+    </div>
+
+    <!-- Results -->
+    <div id="results-container">
+      <div class="result-header">
+        <div class="result-title">LegalMind Analysis</div>
+        <div class="latency-badge" id="latency-badge">—</div>
+      </div>
+
+      <!-- Answer -->
+      <div class="section-card answer-card" id="answer-section">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(79,122,248,0.15)">💡</div>
+          Answer
+          <span id="confidence-badge" class="confidence-badge" style="margin-left:auto"></span>
+        </div>
+        <div class="answer-text" id="answer-text"></div>
+      </div>
+
+      <!-- Legal Provisions -->
+      <div class="section-card" id="provisions-section" style="display:none">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(79,122,248,0.12)">§</div>
+          Relevant Legal Provisions
+        </div>
+        <ul class="provision-list" id="provisions-list"></ul>
+      </div>
+
+      <!-- Judgments -->
+      <div class="section-card" id="judgments-section" style="display:none">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(124,58,237,0.12)">⚖️</div>
+          Relevant Judgments
+        </div>
+        <ul class="judgment-list" id="judgments-list"></ul>
+      </div>
+
+      <!-- Legal Reasoning -->
+      <div class="section-card" id="reasoning-section" style="display:none">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(245,158,11,0.12)">🔍</div>
+          Legal Reasoning
+        </div>
+        <div class="reasoning-text" id="reasoning-text"></div>
+      </div>
+
+      <!-- Citations -->
+      <div class="section-card" id="citations-section" style="display:none">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(34,197,94,0.12)">📚</div>
+          Evidence &amp; Citations
+        </div>
+        <ul class="citation-list" id="citations-list"></ul>
+      </div>
+
+      <!-- Limitations -->
+      <div class="section-card" id="limitations-section" style="display:none">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(239,68,68,0.10)">⚠️</div>
+          Limitations
+        </div>
+        <div class="limitations-text" id="limitations-text"></div>
+      </div>
+
+      <!-- Retrieved documents (collapsible) -->
+      <div class="section-card" id="docs-section" style="display:none">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(107,114,128,0.12)">📄</div>
+          Retrieved Sources
+          <button class="docs-toggle" onclick="toggleDocs()" style="margin-left:auto" id="docs-toggle-btn">
+            Show <span id="docs-count">0</span> sources ▾
+          </button>
+        </div>
+        <div class="docs-list" id="docs-list"></div>
+      </div>
+    </div>
+
+    <footer>
+      <p>LegalMind AI &nbsp;·&nbsp; Not a substitute for professional legal advice</p>
+      <p style="margin-top:6px"><a href="/docs" target="_blank">API Docs</a> &nbsp;·&nbsp; <a href="/health" target="_blank">Health</a> &nbsp;·&nbsp; <a href="/stats" target="_blank">Stats</a></p>
+    </footer>
+  </div>
+
+  <script>
+    // ── State ──────────────────────────────────────────────────────────────
+    let isLoading = false;
+
+    // ── Helpers ────────────────────────────────────────────────────────────
+    function setQuery(text) {
+      document.getElementById('query-input').value = text;
+      document.getElementById('query-input').focus();
+    }
+
+    function clearAll() {
+      document.getElementById('query-input').value = '';
+      document.getElementById('results-container').classList.remove('visible');
+      document.getElementById('status-bar').classList.remove('visible');
+      document.getElementById('query-input').focus();
+    }
+
+    function setStatus(text) {
+      document.getElementById('status-text').textContent = text;
+      document.getElementById('status-bar').classList.add('visible');
+    }
+
+    function hideStatus() {
+      document.getElementById('status-bar').classList.remove('visible');
+    }
+
+    function toggleDocs() {
+      const list = document.getElementById('docs-list');
+      const btn  = document.getElementById('docs-toggle-btn');
+      list.classList.toggle('open');
+      btn.textContent = list.classList.contains('open')
+        ? `Hide sources ▴`
+        : `Show ${document.getElementById('docs-count').textContent} sources ▾`;
+    }
+
+    // ── Confidence badge ───────────────────────────────────────────────────
+    function renderConfidence(conf) {
+      const el = document.getElementById('confidence-badge');
+      const c  = (conf || '').toUpperCase();
+      if (!c) { el.style.display = 'none'; return; }
+      el.style.display = '';
+      const cls = c.includes('HIGH') ? 'conf-high' : c.includes('MED') ? 'conf-medium' : 'conf-low';
+      el.className = 'confidence-badge ' + cls;
+      el.textContent = c.split('\n')[0].trim();
+    }
+
+    // ── Populate list ──────────────────────────────────────────────────────
+    function populateList(items, listId, sectionId, itemClass) {
+      const section = document.getElementById(sectionId);
+      const list    = document.getElementById(listId);
+      list.innerHTML = '';
+      if (!items || !items.length) { section.style.display = 'none'; return; }
+      section.style.display = '';
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.className = itemClass;
+        li.textContent = item;
+        list.appendChild(li);
+      });
+    }
+
+    // ── Main query ─────────────────────────────────────────────────────────
+    async function askQuery() {
+      const query = document.getElementById('query-input').value.trim();
+      if (!query || isLoading) return;
+
+      const topK = parseInt(document.getElementById('top-k-select').value);
+      isLoading = true;
+      document.getElementById('ask-btn').disabled = true;
+      document.getElementById('results-container').classList.remove('visible');
+      setStatus('Retrieving relevant legal documents…');
+
+      const t0 = Date.now();
+
+      try {
+        const res = await fetch('/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query, top_k: topK }),
+        });
+
+        setStatus('Generating legal analysis with Qwen3.6…');
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ detail: res.statusText }));
+          throw new Error(err.detail || 'Server error');
+        }
+
+        const data = await res.json();
+        const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+
+        hideStatus();
+        renderResults(data, elapsed);
+
+      } catch (err) {
+        hideStatus();
+        showError(err.message);
+      } finally {
+        isLoading = false;
+        document.getElementById('ask-btn').disabled = false;
+      }
+    }
+
+    function renderResults(data, elapsed) {
+      // Latency
+      document.getElementById('latency-badge').textContent =
+        `⏱ ${data.total_latency}s total (retrieve: ${data.retrieval_latency}s · generate: ${data.generation_latency}s)`;
+
+      // Answer
+      document.getElementById('answer-text').textContent = data.answer || data.raw_answer || '(No answer returned)';
+      renderConfidence(data.confidence);
+
+      // Provisions
+      populateList(data.legal_provisions, 'provisions-list', 'provisions-section', 'provision-item');
+
+      // Judgments
+      populateList(data.judgments, 'judgments-list', 'judgments-section', 'judgment-item');
+
+      // Reasoning
+      const reasoningEl = document.getElementById('reasoning-text');
+      const reasoningSec = document.getElementById('reasoning-section');
+      if (data.legal_reasoning && data.legal_reasoning.trim()) {
+        reasoningEl.textContent = data.legal_reasoning;
+        reasoningSec.style.display = '';
+      } else {
+        reasoningSec.style.display = 'none';
+      }
+
+      // Citations
+      const citationList = document.getElementById('citations-list');
+      const citationSec  = document.getElementById('citations-section');
+      citationList.innerHTML = '';
+      if (data.citations && data.citations.length) {
+        citationSec.style.display = '';
+        data.citations.forEach(c => {
+          const li = document.createElement('li');
+          li.className = 'citation-item';
+          li.textContent = c;
+          citationList.appendChild(li);
+        });
+      } else {
+        citationSec.style.display = 'none';
+      }
+
+      // Limitations
+      const limText = document.getElementById('limitations-text');
+      const limSec  = document.getElementById('limitations-section');
+      if (data.limitations && data.limitations.trim()) {
+        limText.textContent = data.limitations;
+        limSec.style.display = '';
+      } else {
+        limSec.style.display = 'none';
+      }
+
+      // Retrieved documents
+      const docsList = document.getElementById('docs-list');
+      const docsSec  = document.getElementById('docs-section');
+      const docsCount = document.getElementById('docs-count');
+      docsList.innerHTML = '';
+      docsList.classList.remove('open');
+      if (data.retrieved_documents && data.retrieved_documents.length) {
+        docsSec.style.display = '';
+        docsCount.textContent = data.retrieved_documents.length;
+        document.getElementById('docs-toggle-btn').textContent =
+          `Show ${data.retrieved_documents.length} sources ▾`;
+        data.retrieved_documents.forEach(doc => {
+          const div = document.createElement('div');
+          div.className = 'doc-item';
+          const score = doc.rerank_score != null
+            ? `Rerank: ${doc.rerank_score.toFixed(3)}`
+            : `RRF: ${(doc.rrf_score || 0).toFixed(4)}`;
+          div.innerHTML = `
+            <div class="doc-title">[${doc.citation_id}] ${doc.title || 'Unknown'}
+              <span class="doc-score">${score}</span>
+            </div>
+            <div class="doc-meta">${doc.document_type || ''} · ${doc.court || ''} ${doc.date ? '· ' + doc.date : ''}</div>
+            <div class="doc-preview">${(doc.text_preview || '').replace(/</g,'&lt;')}…</div>
+          `;
+          docsList.appendChild(div);
+        });
+      } else {
+        docsSec.style.display = 'none';
+      }
+
+      document.getElementById('results-container').classList.add('visible');
+      document.getElementById('results-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function showError(msg) {
+      const container = document.getElementById('results-container');
+      container.innerHTML = `<div class="error-card">⚠️ Error: ${msg}</div>`;
+      container.classList.add('visible');
+    }
+
+    // ── Keyboard shortcut (Ctrl+Enter) ─────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('query-input').addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault();
+          askQuery();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

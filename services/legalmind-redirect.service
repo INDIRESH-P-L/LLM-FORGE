@@ -1,0 +1,17 @@
+[Unit]
+Description=LegalMind AI HTTP Redirect Service (Port 8090)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/sece2026-student12/LegalMindAI
+Environment=LEGALMIND_HTTP_PORT=8090
+Environment=LEGALMIND_HTTPS_PORT=8443
+ExecStart=/home/sece2026-student12/LegalMindAI/.venv/bin/uvicorn bin.http_redirect:app --host 0.0.0.0 --port 8090
+Restart=always
+RestartSec=5
+StandardOutput=append:/home/sece2026-student12/LegalMindAI/logs/http-redirect.log
+StandardError=append:/home/sece2026-student12/LegalMindAI/logs/http-redirect.log
+
+[Install]
+WantedBy=default.target

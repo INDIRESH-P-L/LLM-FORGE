@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LegalMind AI — Intelligent Indian Legal Research</title>
+    <meta name="description"
+        content="AI assistant specializing in Indian law, generating evidence-based legal research and analysis.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        (function () {
+            try {
+                const saved = localStorage.getItem('legalmind_theme') || 'light';
+                document.documentElement.setAttribute('data-theme', saved);
+            } catch (e) { }
+        })();
+    </script>
+</head>
+
+<body>
+
+    <header class="glass-nav">
+        <div class="nav-content">
+            <div class="logo">
+                <i class="ri-scales-3-line"></i>
+                <span>LegalMind <strong>AI</strong></span>
+            </div>
+            <div class="nav-actions">
+                <span class="status-badge pulse" id="server-status">
+                    <span class="dot"></span> Model Active
+                </span>
+                <button class="icon-btn" id="theme-toggle-btn" title="Toggle Dark / Light Mode" onclick="toggleTheme()"
+                    aria-label="Toggle theme">
+                    <i class="ri-moon-line" id="theme-toggle-icon"></i>
+                </button>
+                <button class="icon-btn" title="System Stats" onclick="openStats()">
+                    <i class="ri-dashboard-2-line"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-head">
+                <div style="display: flex; gap: 8px; width: 100%; align-items: center;">
+                    <button class="new-chat-btn" id="new-chat-btn" style="flex: 1;">
+                        <i class="ri-add-line"></i> New chat
+                    </button>
+                </div>
+            </div>
+
+            <!-- ChatGPT Style Features Navigation -->
+            <div class="sidebar-features" id="sidebar-features">
+                <button type="button" class="feature-item" data-tab="drafter" onclick="switchSuite('drafter')">
+                    <i class="ri-draft-line"></i> <span>AI Drafter</span>
+                </button>
+                <button type="button" class="feature-item" data-tab="moot" onclick="switchSuite('moot')">
+                    <i class="ri-auction-line"></i> <span>Moot Court</span>
+                </button>
+                <button type="button" class="feature-item" data-tab="dossier" onclick="switchSuite('dossier')">
+                    <i class="ri-folder-shield-2-line"></i> <span>Case Dossier</span>
+                </button>
+                <button type="button" class="feature-item" data-tab="temporal" onclick="switchSuite('temporal')">
+                    <i class="ri-arrow-left-right-line"></i> <span>Criminal Bridge</span>
+                </button>
+
+                <!-- Remaining features hidden inside 'More' -->
+                <div class="features-more-wrap" id="features-more-wrap" hidden style="display: none;">
+                    <button type="button" class="feature-item" data-tab="bail" onclick="switchSuite('bail')">
+                        <i class="ri-scales-3-line"></i> <span>Bail Matrix</span>
+                    </button>
+                    <button type="button" class="feature-item" data-tab="firaudit" onclick="switchSuite('firaudit')">
+                        <i class="ri-shield-cross-line"></i> <span>FIR Auditor</span>
+                    </button>
+                    <button type="button" class="feature-item" data-tab="citcheck" onclick="switchSuite('citcheck')">
+                        <i class="ri-check-double-line"></i> <span>Citation Check</span>
+                    </button>
+                    <button type="button" class="feature-item" data-tab="pleading" onclick="switchSuite('pleading')">
+                        <i class="ri-mic-line"></i> <span>Voice Pleading</span>
+                    </button>
+                </div>
+
+                <button type="button" class="feature-item feature-more-btn" id="feature-more-btn"
+                    onclick="toggleMoreFeatures()">
+                    <i class="ri-more-fill"></i> <span id="more-btn-text">More</span>
+                </button>
+            </div>
+
+            <div class="search-wrap">
+                <i class="ri-search-line"></i>
+                <input type="search" id="history-search" placeholder="Search your history…" autocomplete="off"
+                    spellcheck="false">
+                <button type="button" class="search-clear-btn" id="search-clear-btn" title="Clear search"
+                    aria-label="Clear search" hidden>
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="tabs" role="tablist">
+                <button class="tab is-active" id="tab-mine" role="tab" aria-selected="true">
+                    <i class="ri-user-line"></i> My chats
+                </button>
+                <button class="tab" id="tab-everyone" role="tab" aria-selected="false">
+                    <i class="ri-group-line"></i> Everyone
+                </button>
+            </div>
+
+            <!-- This browser's own conversations -->
+            <div class="sidebar-list" id="conversation-list">
+                <p class="sidebar-empty">Loading…</p>
+            </div>
+
+            <!-- Shared, global activity feed: every question from every user -->
+            <div class="sidebar-list" id="activity-list" hidden style="display: none;">
+                <p class="sidebar-empty">Loading…</p>
+            </div>
+
+            <div class="sidebar-foot" id="sidebar-foot"></div>
+        </aside>
+
+        <main class="container">
+            <!-- 1. Legal Research Workspace (Default Active) -->
+            <div id="workspace-research" class="workspace-panel active">
+                <section class="hero" id="hero-section">
+                    <h1>Indian Legal Research,<br><span class="gradient-text">Elevated by AI.</span></h1>
+                    <p>Ask complex legal questions and receive structured, evidence-backed answers grounded in the
+                        Constitution, Acts, and Supreme Court judgments.</p>
+                    <div class="hero-suggestions" id="hero-suggestions">
+                        <button type="button" class="suggestion-chip"
+                            onclick="fillPrompt('Explain the differences between Article 14, Article 19, and Article 21 of the Constitution of India. Discuss how these rights are connected, their reasonable restrictions, and important Supreme Court judgments.')">
+                            <i class="ri-scales-line"></i> Articles 14, 19 & 21
+                        </button>
+                        <button type="button" class="suggestion-chip"
+                            onclick="fillPrompt('Can bail be denied under PMLA if the twin conditions of Section 45 are not met? Cite recent SC judgments.')">
+                            <i class="ri-shield-check-line"></i> PMLA Section 45 Bail
+                        </button>
+                        <button type="button" class="suggestion-chip"
+                            onclick="fillPrompt('What are the essential ingredients of Criminal Breach of Trust under Section 405 IPC and Section 316 BNS?')">
+                            <i class="ri-book-open-line"></i> Criminal Breach of Trust
+                        </button>
+                    </div>
+                </section>
+
+                <section class="chat-container">
+                    <div class="conv-bar" id="conv-bar" hidden>
+                        <span class="conv-title" id="conv-title-display"></span>
+                        <span class="readonly-badge" id="readonly-badge" hidden>
+                            <i class="ri-eye-line"></i> shared &mdash; read only
+                        </span>
+                        <div class="conv-actions">
+                            <button class="icon-btn small" id="conv-rename" title="Rename">
+                                <i class="ri-pencil-line"></i></button>
+                            <button class="icon-btn small" id="conv-pin" title="Pin">
+                                <i class="ri-pushpin-line"></i></button>
+                            <button class="icon-btn small" id="conv-export-md" title="Export as Markdown">
+                                <i class="ri-markdown-line"></i></button>
+                            <button class="icon-btn small" id="conv-export-txt" title="Export as plain text">
+                                <i class="ri-file-text-line"></i></button>
+                            <button class="icon-btn small danger" id="conv-delete" title="Delete">
+                                <i class="ri-delete-bin-line"></i></button>
+                        </div>
+                    </div>
+                    <div id="chat-history" class="chat-history">
+                        <!-- Rendered from the database on every load -->
+                    </div>
+
+                    <button type="button" id="scroll-bottom-btn" class="scroll-bottom-btn" title="Scroll to bottom" aria-label="Scroll to bottom" onclick="userScrollToBottom()">
+                        <i class="ri-arrow-down-line"></i>
+                    </button>
+
+                    <div class="input-area glass-panel">
+                        <div class="attachment-preview" id="attachment-preview" hidden>
+                            <span class="attachment-icon" id="attachment-icon"><i class="ri-file-text-line"></i></span>
+                            <span class="attachment-name" id="attachment-name"></span>
+                            <span class="attachment-size" id="attachment-size"></span>
+                            <button type="button" class="attachment-remove" id="attachment-remove"
+                                title="Remove attachment"><i class="ri-close-line"></i></button>
+                        </div>
+                        <form id="query-form">
+                            <div class="input-wrapper">
+                                <textarea id="query-input" placeholder="Ask anything" rows="1" required></textarea>
+                                <div class="input-controls">
+                                    <input type="file" id="doc-file-input"
+                                        accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.webp" hidden>
+                                    <div class="media-actions">
+                                        <button type="button" id="upload-btn" class="icon-btn tool-btn"
+                                            title="Upload Document or Image (PDF, DOCX, PNG, JPG, WEBP)">
+                                            <i class="ri-attachment-2"></i>
+                                        </button>
+                                        <button type="button" id="voice-btn" class="icon-btn tool-btn"
+                                            title="Voice Typing (Speech-to-Text)">
+                                            <i class="ri-mic-line"></i>
+                                        </button>
+                                    </div>
+                                    <button type="submit" id="submit-btn" class="submit-btn">
+                                        <span>Analyze</span>
+                                        <i class="ri-send-plane-fill"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 2. AI Drafter & Contract Redline Workspace -->
+            <div id="workspace-drafter" class="workspace-panel" hidden>
+                <div class="workspace-header">
+                    <div class="workspace-title-group">
+                        <h2><i class="ri-file-edit-line"></i> AI Legal Drafter & Contract Redlining</h2>
+                        <p>Draft statutory legal notices, petitions, and commercial contracts, or audit agreements for
+                            legal risk.</p>
+                    </div>
+                    <div class="subtab-toggle">
+                        <button type="button" class="subtab-btn active" id="subtab-draft-btn"
+                            onclick="toggleDrafterSubtab('draft')">
+                            <i class="ri-quill-pen-line"></i> Document Drafter
+                        </button>
+                        <button type="button" class="subtab-btn" id="subtab-redline-btn"
+                            onclick="toggleDrafterSubtab('redline')">
+                            <i class="ri-shield-check-line"></i> Contract Risk Auditor
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Drafter Subpanel -->
+                <div id="drafter-mode-draft" class="drafter-mode-view">
+                    <div class="drafter-grid">
+                        <div class="drafter-form-card glass-panel">
+                            <h3>Document Parameters</h3>
+                            <div class="form-group">
+                                <label for="draft-type-select">Document Type</label>
+                                <select id="draft-type-select" onchange="onDraftTypeChange(this.value)"
+                                    class="form-control">
+                                    <option value="legal_notice_138_ni">Demand Notice (S. 138 Negotiable Instruments
+                                        Act)</option>
+                                    <option value="bail_application">Bail Petition (S. 482 / 483 BNSS 2023 / S. 439
+                                        CrPC)</option>
+                                    <option value="commercial_nda">Mutual Non-Disclosure Agreement (Indian Contract Act)
+                                    </option>
+                                    <option value="consumer_complaint">Consumer Dispute Complaint (Consumer Protection
+                                        Act 2019)</option>
+                                </select>
+                            </div>
+                            <div id="draft-dynamic-fields">
+                                <!-- Populated dynamically based on document type -->
+                            </div>
+                            <button type="button" class="action-submit-btn" id="btn-generate-draft"
+                                onclick="generateDocumentDraft()">
+                                <i class="ri-sparkling-fill"></i> <span>Generate Court-Ready Draft</span>
+                            </button>
+                        </div>
+
+                        <div class="drafter-preview-card glass-panel">
+                            <div class="preview-header">
+                                <h3 id="draft-preview-title">Document Preview</h3>
+                                <div class="preview-actions">
+                                    <button type="button" class="icon-pill-btn" onclick="copyDraftText()"
+                                        title="Copy to Clipboard">
+                                        <i class="ri-file-copy-line"></i> Copy
+                                    </button>
+                                    <button type="button" class="icon-pill-btn" onclick="downloadDraftText()"
+                                        title="Download Text">
+                                        <i class="ri-download-2-line"></i> Download
+                                    </button>
+                                    <button type="button" class="icon-pill-btn accent" onclick="auditCurrentDraft()"
+                                        title="Send to Redline Auditor">
+                                        <i class="ri-shield-flash-line"></i> Audit Draft
+                                    </button>
+                                </div>
+                            </div>
+                            <textarea id="draft-output-area" class="draft-editor"
+                                placeholder="Your generated court-ready draft will appear here. You can edit and fine-tune it directly..."></textarea>
+                            <div class="card-disclaimer">
+                                <i class="ri-information-line"></i> Not a substitute for professional legal advice.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Redline Subpanel -->
+                <div id="drafter-mode-redline" class="drafter-mode-view" hidden>
+                    <div class="redline-grid">
+                        <div class="redline-input-card glass-panel">
+                            <h3>Contract / Clause Review</h3>
+                            <p class="section-desc">Paste contract text or clauses to audit against Indian Contract Act
+                                1872, liability caps, and jurisdiction precedents.</p>
+                            <div class="form-group">
+                                <label>Quick Sample Clauses</label>
+                                <div class="sample-chips">
+                                    <button type="button" class="chip-sm"
+                                        onclick="loadSampleClause('indemnity')">Uncapped Indemnity</button>
+                                    <button type="button" class="chip-sm"
+                                        onclick="loadSampleClause('non_compete')">Restraint of Trade (S.27)</button>
+                                    <button type="button" class="chip-sm"
+                                        onclick="loadSampleClause('arbitration')">Unilateral Arbitrator</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="contract-audit-text">Contract / Clause Text</label>
+                                <textarea id="contract-audit-text" class="form-control code-font" rows="10"
+                                    placeholder="Paste clause text here..."></textarea>
+                            </div>
+                            <button type="button" class="action-submit-btn" id="btn-audit-contract"
+                                onclick="auditContractClause()">
+                                <i class="ri-scan-2-line"></i> <span>Audit for Legal Risks</span>
+                            </button>
+                        </div>
+
+                        <div class="redline-result-card glass-panel" id="redline-results">
+                            <div class="audit-placeholder" id="redline-placeholder">
+                                <i class="ri-shield-keyhole-line"></i>
+                                <p>Submit a contract clause on the left to view real-time risk score, statutory
+                                    violations, and recommended redline revisions.</p>
+                            </div>
+                            <div id="redline-content" hidden>
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Moot Court & Judicial Adversary Simulator Workspace -->
+            <div id="workspace-moot" class="workspace-panel" hidden>
+                <!-- Module 1: Judicial Coram & Session Controller HUD -->
+                <div class="workspace-header moot-workspace-header">
+                    <div class="workspace-title-group">
+                        <h2><i class="ri-auction-line"></i> Moot Court & Judicial Adversary Simulator</h2>
+                        <p>Argue before a simulated Supreme Court bench. Face sharp judicial cross-examination, cite
+                            binding authorities, and receive real-time advocacy analytics.</p>
+                    </div>
+                    <div class="moot-hud-controls">
+                        <div class="moot-control-group">
+                            <label for="moot-bench-select"><i class="ri-scales-line"></i> Judicial Coram:</label>
+                            <select id="moot-bench-select" class="form-control-sm" onchange="onBenchSelectChange()">
+                                <option value="constitutional">Constitution Bench (5-Judge Coram: Part III & Proportionality)</option>
+                                <option value="criminal">Criminal Appellate Bench (3-Judge Coram: Bail & PMLA Bars)</option>
+                                <option value="commercial">Commercial & Arbitration Division (Division Bench: Contracts & S.34)</option>
+                                <option value="regulatory">Public Interest & Green Bench (Special Bench: Environment & Regulation)</option>
+                                <option value="tax_insolvency">Tax & Corporate Insolvency Bench (Special Bench: IBC S.53 & Tax)</option>
+                            </select>
+                        </div>
+                        <div class="moot-control-group">
+                            <label for="moot-problem-select"><i class="ri-file-list-3-line"></i> Moot Problem:</label>
+                            <select id="moot-problem-select" class="form-control-sm" onchange="onProblemSelectChange()">
+                                <option value="open">Open / Custom Submission</option>
+                                <option value="constitutional_surveillance">PUDR v. UOI (Facial Recognition & Art. 21)</option>
+                                <option value="criminal_pmla_bail">Sharma v. ED (PMLA S.45 Bail & Incarceration)</option>
+                                <option value="commercial_liquidated_damages">AeroTech v. NLCA (S.74 Liquidated Damages)</option>
+                                <option value="regulatory_green_clearance">Himalayan Foundation v. MoEFCC (Precautionary)</option>
+                                <option value="tax_ibc_priority">State Tax Dept v. Apex Steel (IBC S.53 Priority)</option>
+                            </select>
+                        </div>
+                        <div class="moot-control-group">
+                            <label for="moot-side-select"><i class="ri-user-star-line"></i> Side:</label>
+                            <select id="moot-side-select" class="form-control-sm" onchange="onSideSelectChange()">
+                                <option value="petitioner">Counsel for Petitioner / Appellant</option>
+                                <option value="respondent">Counsel for Respondent / State</option>
+                            </select>
+                        </div>
+                        <div class="moot-control-group">
+                            <label for="moot-temperament-select"><i class="ri-eye-line"></i> Temperament:</label>
+                            <select id="moot-temperament-select" class="form-control-sm"
+                                onchange="onTemperamentChange()">
+                                <option value="inquisitive">Inquisitive & Probing (Proportionality & Doctrine)</option>
+                                <option value="textualist">Strict Textualist (Bare Act Precision & Limitations)</option>
+                                <option value="adversarial">Adversarial Cross-Examiner (Aggressive Precedents)</option>
+                            </select>
+                        </div>
+                        <div class="moot-timer-box" id="moot-timer-box">
+                            <i class="ri-timer-line"></i>
+                            <span id="moot-timer-display">05:00</span>
+                            <button type="button" class="btn-timer-action" id="btn-timer-toggle"
+                                onclick="toggleMootTimer()" title="Start / Pause Argument Timer">
+                                <i class="ri-play-fill" id="timer-toggle-icon"></i>
+                            </button>
+                            <button type="button" class="btn-timer-action" onclick="resetMootTimer()"
+                                title="Reset Timer">
+                                <i class="ri-restart-line"></i>
+                            </button>
+                        </div>
+                        <div class="moot-header-actions">
+                            <button type="button" class="icon-pill-btn" onclick="resetMootSession()"
+                                title="Reset current session">
+                                <i class="ri-refresh-line"></i> <span>Reset Coram</span>
+                            </button>
+                            <button type="button" class="icon-pill-btn accent" onclick="exportMootSession()"
+                                title="Export official minutes of proceeding">
+                                <i class="ri-file-download-line"></i> <span>Export Minutes</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Moot Two-Column Workspace Layout -->
+                <div class="moot-grid">
+                    <!-- Module 2: The Simulated Courtroom Chamber -->
+                    <div class="moot-courtroom glass-panel">
+                        <div class="bench-profile-bar" id="bench-profile-bar">
+                            <div class="bench-avatar" id="bench-avatar-icon"><i class="ri-scales-3-line"></i></div>
+                            <div class="bench-details">
+                                <div class="bench-title-row">
+                                    <h3 id="bench-presiding-title">Constitution Bench of the Supreme Court of India</h3>
+                                    <span class="coram-badge" id="bench-coram-badge">5-Judge Constitution Coram</span>
+                                </div>
+                                <p id="bench-presiding-name">Hon'ble Presiding Judge (Senior Constitutional Jurist)</p>
+                                <span class="bench-jurisdiction" id="bench-jurisdiction-text">Part III Fundamental
+                                    Rights, Basic Structure & Proportionality</span>
+                            </div>
+                            <div class="bench-status-group">
+                                <div class="bench-status-badge">
+                                    <span class="court-dot"></span> Court in Session
+                                </div>
+                                <span class="round-counter-badge" id="moot-round-badge">Round 1 of 5</span>
+                            </div>
+                        </div>
+
+                        <!-- Moot Problem Briefing Banner (Expands on demand) -->
+                        <div class="moot-problem-banner" id="moot-problem-banner" style="display: none;">
+                            <div class="problem-banner-header" onclick="toggleProblemBanner()">
+                                <div class="problem-banner-title">
+                                    <i class="ri-article-line"></i>
+                                    <strong id="moot-banner-case-title">Problem Title</strong>
+                                    <span class="problem-side-tag" id="moot-banner-side-tag">Petitioner</span>
+                                </div>
+                                <div class="problem-banner-toggle">
+                                    <span>Briefing & Issues</span>
+                                    <i class="ri-arrow-down-s-line" id="problem-banner-arrow"></i>
+                                </div>
+                            </div>
+                            <div class="problem-banner-body" id="moot-banner-body" style="display: none;">
+                                <p class="problem-matrix-text" id="moot-banner-matrix"></p>
+                                <div class="problem-issues-list">
+                                    <strong>Core Substantive Issues:</strong>
+                                    <ul id="moot-banner-issues"></ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Courtroom Dialogue Feed -->
+                        <div class="court-dialogue-feed" id="moot-dialogue-feed">
+                            <div class="moot-message judge-msg">
+                                <div class="moot-avatar"><i class="ri-government-line"></i></div>
+                                <div class="moot-bubble">
+                                    <div class="moot-speaker-row">
+                                        <span class="moot-speaker">THE BENCH (PRESIDING JURIST):</span>
+                                        <span class="moot-msg-time">Preliminary Hearing</span>
+                                    </div>
+                                    <p id="moot-initial-prompt">Counsel, this Court is convened to hear your
+                                        submissions on constitutional validity and fundamental rights. State your primary proposition clearly and be prepared to address the four-prong proportionality standard.</p>
+                                    <div class="moot-actions">
+                                        <button type="button" class="icon-pill-btn tts-btn"
+                                            onclick="speakMootMessage(this)">
+                                            <i class="ri-volume-up-line"></i> <span>Hear the Bench</span>
+                                        </button>
+                                        <button type="button" class="icon-pill-btn-ghost"
+                                            onclick="copyBenchPrompt(this)" title="Copy question">
+                                            <i class="ri-file-copy-line"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Counsel Argument Input Bar -->
+                        <div class="moot-input-bar">
+                            <div class="moot-quick-props-header">
+                                <span><i class="ri-flashlight-line"></i> Sample Submissions & Moot Problems:</span>
+                            </div>
+                            <div class="moot-quick-props" id="moot-quick-chips">
+                                <button type="button" class="chip-sm"
+                                    onclick="fillMootArg('Article 21 incorporates substantive due process and procedural fairness under Maneka Gandhi; executive surveillance without prior judicial warrant violates the four-prong proportionality test.')">Privacy
+                                    Warrant (Art. 21)</button>
+                                <button type="button" class="chip-sm"
+                                    onclick="fillMootArg('Under PMLA Section 45, prolonged incarceration without trial overrides statutory bail bars as held by the Supreme Court in Manish Sisodia (2024).')">PMLA
+                                    Bail Bar (Art. 21)</button>
+                                <button type="button" class="chip-sm"
+                                    onclick="fillMootArg('The liquidated damages clause is a genuine pre-estimate of loss under Section 74 of the Contract Act and does not require proof of actual damage.')">Contract
+                                    Damages (S. 74)</button>
+                                <button type="button" class="chip-sm"
+                                    onclick="fillMootArg('The executive notification suffers from manifest arbitrariness under Shayara Bano as it was passed without determining principle.')">Manifest
+                                    Arbitrariness (Art. 14)</button>
+                            </div>
+                            <div class="moot-input-row">
+                                <textarea id="moot-arg-input"
+                                    placeholder="Counsel's oral submission to the Bench (e.g., 'May it please your Lordships, under Article 21 and the Puttaswamy proportionality test...')"
+                                    rows="3" onkeydown="handleMootTextareaKey(event)"></textarea>
+                                <div class="moot-btn-column">
+                                    <button type="button" class="voice-plead-btn" id="btn-voice-moot"
+                                        onclick="toggleMootVoicePleading()" title="Dictate submission via microphone">
+                                        <i class="ri-mic-line" id="voice-moot-icon"></i>
+                                        <span id="voice-moot-label">Voice Pleading</span>
+                                    </button>
+                                    <button type="button" class="submit-btn" id="btn-submit-moot"
+                                        onclick="submitMootArgument()">
+                                        <span>Submit</span> <i class="ri-send-plane-fill"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="moot-input-footer">
+                                <span class="shortcut-tip"><i class="ri-command-line"></i> Press <strong>Ctrl +
+                                        Enter</strong> to submit oral argument</span>
+                                <span class="char-count" id="moot-char-count">0 words</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Module 3 & 4: Advocacy Scorecard, Radar & Statutory Compendium -->
+                    <div class="moot-sidebar-container">
+                        <div class="moot-scorecard-card glass-panel" id="moot-scorecard-card">
+                            <div class="scorecard-header">
+                                <h3><i class="ri-bar-chart-box-line"></i> Advocacy Scorecard</h3>
+                                <span class="live-eval-pill" id="scorecard-status-pill"><span class="pulse-dot"></span> Standby</span>
+                            </div>
+
+                            <!-- Radial Score Gauge -->
+                            <div class="score-dial-wrap">
+                                <div class="score-radial-container">
+                                    <svg class="score-radial-svg" viewBox="0 0 100 100">
+                                        <circle class="score-radial-bg" cx="50" cy="50" r="42"></circle>
+                                        <circle class="score-radial-progress" id="score-radial-stroke" cx="50" cy="50"
+                                            r="42" stroke-dasharray="264" stroke-dashoffset="264" style="stroke: rgba(255, 255, 255, 0.15);"></circle>
+                                    </svg>
+                                    <div class="score-radial-content">
+                                        <span class="score-number" id="moot-overall-score">--</span>
+                                        <span class="score-denom">/100</span>
+                                    </div>
+                                </div>
+                                <div class="score-rating-badge" id="moot-readiness-rating">Standby (Awaiting Opening)</div>
+                                <p class="score-subtext" id="moot-rating-subtext">Present your opening proposition to activate real-time advocacy analytics</p>
+                            </div>
+
+                            <!-- 4 Dimensional Evaluation Metrics -->
+                            <div class="score-metrics-list">
+                                <div class="metric-row">
+                                    <div class="metric-label">
+                                        <span><i class="ri-book-read-line"></i> Constitutional Grounding</span>
+                                        <span id="val-grounding">--%</span>
+                                    </div>
+                                    <div class="metric-bar-bg">
+                                        <div class="metric-bar-fill" id="bar-grounding" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+                                <div class="metric-row">
+                                    <div class="metric-label">
+                                        <span><i class="ri-scales-2-line"></i> Statutory Precision</span>
+                                        <span id="val-statutory">--%</span>
+                                    </div>
+                                    <div class="metric-bar-bg">
+                                        <div class="metric-bar-fill" id="bar-statutory" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+                                <div class="metric-row">
+                                    <div class="metric-label">
+                                        <span><i class="ri-government-line"></i> Precedent Authority</span>
+                                        <span id="val-precedent">--%</span>
+                                    </div>
+                                    <div class="metric-bar-bg">
+                                        <div class="metric-bar-fill" id="bar-precedent" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+                                <div class="metric-row">
+                                    <div class="metric-label">
+                                        <span><i class="ri-user-voice-line"></i> Judicial Persuasion & Poise</span>
+                                        <span id="val-persuasion">--%</span>
+                                    </div>
+                                    <div class="metric-bar-bg">
+                                        <div class="metric-bar-fill" id="bar-persuasion" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Diagnostic Strengths & Vulnerabilities -->
+                            <div class="moot-diagnostic-box">
+                                <div class="diagnostic-item strengths-group">
+                                    <h5><i class="ri-checkbox-circle-line"></i> Noted Strengths:</h5>
+                                    <ul id="moot-strengths-list">
+                                        <li>Submissions will be evaluated on constitutional grounding, statutory precision, and courtroom poise.</li>
+                                    </ul>
+                                </div>
+                                <div class="diagnostic-item vulnerabilities-group">
+                                    <h5><i class="ri-alert-line"></i> Flagged Vulnerabilities:</h5>
+                                    <ul id="moot-vulnerabilities-list">
+                                        <li>Potential vulnerabilities and procedural bars will be flagged here as arguments proceed.</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Recommended Rebuttal Strategy Box -->
+                            <div class="rebuttal-strategy-box">
+                                <h4><i class="ri-lightbulb-flash-line"></i> Recommended Rebuttal Strategy</h4>
+                                <p id="moot-rebuttal-tip">Judicial cross-examination analysis and strategic rebuttal tips will appear after Counsel addresses the Bench.</p>
+                                <div class="counter-precedent-wrap" id="moot-counter-precedent-wrap" style="display: none;">
+                                    <div class="counter-badge"><i class="ri-bookmark-3-line"></i> Counter Precedent
+                                        Cited by Bench:</div>
+                                    <span class="counter-case-title" id="moot-counter-precedent"></span>
+                                    <p class="counter-case-ratio" id="moot-counter-precedent-ratio"></p>
+                                </div>
+                            </div>
+
+                            <!-- Module 4: Statutory Compendium & Bench Precedent Reference -->
+                            <div class="moot-compendium-box">
+                                <div class="compendium-header" onclick="toggleCompendiumAccordion()">
+                                    <h4><i class="ri-folder-open-line"></i> Bench Compendium & Authorities</h4>
+                                    <i class="ri-arrow-down-s-line" id="compendium-arrow-icon"></i>
+                                </div>
+                                <div class="compendium-body" id="moot-compendium-body">
+                                    <div class="compendium-section">
+                                        <div class="compendium-subtitle"><i class="ri-book-open-line"></i> Key Statutory
+                                            Provisions:</div>
+                                        <div class="compendium-list" id="moot-statutory-compendium">
+                                            <div class="compendium-chip" onclick="insertAuthority('Article 21')">
+                                                <strong>Art. 21</strong> Life & Personal Liberty <i
+                                                    class="ri-add-line"></i>
+                                            </div>
+                                            <div class="compendium-chip" onclick="insertAuthority('Article 14')">
+                                                <strong>Art. 14</strong> Equality & Non-Arbitrariness <i
+                                                    class="ri-add-line"></i>
+                                            </div>
+                                            <div class="compendium-chip" onclick="insertAuthority('Article 19(1)(a)')">
+                                                <strong>Art. 19</strong> Freedom of Expression <i
+                                                    class="ri-add-line"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="compendium-section">
+                                        <div class="compendium-subtitle"><i class="ri-scales-line"></i> Binding Landmark
+                                            Ratios:</div>
+                                        <div class="compendium-list" id="moot-landmark-compendium">
+                                            <div class="compendium-chip"
+                                                onclick="insertAuthority('Maneka Gandhi v. Union of India (1978) 1 SCC 248')">
+                                                <em>Maneka Gandhi (1978)</em> <i class="ri-add-line"></i>
+                                            </div>
+                                            <div class="compendium-chip"
+                                                onclick="insertAuthority('Justice K.S. Puttaswamy v. Union of India (2017) 10 SCC 1')">
+                                                <em>Puttaswamy (2017)</em> <i class="ri-add-line"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 5. Advocate Case Dossier & Court Brief Workspace -->
+            <div id="workspace-dossier" class="workspace-panel" hidden>
+                <div class="workspace-header">
+                    <div class="workspace-title-group">
+                        <h2><i class="ri-folder-shield-2-line"></i> Advocate's Case Dossier & Court Brief Generator</h2>
+                        <p>Compile comprehensive, court-formatted bench memorandums with Table of Authorities and export
+                            official A4 PDFs.</p>
+                    </div>
+                    <div class="dossier-actions-top">
+                        <button type="button" class="action-submit-btn accent" id="btn-export-pdf"
+                            onclick="exportDossierToPdf()">
+                            <i class="ri-file-pdf-line"></i> <span>Download Court-Ready PDF</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="dossier-grid">
+                    <div class="dossier-input-card glass-panel">
+                        <h3>Case Parameters</h3>
+                        <div class="form-group">
+                            <label for="dossier-court">Target Forum / Court</label>
+                            <input type="text" id="dossier-court" class="form-control"
+                                value="IN THE SUPREME COURT OF INDIA">
+                        </div>
+                        <div class="form-group">
+                            <label for="dossier-title">Cause Title / Case Name</label>
+                            <input type="text" id="dossier-title" class="form-control"
+                                value="Arun Sharma & Anr. v. State of Maharashtra & Ors.">
+                        </div>
+                        <div class="form-group">
+                            <label for="dossier-query">Core Legal Proposition / Question</label>
+                            <textarea id="dossier-query" class="form-control"
+                                rows="3">Whether personal liberty under Article 21 can be curtailed indefinitely without trial under statutory twin bail conditions?</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="dossier-facts">Factual Matrix / Legal Research Synthesis</label>
+                            <textarea id="dossier-facts" class="form-control"
+                                rows="6">The petitioner has been incarcerated for over 22 months awaiting trial. Chargesheet has been filed but charges have not been framed. The Supreme Court in Manish Sisodia (2024) held that Article 21 guarantees speedy trial which overrides statutory restrictions under Section 45.</textarea>
+                        </div>
+                        <button type="button" class="action-submit-btn" onclick="generateDossierBrief()">
+                            <i class="ri-sparkling-fill"></i> <span>Compile Case Dossier</span>
+                        </button>
+                    </div>
+
+                    <div class="dossier-preview-card glass-panel">
+                        <div class="dossier-paper" id="dossier-paper">
+                            <div class="paper-header">
+                                <div class="court-heading" id="pv-court-heading">IN THE SUPREME COURT OF INDIA</div>
+                                <div class="jurisdiction-sub">EXTRAORDINARY ORIGINAL / APPELLATE JURISDICTION</div>
+                                <hr class="paper-rule">
+                                <div class="cause-title" id="pv-cause-title">ARUN SHARMA & ANR. v. STATE OF MAHARASHTRA
+                                    & ORS.</div>
+                                <div class="brief-title">BENCH MEMORANDUM & ADVOCATE'S BRIEF</div>
+                            </div>
+
+                            <div class="paper-section">
+                                <h4 class="section-badge">I. QUESTIONS OF LAW</h4>
+                                <ol class="legal-list" id="pv-questions-list">
+                                    <li>Whether Article 21 of the Constitution overrides statutory bail bars where
+                                        prolonged pre-trial incarceration has occurred?</li>
+                                </ol>
+                            </div>
+
+                            <div class="paper-section">
+                                <h4 class="section-badge">II. TABLE OF AUTHORITIES</h4>
+                                <table class="paper-table" id="pv-table-authorities">
+                                    <thead>
+                                        <tr>
+                                            <th>Authority / Precedent</th>
+                                            <th>Citation</th>
+                                            <th>Ratio Decidendi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Manish Sisodia v. Directorate of Enforcement</td>
+                                            <td>(2024) INSC 595</td>
+                                            <td>Right to speedy trial under Art. 21 is sacred and overrides statutory
+                                                bail bars.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Satender Kumar Antil v. CBI</td>
+                                            <td>(2022) 10 SCC 51</td>
+                                            <td>Bail is the rule, jail is the exception; procedure must be just and
+                                                non-oppressive.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="paper-section">
+                                <h4 class="section-badge">III. STATUTORY MATRIX</h4>
+                                <div id="pv-statutory-matrix">
+                                    <p><strong>Constitution of India:</strong> Articles 14, 19, 21, 32</p>
+                                    <p><strong>Bharatiya Nagarik Suraksha Sanhita, 2023:</strong> Section 480, 482</p>
+                                </div>
+                            </div>
+
+                            <div class="paper-section">
+                                <h4 class="section-badge">IV. SYNOPSIS & SUBMISSIONS</h4>
+                                <div class="paper-text-body" id="pv-submissions-body">
+                                    It is respectfully submitted that continued detention without expeditious trial
+                                    converts judicial custody into punitive incarceration, offending the fundamental
+                                    right to life and personal liberty enshrined in Article 21.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Criminal Law Temporal Bridge Workspace -->
+            <div id="workspace-temporal" class="workspace-panel" hidden>
+                <div class="workspace-header">
+                    <div class="workspace-title-group">
+                        <h2><i class="ri-arrow-left-right-line"></i> Criminal Law Temporal Bridge</h2>
+                        <p>Cross-reference statutory sections across the July 1, 2024 transition (IPC ↔ BNS, CrPC ↔
+                            BNSS, IEA ↔ BSA) based on the date of alleged offense.</p>
+                    </div>
+                </div>
+                <div class="tool-grid">
+                    <div class="tool-input-card glass-panel">
+                        <h3>Conversion Parameters</h3>
+                        <div class="form-group">
+                            <label for="temp-date">Date of Alleged Offense</label>
+                            <input type="date" id="temp-date" class="form-control" value="2024-08-01">
+                            <small class="form-hint">Cutoff: 1 July 2024 (pre-cutoff = IPC/CrPC/IEA, post-cutoff =
+                                BNS/BNSS/BSA)</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="temp-act">Statute / Regime</label>
+                            <select id="temp-act" class="form-control">
+                                <option value="auto">Auto-Detect</option>
+                                <option value="IPC">IPC (Indian Penal Code → BNS)</option>
+                                <option value="CrPC">CrPC (Code of Criminal Procedure → BNSS)</option>
+                                <option value="IEA">IEA (Indian Evidence Act → BSA)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="temp-sections">Sections (comma-separated)</label>
+                            <input type="text" id="temp-sections" class="form-control" placeholder="e.g. 302, 420, 120B"
+                                value="302, 420">
+                        </div>
+                        <button type="button" class="action-submit-btn" onclick="runTemporalConvert()">
+                            <i class="ri-arrow-left-right-line"></i> <span>Convert & Cross-Reference</span>
+                        </button>
+                    </div>
+                    <div class="tool-output-card glass-panel">
+                        <h3>Statutory Mapping & Analysis</h3>
+                        <div id="temporal-results" class="tool-results-body">
+                            <p class="placeholder-text"><i class="ri-information-line"></i> Select offense date and
+                                sections, then click Convert to view statutory mapping.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. Bail Feasibility Matrix Workspace -->
+            <div id="workspace-bail" class="workspace-panel" hidden>
+                <div class="workspace-header">
+                    <div class="workspace-title-group">
+                        <h2><i class="ri-scales-3-line"></i> Bail Feasibility & Sentencing Matrix</h2>
+                        <p>Rule-based probabilistic bail evaluation evaluating offense severity, special act twin
+                            conditions, and custody milestones.</p>
+                    </div>
+                </div>
+                <div class="tool-grid">
+                    <div class="tool-input-card glass-panel">
+                        <h3>Bail Parameters</h3>
+                        <div class="form-group">
+                            <label for="bail-category">Offense Category</label>
+                            <select id="bail-category" class="form-control">
+                                <option value="Economic Offence">Economic Offence / Financial Fraud</option>
+                                <option value="Murder">Murder / Culpable Homicide</option>
+                                <option value="Cheating">Cheating / Breach of Trust</option>
+                                <option value="Heinous Offence">Heinous Offence</option>
+                                <option value="Cyber Crime">Cyber Crime</option>
+                                <option value="General IPC">General IPC Offence (≤ 7 Years)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="bail-custody">Custody Duration (Days)</label>
+                            <input type="number" id="bail-custody" class="form-control" value="45" min="0">
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="bail-special-act">
+                                <span>Special Act Invoked (PMLA S.45 / NDPS S.37 Twin Conditions)</span>
+                            </label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="bail-chargesheet" checked>
+                                <span>Chargesheet Filed by Investigating Agency</span>
+                            </label>
+                        </div>
+                        <button type="button" class="action-submit-btn" onclick="runBailMatrix()">
+                            <i class="ri-scales-3-line"></i> <span>Assess Bail Probability</span>
+                        </button>
+                    </div>
+                    <div class="tool-output-card glass-panel">
+                        <h3>Judicial Assessment</h3>
+                        <div id="bail-results" class="tool-results-body">
+                            <p class="placeholder-text"><i class="ri-information-line"></i> Specify case parameters to
+                                generate a bail feasibility report and citations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. FIR Procedural Auditor Workspace -->
+            <div id="workspace-firaudit" class="workspace-panel" hidden>
+                <div class="workspace-header">
+                    <div class="workspace-title-group">
+                        <h2><i class="ri-shield-cross-line"></i> FIR Procedural Defect & Quashing Auditor</h2>
+                        <p>Automated procedural audit of First Information Reports against Supreme Court guidelines and
+                            Section 482 CrPC / Section 528 BNSS quashing grounds.</p>
+                    </div>
+                </div>
+                <div class="tool-grid">
+                    <div class="tool-input-card glass-panel">
+                        <h3>FIR Narrative & Facts</h3>
+                        <div class="form-group">
+                            <label for="fir-text">FIR Text / Allegations</label>
+                            <textarea id="fir-text" class="form-control" rows="8"
+                                placeholder="Paste the text or narrative of the FIR including dates, allegations, and registered sections..."></textarea>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="fir-arrest">
+                                <span>Accused Currently in Arrest / Police Custody</span>
+                            </label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="fir-pmla">
+                                <span>Special Statute Invoked (PMLA / UAPA / NDPS)</span>
+                            </label>
+                        </div>
+                        <button type="button" class="action-submit-btn" onclick="runFirAudit()">
+                            <i class="ri-shield-cross-line"></i> <span>Audit FIR & Calculate Feasibility</span>
+                        </button>
+                    </div>
+                    <div class="tool-output-card glass-panel">
+                        <h3>Procedural Findings</h3>
+                        <div id="fir-results" class="tool-results-body">
+                            <p class="placeholder-text"><i class="ri-information-line"></i> Paste an FIR narrative and
+                                click Audit to screen for procedural defects and statutory safeguards under Section 528 BNSS.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. Citation Check Workspace -->
+            <div id="workspace-citcheck" class="workspace-panel" hidden>
+                <div class="workspace-header">
+                    <div class="workspace-title-group">
+                        <h2><i class="ri-check-double-line"></i> Citation Treatment & Good Law Verifier</h2>
+                        <p>Validate legal citations and precedent treatments against Supreme Court overrulings,
+                            distinguishing notes, and affirmations.</p>
+                    </div>
+                </div>
+                <div class="tool-grid">
+                    <div class="tool-input-card glass-panel">
+                        <h3>Submissions or Citation List</h3>
+                        <div class="form-group">
+                            <label for="cit-text">Legal Text / Citations</label>
+                            <textarea id="cit-text" class="form-control" rows="8"
+                                placeholder="Paste paragraph with citations (e.g. (2024) INSC 595, 2022 10 SCC 51, AIR 1973 SC 1461, etc.)..."></textarea>
+                        </div>
+                        <button type="button" class="action-submit-btn" onclick="runCitationCheck()">
+                            <i class="ri-check-double-line"></i> <span>Verify Citations</span>
+                        </button>
+                    </div>
+                    <div class="tool-output-card glass-panel">
+                        <h3>Citation Validity Report</h3>
+                        <div id="citcheck-results" class="tool-results-body">
+                            <p class="placeholder-text"><i class="ri-information-line"></i> Enter legal citations to
+                                verify their treatment status in court.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <!-- 11. Voice Pleading Workspace -->
+            <div id="workspace-pleading" class="workspace-panel" hidden>
+                <div class="workspace-header">
+                    <div class="workspace-title-group">
+                        <h2><i class="ri-mic-line"></i> Voice Pleading & Dictation Formatter</h2>
+                        <p>Dictate or transcribe oral court arguments and transform raw facts into structured,
+                            high-court ready legal petitions.</p>
+                    </div>
+                </div>
+                <div class="tool-grid">
+                    <div class="tool-input-card glass-panel">
+                        <h3>Pleading Specifications</h3>
+                        <div class="form-group">
+                            <label for="pleading-type">Pleading Structure</label>
+                            <select id="pleading-type" class="form-control">
+                                <option value="bail">Regular Bail Application (BNSS S.480/483 / CrPC S.437/439)</option>
+                                <option value="writ">Writ Petition under Article 226 / 32</option>
+                                <option value="civil_suit">Civil Plaint & Supporting Affidavit (CPC Order VII)</option>
+                                <option value="quashing_petition">Section 482 / BNSS 528 Quashing Petition</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <div class="field-header-row">
+                                <label for="pleading-text">Spoken / Unstructured Notes</label>
+                                <button type="button" class="voice-toggle-btn" id="pleading-mic-btn"
+                                    onclick="togglePleadingDictation()">
+                                    <i class="ri-mic-line"></i> <span id="pleading-mic-text">Start Dictation</span>
+                                </button>
+                            </div>
+                            <textarea id="pleading-text" class="form-control" rows="8"
+                                placeholder="Click 'Start Dictation' to dictate orally, or type rough facts and case chronology here..."></textarea>
+                        </div>
+                        <button type="button" class="action-submit-btn" onclick="runPleading()">
+                            <i class="ri-file-text-line"></i> <span>Format Court Pleading</span>
+                        </button>
+                    </div>
+                    <div class="tool-output-card glass-panel">
+                        <h3>Court-Formatted Draft</h3>
+                        <div id="pleading-results" class="tool-results-body">
+                            <p class="placeholder-text"><i class="ri-information-line"></i> Dictate or input case notes
+                                and click Format Court Pleading to generate formal draft.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Undo toast (soft delete) -->
+    <div class="toast" id="toast" hidden>
+        <span id="toast-text"></span>
+        <button id="toast-action" class="toast-action">Undo</button>
+    </div>
+
+    <!-- Stats Modal -->
+    <div id="stats-modal" class="modal-overlay">
+        <div class="modal glass-panel">
+            <div class="modal-header">
+                <h3>System Status</h3>
+                <button class="close-btn" onclick="closeStats()"><i class="ri-close-line"></i></button>
+            </div>
+            <div class="modal-body" id="stats-content">
+                Loading stats...
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates for dynamic content -->
+    <template id="msg-user-template">
+        <div class="message user-message slide-up">
+            <div class="avatar"><i class="ri-user-smile-line"></i></div>
+            <div class="content">
+                <div class="text"></div>
+            </div>
+        </div>
+    </template>
+
+    <template id="msg-bot-template">
+        <div class="message bot-message slide-up">
+            <div class="avatar"><i class="ri-scales-3-line"></i></div>
+            <div class="content">
+                <div class="loading-state">
+                    <div class="typing-indicator"><span></span><span></span><span></span></div>
+                    <div class="loading-text">Analyzing legal corpus...</div>
+                </div>
+                <div class="answer-payload" style="display: none;">
+                    <div class="answer-toolbar">
+                        <div class="answer-actions">
+                            <button type="button" class="msg-action-btn tts-btn"
+                                title="Listen to Answer (Text-to-Speech)" onclick="toggleSpeech(this)">
+                                <i class="ri-volume-up-line"></i> <span>Listen</span>
+                            </button>
+                            <button type="button" class="msg-action-btn copy-btn" title="Copy Answer to Clipboard"
+                                onclick="copyAnswer(this)">
+                                <i class="ri-file-copy-line"></i> <span>Copy</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="markdown-body"></div>
+                    <div class="bot-disclaimer">
+                        <i class="ri-information-line"></i> Not a substitute for professional legal advice.
+                    </div>
+                    <div class="metrics">
+                        <span class="latency" title="Retrieval"><i class="ri-search-line"></i> <span
+                                class="r-lat"></span>s</span>
+                        <span class="latency" title="Generation"><i class="ri-cpu-line"></i> <span
+                                class="g-lat"></span>s</span>
+                        <span class="confidence-badge"></span>
+                    </div>
+                    <div class="sources-accordion">
+                        <button class="accordion-header" onclick="toggleSources(this)">
+                            <span><i class="ri-book-read-line"></i> View Extracted Evidence (<span
+                                    class="src-count">0</span>)</span>
+                            <i class="ri-arrow-down-s-line chevron"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <ul class="source-list"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="conv-row-template">
+        <div class="conv-row">
+            <button class="conv-open">
+                <span class="conv-row-title"></span>
+                <span class="conv-row-meta"></span>
+            </button>
+            <div class="conv-row-actions">
+                <button class="row-btn pin" title="Pin"><i class="ri-pushpin-line"></i></button>
+                <button class="row-btn rename" title="Rename"><i class="ri-pencil-line"></i></button>
+                <button class="row-btn delete" title="Delete"><i class="ri-delete-bin-line"></i></button>
+            </div>
+        </div>
+    </template>
+
+    <!-- Marked for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="/static/app.js?v=20260917_v7"></script>
+</body>
+
+</html>

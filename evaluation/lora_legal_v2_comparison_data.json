@@ -1,0 +1,659 @@
+{
+  "timestamp": "2026-09-13 15:24:37",
+  "hardware": "NVIDIA DGX B200",
+  "base_model": "/home/sece2026-student12/LegalMindAI/models/Qwen3.6-35B-A3B",
+  "adapter_path": "/home/sece2026-student12/LegalMindAI/fine_tuning/adapters/lora-legal-v2",
+  "adapter_audit": {
+    "path": "/home/sece2026-student12/LegalMindAI/fine_tuning/adapters/lora-legal-v2/adapter_model.safetensors",
+    "total_tensors": 80,
+    "total_params": 3440640,
+    "nan_tensors_count": 0,
+    "nan_tensors": [],
+    "inf_tensors_count": 0,
+    "inf_tensors": [],
+    "is_valid": true,
+    "status": "VALID",
+    "config": {
+      "alora_invocation_tokens": null,
+      "alpha_pattern": {},
+      "arrow_config": null,
+      "auto_mapping": null,
+      "base_model_name_or_path": "/home/sece2026-student12/LegalMindAI/models/Qwen3.6-35B-A3B",
+      "bias": "none",
+      "corda_config": null,
+      "ensure_weight_tying": false,
+      "eva_config": null,
+      "exclude_modules": null,
+      "fan_in_fan_out": false,
+      "inference_mode": true,
+      "init_lora_weights": true,
+      "layer_replication": null,
+      "layers_pattern": null,
+      "layers_to_transform": null,
+      "loftq_config": {},
+      "lora_alpha": 32,
+      "lora_bias": false,
+      "lora_dropout": 0.05,
+      "lora_ga_config": null,
+      "megatron_config": null,
+      "megatron_core": "megatron.core",
+      "modules_to_save": null,
+      "monteclora_config": null,
+      "peft_type": "LORA",
+      "peft_version": "0.20.0",
+      "qalora_group_size": 16,
+      "r": 16,
+      "rank_pattern": {},
+      "revision": null,
+      "target_modules": [
+        "k_proj",
+        "q_proj",
+        "o_proj",
+        "v_proj"
+      ],
+      "target_parameters": null,
+      "task_type": "CAUSAL_LM",
+      "trainable_token_indices": null,
+      "use_bdlora": null,
+      "use_dora": false,
+      "use_qalora": false,
+      "use_rslora": false,
+      "velora_config": null
+    }
+  },
+  "in_memory_tensor_audit": {
+    "total_lora_params": 3440640,
+    "nan_params_count": 0,
+    "inf_params_count": 0,
+    "clean": true
+  },
+  "summary_metrics": {
+    "base_avg_latency_s": 17.3,
+    "lora_avg_latency_s": 18.27,
+    "base_avg_grounding": 0.668,
+    "lora_avg_grounding": 0.692,
+    "base_avg_hallucination_rate": 0.332,
+    "lora_avg_hallucination_rate": 0.308,
+    "base_total_citations": 29,
+    "lora_total_citations": 32,
+    "is_production_ready": false
+  },
+  "detailed_results": [
+    {
+      "index": 1,
+      "category": "Article 14",
+      "query": "What does Article 14 of the Constitution of India guarantee and what is the arbitrariness test under E.P. Royappa?",
+      "retrieval": {
+        "chunk_count": 7,
+        "citations_count": 7,
+        "latency_s": 1.073
+      },
+      "base_rag": {
+        "answer": "## Answer\nArticle 14 of the Constitution of India guarantees **equality before the law** and **equal protection of the laws** within the territory of India [1]. It embodies two fundamental concepts: the absence of special privileges for any individual (equality before the law) and equal treatment under equal circumstances, which permits reasonable classification (equal protection of the laws) [1].\n\nUnder the landmark judgment in *E.P. Royappa v. State of Tamil Nadu* (1974), Article 14 strikes at **arbitrariness** in State action. The Court established that **arbitrariness is antithetical to equality** [1]. Consequently, any legislative or executive action that is arbitrary violates Article 14. To survive scrutiny under Article 14, a classification must satisfy two conditions:\n1. It must be based on an **intelligible differentia** that distinguishes persons or things grouped together from others left out; and\n2. There must be a **rational nexus** between the differentia and the object sought to be achieved by the statute [1].\n\n## Relevant Legal Provisions\n*   **Constitution of India, Article 14**: \"The State shall not deny to any person equality before the law or the equal protection of the laws within the territory of India.\" [1]\n*   **Constitution of India, Articles 14, 19, and 21**: Referenced together as the \"Golden Triangle\" doctrine, ensuring that any procedure depriving personal liberty must be just, fair, and non-arbitrary [2].\n\n## Relevant Judgments\n*   **E.P. Royappa v. State of Tamil Nadu & Anr**, [1974] 2 S.C.R. 348 (Supreme Court of India, decided 1973",
+        "metrics": {
+          "character_count": 1590,
+          "latency_s": 18.11,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 2,
+          "citations_extracted": [
+            "Article 14 of the Constitution of India",
+            "Article 14"
+          ],
+          "verified_citations": 2,
+          "unverified_citations": 0,
+          "hallucination_rate": 0.0,
+          "unsupported_claim_rate": 0.0,
+          "grounding_score": 1.0,
+          "confidence_label": "high",
+          "repetition_rate": 0.0795,
+          "has_nans": false,
+          "sample": "## Answer\nArticle 14 of the Constitution of India guarantees **equality before the law** and **equal protection of the laws** within the territory of India [1]. It embodies two fundamental concepts: the absence of special privileges for any individual (equality before the law) an..."
+        }
+      },
+      "lora_rag": {
+        "answer": "## Answer\nArticle 14 of the Constitution of India guarantees **equality before the law** and **equal protection of the laws** to all persons within the territory of India [1]. It embodies two concepts: the absence of special privileges for any individual (equality before the law) and equal treatment under equal circumstances, which permits reasonable classification (equal protection of the laws) [1].\n\nThe **arbitrariness test** established in *E.P. Royappa v. State of Tamil Nadu* (1974) posits that **equality is antithetical to arbitrariness** [1]. Consequently, Article 14 strikes at arbitrariness in State action [1]. For any legislative or executive classification to survive scrutiny under Article 14, it must satisfy two conditions:\n1. It must be based on an **intelligible differentia** that distinguishes persons or things grouped together from others left out; and\n2. There must be a **rational nexus** between the differentia and the object sought to be achieved by the statute [1].\n\n## Relevant Legal Provisions\n*   **Constitution of India, Article 14**: \"The State shall not deny to any person equality before the law or the equal protection of the laws within the territory of India.\" [1]\n\n## Relevant Judgments\n*   **E.P. Royappa v. State of Tamil Nadu & Anr**, [1974] 2 S.C.R. 348 (Supreme Court of India, decided 1973-11-23) [3].\n*   **The State of West Bengal v. Anwar Ali Sarkar**, [1952] 1 S.C.R. 284 (Supreme Court of India, decided 1952-01-",
+        "metrics": {
+          "character_count": 1466,
+          "latency_s": 18.3,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 2,
+          "citations_extracted": [
+            "Article 14 of the Constitution of India",
+            "Article 14"
+          ],
+          "verified_citations": 2,
+          "unverified_citations": 0,
+          "hallucination_rate": 0.0,
+          "unsupported_claim_rate": 0.0,
+          "grounding_score": 1.0,
+          "confidence_label": "high",
+          "repetition_rate": 0.0786,
+          "has_nans": false,
+          "sample": "## Answer\nArticle 14 of the Constitution of India guarantees **equality before the law** and **equal protection of the laws** to all persons within the territory of India [1]. It embodies two concepts: the absence of special privileges for any individual (equality before the law)..."
+        }
+      }
+    },
+    {
+      "index": 2,
+      "category": "Article 21",
+      "query": "What does Article 21 of the Constitution of India guarantee regarding right to life and personal liberty?",
+      "retrieval": {
+        "chunk_count": 8,
+        "citations_count": 8,
+        "latency_s": 0.734
+      },
+      "base_rag": {
+        "answer": "## Answer\nArticle 21 of the Constitution of India guarantees that \"No person shall be deprived of his life or personal liberty except according to procedure established by law.\" [1]\n\nThrough judicial interpretation, particularly the landmark judgment in *Maneka Gandhi v. Union of India* (1978), the scope of this article has been significantly expanded. The Supreme Court held that the procedure established by law must not be arbitrary, fanciful, or oppressive, but must be \"just, fair, and reasonable.\" This effectively imported the concept of substantive due process into Article 21. [1]\n\nFurthermore, the Supreme Court has recognized various enriched facets of Article 21, including:\n*   The right to live with human dignity [1]\n*   The right to livelihood [1]\n*   The right to privacy [1]\n*   The right to a clean environment [1]\n*   The right to a speedy trial [1]\n\nAdditionally, under Article 359(1) as amended by the 44th Amendment Act, 1978, Article 21 cannot be suspended even during a National Emergency. [1]\n\n## Relevant Legal Provisions\n*   **Constitution of India, Article 21**: Protection of life and personal liberty.\n*   **Constitution of India, Article 359(1)**: As amended by the Constitution (Forty-fourth Amendment) Act, 1978, regarding the suspension of rights during National Emergency.\n\n## Relevant Judgments\n*   **Maneka Gandhi v. Union of India**, 1978-01-25, Supreme Court of India (7-Judge Bench) [4]\n*   **A.K. Gopalan v. State of Madras**, 1950-",
+        "metrics": {
+          "character_count": 1476,
+          "latency_s": 17.26,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 3,
+          "citations_extracted": [
+            "Article 21 of the Constitution of India",
+            "Article 21",
+            "Article 359"
+          ],
+          "verified_citations": 3,
+          "unverified_citations": 0,
+          "hallucination_rate": 0.0,
+          "unsupported_claim_rate": 0.0,
+          "grounding_score": 1.0,
+          "confidence_label": "high",
+          "repetition_rate": 0.0633,
+          "has_nans": false,
+          "sample": "## Answer\nArticle 21 of the Constitution of India guarantees that \"No person shall be deprived of his life or personal liberty except according to procedure established by law.\" [1]\n\nThrough judicial interpretation, particularly the landmark judgment in *Maneka Gandhi v. Union of..."
+        }
+      },
+      "lora_rag": {
+        "answer": "## Answer\nArticle 21 of the Constitution of India guarantees that **\"No person shall be deprived of his life or personal liberty except according to procedure established by law.\"**\n\nWhile the text appears simple, the Supreme Court of India has interpreted this provision expansively. The guarantee now includes:\n1.  **Substantive Due Process:** The procedure depriving a person of life or liberty must be \"just, fair, and reasonable,\" not arbitrary, fanciful, or oppressive [Source 1].\n2.  **Non-Derogability:** This right cannot be suspended even during a National Emergency [Source 1].\n3.  **Expanded Scope:** The \"right to life\" has been interpreted to include the right to live with human dignity, the right to livelihood, the right to privacy, the right to a clean environment, and the right to a speedy trial [Source 1].\n\n## Relevant Legal Provisions\n*   **Article 21, Constitution of India:** Protection of life and personal liberty.\n*   **Article 359(1), Constitution of India (as amended by 44th Amendment 1978):** Regarding the suspension of rights during emergencies (specifically noting Article 21 cannot be suspended).\n*   **Article 21A, Constitution of India:** Right to education (related fundamental right inserted by the 86th Amendment).\n\n## Relevant Judgments\n*   **Maneka Gandhi v. Union of India**, 1978-01-25, Supreme Court of India (1978INSC16) [Source 4].\n*   **A.K. Gopalan v. State of Madras**, 1950-05-19, Supreme Court of India (1950INSC13) [Source",
+        "metrics": {
+          "character_count": 1476,
+          "latency_s": 18.45,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 4,
+          "citations_extracted": [
+            "Article 21 of the Constitution of India",
+            "Article 21",
+            "Article 359",
+            "Article 21A"
+          ],
+          "verified_citations": 4,
+          "unverified_citations": 0,
+          "hallucination_rate": 0.0,
+          "unsupported_claim_rate": 0.0,
+          "grounding_score": 1.0,
+          "confidence_label": "high",
+          "repetition_rate": 0.0138,
+          "has_nans": false,
+          "sample": "## Answer\nArticle 21 of the Constitution of India guarantees that **\"No person shall be deprived of his life or personal liberty except according to procedure established by law.\"**\n\nWhile the text appears simple, the Supreme Court of India has interpreted this provision expansiv..."
+        }
+      }
+    },
+    {
+      "index": 3,
+      "category": "Fundamental Rights",
+      "query": "What is the scope of Fundamental Rights under Part III of the Constitution and can they be amended?",
+      "retrieval": {
+        "chunk_count": 7,
+        "citations_count": 7,
+        "latency_s": 0.09
+      },
+      "base_rag": {
+        "answer": "## Answer\nThe scope of Fundamental Rights under Part III of the Constitution is broad, encompassing rights to equality, freedom, protection against exploitation, freedom of religion, cultural and educational rights, and the right to constitutional remedies. These rights are enforceable against the \"State\" as defined in Article 12, and any law inconsistent with them is void under Article 13.\n\nRegarding their amendability, the retrieved evidence is **insufficient** to provide a complete answer regarding the current constitutional position on whether Fundamental Rights can be amended. The provided documents list case names (such as *Maneka Gandhi*, *A.K. Gopalan*, *E.P. Royappa*) and Articles 12-13, but they do not contain the text or holdings of landmark judgments like *Shri Kesavananda Bharati v. State of Kerala* (1973), which established the \"Basic Structure Doctrine.\"\n\nHowever, relying on **general legal knowledge** (as permitted by the instructions when evidence is insufficient):\n1.  **Scope:** Fundamental Rights are justiciable (Article 32) and apply primarily to the State, though some apply to private individuals as well. They are not absolute and are subject to reasonable restrictions.\n2.  **Amendability:** Under Article 368, Parliament has the power to amend the Constitution, including Fundamental Rights. However, per the Basic Structure Doctrine (established in *Kesavananda Bharati*), Parliament **cannot** amend the \"basic structure\" of the Constitution. Certain core features of Fundamental Rights (such as the rule of law, judicial review, and the essence of certain rights) are part of this basic structure and thus cannot be destroyed or abrogated by amendment.\n\n## Relevant Legal Provisions\n*   **Article 12**: Definition of \"the State\" [Source 7]",
+        "metrics": {
+          "character_count": 1783,
+          "latency_s": 17.1,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 4,
+          "citations_extracted": [
+            "Article 12",
+            "Article 13",
+            "Article 32",
+            "Article 368"
+          ],
+          "verified_citations": 1,
+          "unverified_citations": 3,
+          "hallucination_rate": 0.75,
+          "unsupported_claim_rate": 0.75,
+          "grounding_score": 0.25,
+          "confidence_label": "low",
+          "repetition_rate": 0.0039,
+          "has_nans": true,
+          "sample": "## Answer\nThe scope of Fundamental Rights under Part III of the Constitution is broad, encompassing rights to equality, freedom, protection against exploitation, freedom of religion, cultural and educational rights, and the right to constitutional remedies. These rights are enfor..."
+        }
+      },
+      "lora_rag": {
+        "answer": "## Answer\nThe scope of Fundamental Rights under Part III of the Constitution is broad, encompassing rights against the State (defined in Article 12) and protecting citizens from arbitrary state action. Article 13 declares that any law inconsistent with Part III is void to the extent of such inconsistency [7]. Regarding amendability, the retrieved evidence is insufficient to provide a definitive answer on whether Fundamental Rights can be amended, as it does not contain the specific constitutional provisions (such as Article 368) or landmark judgments (such as *Kesavananda Bharati*) that establish the current legal position. Therefore, relying on general legal knowledge: Fundamental Rights are amendable by Parliament under Article 368, but with a crucial limitation established by the Supreme Court in the *Kesavananda Bharati* case (1973). Parliament cannot amend the \"Basic Structure\" of the Constitution, which includes the core essence of Fundamental Rights. While individual rights can be restricted or modified, the fundamental framework cannot be destroyed.\n\n## Relevant Legal Provisions\n*   **Article 12, Constitution of India**: Defines \"the State\" to include the Government and Parliament of India, State Governments, Legislatures, and other local or other authorities [7].\n*   **Article 13, Constitution of India**: Declares that all laws in force before the Constitution's commencement, insofar as they are inconsistent with Part III (Fundamental Rights), shall be void [7].\n*   **Article 368, Constitution of India**: (Not in retrieved evidence, but relevant general knowledge) Empowers Parliament to amend the Constitution.\n*   **Article 35, Constitution of India**: (Referenced in Source 6) Relates to legislation to give effect to the provisions of Part III.\n\n## Relevant Judgments\n*   **Maneka Gandhi v. Union",
+        "metrics": {
+          "character_count": 1835,
+          "latency_s": 18.1,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 4,
+          "citations_extracted": [
+            "Article 12",
+            "Article 13",
+            "Article 368",
+            "Article 35"
+          ],
+          "verified_citations": 1,
+          "unverified_citations": 3,
+          "hallucination_rate": 0.75,
+          "unsupported_claim_rate": 0.75,
+          "grounding_score": 0.25,
+          "confidence_label": "low",
+          "repetition_rate": 0.0039,
+          "has_nans": true,
+          "sample": "## Answer\nThe scope of Fundamental Rights under Part III of the Constitution is broad, encompassing rights against the State (defined in Article 12) and protecting citizens from arbitrary state action. Article 13 declares that any law inconsistent with Part III is void to the ext..."
+        }
+      }
+    },
+    {
+      "index": 4,
+      "category": "Constitution overview",
+      "query": "Provide an overview of the Constitution of India, its preamble, basic structure, and schedule arrangement.",
+      "retrieval": {
+        "chunk_count": 7,
+        "citations_count": 7,
+        "latency_s": 0.097
+      },
+      "base_rag": {
+        "answer": "## Answer\n\nThe Constitution of India is the supreme law of India, laying down the framework for democratic government. Below is an overview organized by the required subheadings, based on the retrieved evidence and general legal knowledge where the evidence is insufficient.\n\n### Preamble\nThe retrieved evidence does not cover this topic.\n*General Legal Knowledge:* The Preamble declares India to be a Sovereign, Socialist, Secular, Democratic Republic. It secures Justice, Liberty, Equality, and Fraternity for all citizens. It was adopted on November 26, 1949, and came into effect on January 26, 1950.\n\n### Fundamental Rights\nThe retrieved evidence does not cover this topic.\n*General Legal Knowledge:* Part III (Articles 12-35) guarantees six Fundamental Rights: Right to Equality, Right to Freedom, Right against Exploitation, Right to Freedom of Religion, Cultural and Educational Rights, and Right to Constitutional Remedies. Cases like *Romesh Thappar v. State of Madras* [5] and *A.K. Gopalan v. State of Madras* [2] in the evidence relate to these rights, specifically freedom of speech and personal liberty, though the specific holdings are not detailed in the snippets.\n\n### Directive Principles of State Policy\nThe retrieved evidence does not cover this topic.\n*General Legal Knowledge:* Part IV (Articles 36-51) contains non-justicible principles for the governance of the country, aiming to establish social and economic democracy. Source [6] references \"SPECIAL DIRECTIVES\" in the context of Chapter IV, but does not provide the substantive content of the Directive Principles.\n\n### Fundamental Duties\nThe retrieved evidence does not cover this topic.\n*General Legal Knowledge:* Part IV-A (Article 51A) contains ten",
+        "metrics": {
+          "character_count": 1731,
+          "latency_s": 17.05,
+          "terminology_score": 0.5,
+          "logical_order_score": 0.7,
+          "citations_count": 1,
+          "citations_extracted": [
+            "Article 51A"
+          ],
+          "verified_citations": 0,
+          "unverified_citations": 1,
+          "hallucination_rate": 1.0,
+          "unsupported_claim_rate": 1.0,
+          "grounding_score": 0.0,
+          "confidence_label": "low",
+          "repetition_rate": 0.1102,
+          "has_nans": true,
+          "sample": "## Answer\n\nThe Constitution of India is the supreme law of India, laying down the framework for democratic government. Below is an overview organized by the required subheadings, based on the retrieved evidence and general legal knowledge where the evidence is insufficient.\n\n### ..."
+        }
+      },
+      "lora_rag": {
+        "answer": "## Answer\n\nThe retrieved evidence is **insufficient** to provide a comprehensive overview of the Constitution of India, its Preamble, Basic Structure, and Schedule arrangement as requested. The provided documents consist primarily of metadata for Supreme Court cases (Maneka Gandhi, A.K. Gopalan, etc.) and fragmented text from the Constitution of India regarding specific administrative provisions (Section 371C).\n\nConsequently, the following overview relies on **general legal knowledge** of Indian Constitutional Law, with explicit disclaimers where the retrieved evidence fails to support specific topics.\n\n### Preamble\nThe Preamble to the Constitution of India declares India to be a Sovereign, Socialist, Secular, Democratic Republic. It secures Justice, Liberty, Equality, and Fraternity to all citizens. It embodies the objectives of the Constitution.\n*Note: The retrieved evidence does not contain the text or analysis of the Preamble.*\n\n### Fundamental Rights\nPart III of the Constitution (Articles 12-35) guarantees Fundamental Rights, including Right to Equality, Right to Freedom, Right against Exploitation, Right to Freedom of Religion, Cultural and Educational Rights, and Right to Constitutional Remedies.\n*Note: While cases like *Maneka Gandhi* [1] and *A.K. Gopalan* [2] in the evidence deal with Article 21 (Right to Life and Personal Liberty), the evidence provided is only metadata and does not contain the legal reasoning or the specific provisions of Fundamental Rights.*\n\n### Directive Principles of State Policy\nPart IV (Articles 36-51) contains Directive Principles of State Policy, which are guidelines for the State to establish social and economic democracy.\n*Note: The retrieved evidence mentions \"SPECIAL DIRECTIVES\" in Section 1(3) of the Constitution [6], but this appears to be a fragmented or erroneous reference to",
+        "metrics": {
+          "character_count": 1851,
+          "latency_s": 18.04,
+          "terminology_score": 0.75,
+          "logical_order_score": 1.0,
+          "citations_count": 3,
+          "citations_extracted": [
+            "Article 21",
+            "Section 371C",
+            "Section 1"
+          ],
+          "verified_citations": 2,
+          "unverified_citations": 1,
+          "hallucination_rate": 0.333,
+          "unsupported_claim_rate": 0.333,
+          "grounding_score": 0.667,
+          "confidence_label": "medium",
+          "repetition_rate": 0.0228,
+          "has_nans": false,
+          "sample": "## Answer\n\nThe retrieved evidence is **insufficient** to provide a comprehensive overview of the Constitution of India, its Preamble, Basic Structure, and Schedule arrangement as requested. The provided documents consist primarily of metadata for Supreme Court cases (Maneka Gandh..."
+        }
+      }
+    },
+    {
+      "index": 5,
+      "category": "Indian Penal Code/BNS distinction",
+      "query": "Explain the transition from Section 302 IPC to Section 103 BNS for the offence of murder, including changes in statutory definition and punishments.",
+      "retrieval": {
+        "chunk_count": 5,
+        "citations_count": 5,
+        "latency_s": 1.407
+      },
+      "base_rag": {
+        "answer": "## Answer\nThe transition from Section 302 of the Indian Penal Code (IPC) to Section 103 of the Bharatiya Nyaya Sanhita (BNS), 2023, marks a shift in the statutory framework for punishing murder, although the core punishment remains largely consistent. Under Section 302 IPC, the punishment for murder was death or imprisonment for life, and the offender could also be fined. Section 103 BNS retains this primary punishment structure: death or imprisonment for life, along with liability for a fine.\n\nHowever, Section 103 BNS introduces specific statutory nuances not explicitly detailed in the main text of Section 302 IPC:\n1.  **Group Murder on Specific Grounds:** Section 103(2) BNS specifically addresses murders committed by a group of five or more persons acting in concert on grounds of race, caste, community, sex, place of birth, language, personal belief, or any other similar ground. In such cases, every member of the group is liable to the same punishment (death or life imprisonment) and fine. This codifies the principle of joint liability in hate-motivated mob murders more explicitly.\n2.  **Definition of Murder:** The retrieved evidence does not contain the statutory definition of \"murder\" (which was previously under Section 300 IPC and is now under Section 100 BNS). Therefore, the transition in the *definition* cannot be fully explained based solely on the provided text, but the transition in *punishment* is clear.\n\n## Relevant Legal Provisions\n*   **Bharatiya Nyaya Sanhita, 2023:**\n    *   **Section 103:** Punishment for murder.\n    *   **Section 104:** Punishment for",
+        "metrics": {
+          "character_count": 1595,
+          "latency_s": 17.2,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 7,
+          "citations_extracted": [
+            "Section 302 of the Indian Penal Code",
+            "Section 103 of the Bharatiya Nyaya Sanhita",
+            "Section 302",
+            "Section 103",
+            "Section 300"
+          ],
+          "verified_citations": 3,
+          "unverified_citations": 4,
+          "hallucination_rate": 0.571,
+          "unsupported_claim_rate": 0.571,
+          "grounding_score": 0.429,
+          "confidence_label": "low",
+          "repetition_rate": 0.0083,
+          "has_nans": false,
+          "sample": "## Answer\nThe transition from Section 302 of the Indian Penal Code (IPC) to Section 103 of the Bharatiya Nyaya Sanhita (BNS), 2023, marks a shift in the statutory framework for punishing murder, although the core punishment remains largely consistent. Under Section 302 IPC, the p..."
+        }
+      },
+      "lora_rag": {
+        "answer": "## Answer\nThe transition from Section 302 of the Indian Penal Code (IPC) to Section 103 of the Bharatiya Nyaya Sanhita (BNS), 2023, represents a shift in the statutory numbering and a slight modification in the phrasing of the punishment for murder, while retaining the core substantive law.\n\n**1. Statutory Definition and Scope:**\n*   **IPC Section 302:** Defined the punishment for murder as prescribed under Section 300 of the IPC. It did not contain a standalone definition of \"murder\" but relied on the definitions in Sections 299 and 300.\n*   **BNS Section 103:** Explicitly states, \"Whoever commits murder shall be punished...\" The substantive definition of what constitutes \"murder\" under the BNS is found in **Section 101** (which corresponds to IPC Section 300). The retrieved evidence confirms that Section 103 applies to those who commit the offence defined as murder.\n\n**2. Changes in Punishment:**\n*   **IPC Section 302:** Prescribed punishment of death or imprisonment for life, and also liable to fine.\n*   **BNS Section 103(1):** Retains the same primary punishment: \"death or imprisonment for life, and shall also be liable to fine.\"\n*   **New Provision for Group Offences (BNS Section 103(2)):** A significant addition in the BNS is the specific provision for group murders. If a group of **five or more persons** acting in concert commits murder on grounds of race, caste, community, sex, place of birth, language, personal belief, or any other similar ground, **each member** of such group is liable to be punished with",
+        "metrics": {
+          "character_count": 1540,
+          "latency_s": 18.24,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 6,
+          "citations_extracted": [
+            "Section 302 of the Indian Penal Code",
+            "Section 103 of the Bharatiya Nyaya Sanhita",
+            "Section 302",
+            "Section 300",
+            "Section 103"
+          ],
+          "verified_citations": 2,
+          "unverified_citations": 4,
+          "hallucination_rate": 0.667,
+          "unsupported_claim_rate": 0.667,
+          "grounding_score": 0.333,
+          "confidence_label": "low",
+          "repetition_rate": 0.0168,
+          "has_nans": false,
+          "sample": "## Answer\nThe transition from Section 302 of the Indian Penal Code (IPC) to Section 103 of the Bharatiya Nyaya Sanhita (BNS), 2023, represents a shift in the statutory numbering and a slight modification in the phrasing of the punishment for murder, while retaining the core subst..."
+        }
+      }
+    },
+    {
+      "index": 6,
+      "category": "Criminal procedure",
+      "query": "What are the essential statutory conditions and procedural rules for granting anticipatory bail under Section 438 CrPC and its corresponding BNSS provision?",
+      "retrieval": {
+        "chunk_count": 5,
+        "citations_count": 5,
+        "latency_s": 0.8
+      },
+      "base_rag": {
+        "answer": "## Answer\nBased on the retrieved evidence, the specific provision for anticipatory bail under the new Bharatiya Nagarik Suraksha Sanhita (BNSS), 2023 is **Section 482**. The essential statutory conditions and procedural rules are:\n\n1.  **Pre-condition:** The applicant must have a reason to believe that they may be arrested on an accusation of having committed a **non-bailable offence** [Source 1].\n2.  **Jurisdiction:** The application must be made to the **High Court** or the **Court of Session** [Source 1].\n3.  **Discretionary Power:** The Court may, if it thinks fit, direct that in the event of arrest, the person shall be released on bail [Source 1].\n4.  **Conditions:** The Court may include such conditions in the direction as it thinks fit, in light of the facts of the particular case [Source 1].\n\n*Note: The retrieved evidence does not contain the text of Section 438 of the CrPC, 1973, nor does it provide detailed judicial precedents or specific procedural timelines (such as notice to the Public Prosecutor) often associated with anticipatory bail jurisprudence. The answer is derived strictly from the text of BNSS Section 482 provided in the corpus.*\n\n## Relevant Legal Provisions\n*   **Bharatiya Nagarik Suraksha Sanhita, 2023:**\n    *   **Section 482:** Direction for grant of bail to person apprehending arrest [Source 1].\n    *   **Section 478:** In what cases bail to be taken (relevant for general bail conditions, though not specific to anticipatory bail) [Source 2].\n    *   **Section 479",
+        "metrics": {
+          "character_count": 1516,
+          "latency_s": 17.69,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 4,
+          "citations_extracted": [
+            "Section 482",
+            "Section 438",
+            "Section 478",
+            "Section 479"
+          ],
+          "verified_citations": 4,
+          "unverified_citations": 0,
+          "hallucination_rate": 0.0,
+          "unsupported_claim_rate": 0.0,
+          "grounding_score": 1.0,
+          "confidence_label": "high",
+          "repetition_rate": 0.0044,
+          "has_nans": false,
+          "sample": "## Answer\nBased on the retrieved evidence, the specific provision for anticipatory bail under the new Bharatiya Nagarik Suraksha Sanhita (BNSS), 2023 is **Section 482**. The essential statutory conditions and procedural rules are:\n\n1.  **Pre-condition:** The applicant must have a..."
+        }
+      },
+      "lora_rag": {
+        "answer": "## Answer\nBased on the retrieved evidence, the specific statutory provision for anticipatory bail under the **Bharatiya Nagarik Suraksha Sanhita (BNSS), 2023** is **Section 482**. The essential statutory conditions and procedural rules derived from the provided text are:\n\n1.  **Eligibility:** A person may apply if they have reason to believe they may be arrested on an accusation of having committed a **non-bailable offence** [Source 1].\n2.  **Competent Authority:** The application must be made to the **High Court** or the **Court of Session** [Source 1].\n3.  **Discretionary Power:** The Court may, if it thinks fit, direct that in the event of such arrest, the applicant shall be released on bail [Source 1].\n4.  **Conditions:** The Court may include such conditions in the direction as it thinks fit, in light of the facts of the particular case [Source 1].\n\n*Note: The retrieved evidence does not contain the text of Section 438 of the CrPC, 1973, nor does it provide the detailed judicial precedents (such as the \"Siddharam Satlingappa Mhetre\" factors) typically associated with the essential conditions for granting anticipatory bail. The answer is therefore limited to the statutory text of BNSS Section 482 provided in the corpus.*\n\n## Relevant Legal Provisions\n*   **Bharatiya Nagarik Suraksha Sanhita, 2023:**\n    *   **Section 482:** Direction for grant of bail to person apprehending arrest [Source 1].\n    *   **Section 478:** In what cases bail to be taken (relevant for general bail conditions, though not",
+        "metrics": {
+          "character_count": 1525,
+          "latency_s": 18.42,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 3,
+          "citations_extracted": [
+            "Section 482",
+            "Section 438",
+            "Section 478"
+          ],
+          "verified_citations": 3,
+          "unverified_citations": 0,
+          "hallucination_rate": 0.0,
+          "unsupported_claim_rate": 0.0,
+          "grounding_score": 1.0,
+          "confidence_label": "high",
+          "repetition_rate": 0.0044,
+          "has_nans": false,
+          "sample": "## Answer\nBased on the retrieved evidence, the specific statutory provision for anticipatory bail under the **Bharatiya Nagarik Suraksha Sanhita (BNSS), 2023** is **Section 482**. The essential statutory conditions and procedural rules derived from the provided text are:\n\n1.  **E..."
+        }
+      }
+    },
+    {
+      "index": 7,
+      "category": "Contract law",
+      "query": "What constitutes a valid contract under Section 10 and lawful consideration under Section 23 of the Indian Contract Act, 1872?",
+      "retrieval": {
+        "chunk_count": 5,
+        "citations_count": 5,
+        "latency_s": 1.396
+      },
+      "base_rag": {
+        "answer": "## Answer\nBased on the retrieved evidence, a valid contract under Section 10 of the Indian Contract Act, 1872, requires that the agreement be made by the **free consent** of parties who are **competent to contract**, for a **lawful consideration** and with a **lawful object**, and it must not be expressly declared to be void.\n\nUnder Section 23, consideration and objects are considered **lawful** unless they fall into specific prohibited categories. Specifically, consideration or object is unlawful if it is:\n1. Forbidden by law;\n2. Of such a nature that if permitted, it would defeat the provisions of any law;\n3. Fraudulent;\n4. Involves or implies injury to the person or property of another; or\n5. Regarded by the Court as immoral or opposed to public policy.\n\n## Relevant Legal Provisions\n*   **The Indian Contract Act, 1872, Section 10**: What agreements are contracts.\n*   **The Indian Contract Act, 1872, Section 23**: What considerations and objects are lawful, and what not.\n*   **The Indian Contract Act, 1872, Section 11**: Who are competent to contract (referenced for context on \"competent to contract\" in Section 10).\n\n## Relevant Judgments\nNone\n\n## Legal Reasoning\nTo determine the validity of a contract under the Indian Contract Act, 1872, one must analyze the interplay between Section 10 and Section 23 as provided in the evidence:\n\n1.  **Essentials of a Valid Contract (Section 10)**:\n    Section 10 establishes the foundational requirements for an agreement to become a contract. The retrieved text states: \"All agreements are contracts",
+        "metrics": {
+          "character_count": 1561,
+          "latency_s": 17.04,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 4,
+          "citations_extracted": [
+            "Section 10 of the Indian Contract Act, 1872",
+            "Section 23",
+            "Section 10",
+            "Section 11"
+          ],
+          "verified_citations": 4,
+          "unverified_citations": 0,
+          "hallucination_rate": 0.0,
+          "unsupported_claim_rate": 0.0,
+          "grounding_score": 1.0,
+          "confidence_label": "high",
+          "repetition_rate": 0.0504,
+          "has_nans": false,
+          "sample": "## Answer\nBased on the retrieved evidence, a valid contract under Section 10 of the Indian Contract Act, 1872, requires that the agreement be made by the **free consent** of parties who are **competent to contract**, for a **lawful consideration** and with a **lawful object**, an..."
+        }
+      },
+      "lora_rag": {
+        "answer": "## Answer\nUnder the Indian Contract Act, 1872, a valid contract is defined by the cumulative satisfaction of specific conditions outlined in Section 10. An agreement becomes a contract if it is made by the free consent of parties who are competent to contract, for a lawful consideration, and with a lawful object, provided it is not expressly declared to be void by the Act.\n\nRegarding lawful consideration, Section 23 establishes the criteria for validity. The consideration or object of an agreement is considered lawful unless it falls into one of five specific prohibitions: it is forbidden by law; it defeats the provisions of any law; it is fraudulent; it involves injury to the person or property of another; or the Court regards it as immoral or opposed to public policy.\n\n## Relevant Legal Provisions\n*   **The Indian Contract Act, 1872, Section 10**: Defines what agreements are contracts.\n*   **The Indian Contract Act, 1872, Section 23**: Defines what considerations and objects are lawful.\n*   **The Indian Contract Act, 1872, Section 11**: Defines who are competent to contract (referenced as a prerequisite for Section 10).\n\n## Relevant Judgments\nNone\n\n## Legal Reasoning\nThe validity of a contract under the Indian Contract Act, 1872, is determined by analyzing the interplay between Section 10 and Section 23, along with the competence of parties under Section 11.\n\n**1. Constituent Elements of a Valid Contract (Section 10)**\nSection 10 states that \"All agreements are contracts if they are made by the free consent of parties competent to contract, for a lawful consideration and with a lawful object, and are not hereby expressly declared to be void.\" [Source 2] This",
+        "metrics": {
+          "character_count": 1688,
+          "latency_s": 18.15,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 3,
+          "citations_extracted": [
+            "Section 10",
+            "Section 23",
+            "Section 11"
+          ],
+          "verified_citations": 3,
+          "unverified_citations": 0,
+          "hallucination_rate": 0.0,
+          "unsupported_claim_rate": 0.0,
+          "grounding_score": 1.0,
+          "confidence_label": "high",
+          "repetition_rate": 0.1061,
+          "has_nans": false,
+          "sample": "## Answer\nUnder the Indian Contract Act, 1872, a valid contract is defined by the cumulative satisfaction of specific conditions outlined in Section 10. An agreement becomes a contract if it is made by the free consent of parties who are competent to contract, for a lawful consid..."
+        }
+      }
+    },
+    {
+      "index": 8,
+      "category": "Case-law explanation",
+      "query": "Explain the landmark ruling and ratio decidendi of Kesavananda Bharati v. State of Kerala (1973).",
+      "retrieval": {
+        "chunk_count": 5,
+        "citations_count": 5,
+        "latency_s": 0.127
+      },
+      "base_rag": {
+        "answer": "## Answer\nThe retrieved evidence provided is **insufficient** and does not contain any information regarding the landmark ruling or ratio decidendi of *Kesavananda Bharati v. State of Kerala (1973)*. The provided documents consist of excerpts from the Constitution of India (specifically Article 31A regarding agricultural land grants), the Companies Act, the Limitation Act, and the Arbitration and Conciliation Act, none of which discuss the constitutional law principles established in the *Kesavananda Bharati* case.\n\nHowever, based on **general legal knowledge** (as permitted by the instructions when evidence is insufficient), the following explanation is provided:\n\n*Kesavananda Bharati v. State of Kerala* (1973) is a landmark judgment of the Supreme Court of India. The core ruling established the **\"Basic Structure Doctrine.\"** The Court held that while Parliament has the power to amend the Constitution under Article 368, it does not have the power to destroy or alter the \"basic structure\" or essential features of the Constitution. This doctrine serves as a limitation on the amending power of the Parliament. The case involved a challenge to the Kerala Land Reforms Act and the 24th, 25th, and 29th Constitutional Amendments. A 13-judge bench, by a narrow majority of 7-6, overruled the earlier decision in *Golaknath v. State of Punjab* (which had held that fundamental rights could not be amended) but simultaneously curtailed the absolute power of Parliament to amend the Constitution.\n\n## Relevant Legal Provisions\n*   **Article 368** of the Constitution of India (Power of Parliament to amend the Constitution and procedure therefor).\n*   **Part III** of the Constitution of India (Fundamental Rights), specifically Articles 14,",
+        "metrics": {
+          "character_count": 1750,
+          "latency_s": 17.17,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 2,
+          "citations_extracted": [
+            "Article 31A",
+            "Article 368"
+          ],
+          "verified_citations": 0,
+          "unverified_citations": 2,
+          "hallucination_rate": 1.0,
+          "unsupported_claim_rate": 1.0,
+          "grounding_score": 0.0,
+          "confidence_label": "low",
+          "repetition_rate": 0.0469,
+          "has_nans": true,
+          "sample": "## Answer\nThe retrieved evidence provided is **insufficient** and does not contain any information regarding the landmark ruling or ratio decidendi of *Kesavananda Bharati v. State of Kerala (1973)*. The provided documents consist of excerpts from the Constitution of India (speci..."
+        }
+      },
+      "lora_rag": {
+        "answer": "## Answer\nThe retrieved evidence provided is **insufficient** and does not contain any information regarding the landmark ruling or ratio decidendi of *Kesavananda Bharati v. State of Kerala (1973)*. The provided documents consist of excerpts from the Constitution of India (specifically Article 31A regarding agricultural land grants), the Companies Act, the Limitation Act, and the Arbitration and Conciliation Act, none of which discuss constitutional amendment powers or the basic structure doctrine.\n\nHowever, based on **general legal knowledge**, the case of *Kesavananda Bharati v. State of Kerala* (1973) is a landmark judgment in Indian constitutional law. The Supreme Court held that while Parliament has the power to amend any part of the Constitution under Article 368, it cannot alter or destroy its **\"Basic Structure\"**. This means that fundamental features of the Constitution, such as the supremacy of the Constitution, the rule of law, the separation of powers, and the secular character of the state, are beyond the amending power of Parliament.\n\n## Relevant Legal Provisions\n*   **Retrieved Evidence:** None relevant to the query.\n*   **General Legal Knowledge:**\n    *   **Article 368** of the Constitution of India (Power of Parliament to amend the Constitution and procedure therefor).\n    *   **Part III** of the Constitution of India (Fundamental Rights).\n\n## Relevant Judgments\n*   **Retrieved Evidence:** None.\n*   **General Legal Knowledge:**\n    *   *Kesavananda Bharati v. State of Kerala*, AIR 1973 SC 1461 (13-judge bench).\n    *   *Golaknath v. State of Punjab*, AIR 1967 SC 1643 (Precedent over",
+        "metrics": {
+          "character_count": 1628,
+          "latency_s": 18.38,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 4,
+          "citations_extracted": [
+            "Article 31A",
+            "Article 368",
+            "AIR 1973 SC 1461",
+            "AIR 1967 SC 1643"
+          ],
+          "verified_citations": 0,
+          "unverified_citations": 4,
+          "hallucination_rate": 1.0,
+          "unsupported_claim_rate": 1.0,
+          "grounding_score": 0.0,
+          "confidence_label": "low",
+          "repetition_rate": 0.0485,
+          "has_nans": true,
+          "sample": "## Answer\nThe retrieved evidence provided is **insufficient** and does not contain any information regarding the landmark ruling or ratio decidendi of *Kesavananda Bharati v. State of Kerala (1973)*. The provided documents consist of excerpts from the Constitution of India (speci..."
+        }
+      }
+    },
+    {
+      "index": 9,
+      "category": "Historical-law question",
+      "query": "Explain the repeal of the Companies Act, 1956 by the Companies Act, 2013 and the corporate doctrine of ultra vires.",
+      "retrieval": {
+        "chunk_count": 5,
+        "citations_count": 5,
+        "latency_s": 0.194
+      },
+      "base_rag": {
+        "answer": "## Answer\nThe Companies Act, 1956 was repealed by the Companies Act, 2013, specifically through **Section 465(1)** of the 2013 Act, which explicitly states that the 1956 Act is repealed [Source 2]. This repeal was subject to savings provisions, meaning that rights, liabilities, and appointments existing under the 1956 Act were preserved unless otherwise specified [Source 2].\n\nRegarding the corporate doctrine of **ultra vires**, the retrieved evidence **does not contain** any specific statutory provisions or judicial judgments defining or explaining this doctrine. The provided text only lists sections of the 1956 Act (which is now repealed) and the repeal section of the 2013 Act. Therefore, the explanation of the ultra vires doctrine below is based on **general legal knowledge** and is not derived from the retrieved evidence.\n\n## Relevant Legal Provisions\n*   **The Companies Act, 2013, Section 465(1):** Repeal of the Companies Act, 1956 (1 of 1956) [Source 2].\n*   **The Companies Act, 1956:** Repealed by Act 18 of 2013 [Source 1, Source 3, Source 4, Source 5].\n*   *Note: The specific sections of the Companies Act, 2013 governing the ultra vires doctrine (Section 4) are not present in the retrieved evidence.*\n\n## Relevant Judgments\nNone. The retrieved evidence does not contain any case laws or judicial decisions.\n\n## Legal Reasoning\n**1. Repeal of the Companies Act, 1956:**\nBased on the retrieved evidence, the transition from",
+        "metrics": {
+          "character_count": 1447,
+          "latency_s": 17.19,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 2,
+          "citations_extracted": [
+            "Section 465",
+            "Section 4"
+          ],
+          "verified_citations": 2,
+          "unverified_citations": 0,
+          "hallucination_rate": 0.0,
+          "unsupported_claim_rate": 0.0,
+          "grounding_score": 1.0,
+          "confidence_label": "high",
+          "repetition_rate": 0.0734,
+          "has_nans": false,
+          "sample": "## Answer\nThe Companies Act, 1956 was repealed by the Companies Act, 2013, specifically through **Section 465(1)** of the 2013 Act, which explicitly states that the 1956 Act is repealed [Source 2]. This repeal was subject to savings provisions, meaning that rights, liabilities, a..."
+        }
+      },
+      "lora_rag": {
+        "answer": "## Answer\nThe Companies Act, 1956 was repealed by the Companies Act, 2013, as explicitly provided under Section 465 of the 2013 Act [Source 2]. The retrieved evidence confirms that the 1956 Act is repealed (Act 18 of 2013) and provides specific savings regarding appointments, liabilities, and existing offices [Source 2].\n\nRegarding the corporate doctrine of *ultra vires*, the retrieved legal evidence is **insufficient** to explain the doctrine itself. The provided text contains sections from the Companies Act, 1956 (Sections 85, 70, 108, 113) and the Companies Act, 2013 (Section 465), but none of these sections define, discuss, or provide the statutory framework for the doctrine of *ultra vires* (which is primarily governed by Section 4 of the Companies Act, 2013, and Section 17 of the Companies Act, 1956, neither of which are included in the retrieved snippets). Therefore, I must rely on general legal knowledge to explain the doctrine, while explicitly stating that this part of the answer is not derived from the retrieved evidence.\n\n## Relevant Legal Provisions\n*   **Companies Act, 2013, Section 465**: Repeal of certain enactments and savings. Specifically, Section 465(1) repeals the Companies Act, 1956 (1 of 1956) [Source 2].\n*   **Companies Act, 1956**: Repealed by Act 18 of 2013 [Source 1, Source 3, Source 4, Source 5].",
+        "metrics": {
+          "character_count": 1345,
+          "latency_s": 18.35,
+          "terminology_score": 1.0,
+          "logical_order_score": 1.0,
+          "citations_count": 3,
+          "citations_extracted": [
+            "Section 465",
+            "Section 4 of the Companies Act, 2013",
+            "Section 17 of the Companies Act, 1956"
+          ],
+          "verified_citations": 2,
+          "unverified_citations": 1,
+          "hallucination_rate": 0.333,
+          "unsupported_claim_rate": 0.333,
+          "grounding_score": 0.667,
+          "confidence_label": "medium",
+          "repetition_rate": 0.0531,
+          "has_nans": false,
+          "sample": "## Answer\nThe Companies Act, 1956 was repealed by the Companies Act, 2013, as explicitly provided under Section 465 of the 2013 Act [Source 2]. The retrieved evidence confirms that the 1956 Act is repealed (Act 18 of 2013) and provides specific savings regarding appointments, lia..."
+        }
+      }
+    },
+    {
+      "index": 10,
+      "category": "Unsupported/non-legal question",
+      "query": "Explain the quantum mechanical superposition of states and Schr\u00f6dinger's wave equation in Hilbert space.",
+      "retrieval": {
+        "chunk_count": 5,
+        "citations_count": 5,
+        "latency_s": 0.107
+      },
+      "base_rag": {
+        "answer": "## Answer\nThe retrieved legal evidence is insufficient and does not contain any information regarding quantum mechanical superposition of states or Schr\u00f6dinger's wave equation in Hilbert space. The provided documents consist exclusively of Indian statutory laws (Bharatiya Sakshya Adhiniyam, Bharatiya Nagarik Suraksha Sanhita, Information Technology Act, and Companies Act) and do not address physics or quantum mechanics.\n\nTherefore, I must explicitly state that the retrieved evidence is insufficient. However, to provide a helpful response, I will explain these concepts using general legal knowledge of physics, clearly distinguishing this from the retrieved legal evidence.\n\n**Quantum Mechanical Superposition of States:**\nIn quantum mechanics, the principle of superposition states that a physical system\u2014such as an electron\u2014exists partly in all its particular, theoretically possible states simultaneously; but, when measured or observed, it gives a result corresponding to only one of the possible configurations [General Knowledge]. Mathematically, if a system can be in state $|\\psi_1\\rangle$ or state $|\\psi_2\\rangle$, it can also be in any linear combination $c_1|\\psi_1\\rangle + c_2|\\psi_2\\rangle$, where $c_1$ and $c_2$ are complex numbers.\n\n**Schr\u00f6dinger's Wave Equation in Hilbert Space:**\nSchr\u00f6dinger's equation describes how the quantum state of a physical system changes with time. In the abstract formulation using Hilbert space, the state of a system is represented by a vector (or ray) in a complex Hilbert space. The time-dependent Schr\u00f6dinger equation is given by:\n$$ i\\hbar \\frac{\\partial}{\\partial t} |\\Psi(t)\\rangle = \\hat{H} |\\Psi(t)\\rangle $$\nwhere:\n*   $|\\Psi(t",
+        "metrics": {
+          "character_count": 1692,
+          "latency_s": 17.14,
+          "terminology_score": 0.5,
+          "logical_order_score": 1.0,
+          "citations_count": 0,
+          "citations_extracted": [],
+          "verified_citations": 0,
+          "unverified_citations": 0,
+          "hallucination_rate": 0.0,
+          "unsupported_claim_rate": 0.0,
+          "grounding_score": 1.0,
+          "confidence_label": "medium",
+          "repetition_rate": 0.0285,
+          "has_nans": false,
+          "sample": "## Answer\nThe retrieved legal evidence is insufficient and does not contain any information regarding quantum mechanical superposition of states or Schr\u00f6dinger's wave equation in Hilbert space. The provided documents consist exclusively of Indian statutory laws (Bharatiya Sakshya..."
+        }
+      },
+      "lora_rag": {
+        "answer": "## Answer\nThe retrieved legal evidence is insufficient and does not contain any statutory or constitutional provisions regarding quantum mechanical superposition of states or Schr\u00f6dinger's wave equation in Hilbert space. The provided documents pertain exclusively to Indian law, specifically the Bharatiya Sakshya Adhiniyam, 2023, the Bharatiya Nagarik Suraksha Sanhita, 2023, the Information Technology Act, 2000, and the Companies Act. These texts deal with legal concepts such as relevancy of facts, examination of the accused, adjudication of compensation, and corporate financial ratios, none of which relate to quantum physics.\n\nConsequently, the explanation below relies on **general legal knowledge** of physics principles, explicitly disclaimed as not being derived from the retrieved legal corpus.\n\n**Quantum Mechanical Superposition:**\nIn quantum mechanics, the principle of superposition states that a physical system\u2014such as an electron\u2014exists partly in all its particular, theoretically possible states simultaneously; but, when measured or observed, it gives a result corresponding to only one of the possible configurations. Mathematically, if $|\\psi_1\\rangle$ and $|\\psi_2\\rangle$ are valid quantum states, then any linear combination $c_1|\\psi_1\\rangle + c_2|\\psi_2\\rangle$ is also a valid state, where $c_1$ and $c_2$ are complex numbers.\n\n**Schr\u00f6dinger's Wave Equation in Hilbert Space:**\nSchr\u00f6dinger's equation describes how the quantum state of a physical system changes with time. In the abstract formulation using Hilbert space, the state of a system is represented by a vector $|\\psi(t)\\rangle$ in a complex Hilbert space $\\mathcal{H}$. The time-dependent Schr\u00f6dinger equation is written",
+        "metrics": {
+          "character_count": 1712,
+          "latency_s": 18.25,
+          "terminology_score": 0.25,
+          "logical_order_score": 1.0,
+          "citations_count": 0,
+          "citations_extracted": [],
+          "verified_citations": 0,
+          "unverified_citations": 0,
+          "hallucination_rate": 0.0,
+          "unsupported_claim_rate": 0.0,
+          "grounding_score": 1.0,
+          "confidence_label": "medium",
+          "repetition_rate": 0.0165,
+          "has_nans": true,
+          "sample": "## Answer\nThe retrieved legal evidence is insufficient and does not contain any statutory or constitutional provisions regarding quantum mechanical superposition of states or Schr\u00f6dinger's wave equation in Hilbert space. The provided documents pertain exclusively to Indian law, s..."
+        }
+      }
+    }
+  ]
+}

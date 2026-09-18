@@ -1,0 +1,3 @@
+Status: 200
+STT Live Response: {'success': True, 'text': 'which is the basic structure doctrine in Indian Constitutional Law.', 'language': 'en', 'confidence': 1.0, 'warnings': []}
+LIVE ENDPOINT TRANSCRIPTION VERIFIED SUCCESSFULLY!

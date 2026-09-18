@@ -1,0 +1,95 @@
+# fine_tuning/configs/lora_config.yaml
+# =====================================
+# LegalMind AI — LoRA Fine-Tuning Configuration
+# Model: Qwen3.6-35B-A3B (MoE)
+# =====================================
+
+# ── Model ────────────────────────────────────────────────────────────────────
+model:
+  path: "/home/sece2026-student12/LegalMindAI/models/Qwen3.6-35B-A3B"
+  dtype: "bfloat16"
+  # Device map for multi-GPU training — set to "auto" for automatic sharding
+  # or override with specific GPU like {"": 1} for single-GPU
+  device_map: "auto"
+  max_seq_length: 4096       # Cap for training (full context=262144 too expensive)
+
+# ── LoRA / PEFT ──────────────────────────────────────────────────────────────
+lora:
+  r: 16                      # LoRA rank — higher = more capacity, more VRAM
+  lora_alpha: 32             # Scaling factor (typically 2×r)
+  lora_dropout: 0.05
+  bias: "none"
+  task_type: "CAUSAL_LM"
+  # Target modules for Qwen3.6 MoE (attention + MLP gates)
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  # Only fine-tune shared/dense layers, not expert weights?
+  # Set to true for faster training on MoE models
+  modules_to_save: []
+
+# ── Training ─────────────────────────────────────────────────────────────────
+training:
+  output_dir: "fine_tuning/checkpoints/lora-legal-v1"
+  num_train_epochs: 1
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 8    # Effective batch = 1×8 = 8 (conservative)
+  learning_rate: 2.0e-5             # Safe learning rate to prevent NaN/exploding gradients
+  warmup_ratio: 0.05
+  lr_scheduler_type: "cosine"
+  weight_decay: 0.01
+  max_grad_norm: 0.3                # Strict gradient clipping
+  fp16: false
+  bf16: true                        # Standard LoRA with BF16 precision (no QLoRA/quantization)
+  dataloader_num_workers: 2
+  evaluation_strategy: "steps"
+  eval_steps: 50
+  save_strategy: "steps"
+  save_steps: 50
+  save_total_limit: 2
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_loss"
+  greater_is_better: false
+  logging_steps: 10
+  logging_dir: "logs/lora_training"
+  report_to: "none"
+  seed: 42
+
+# ── Dataset ───────────────────────────────────────────────────────────────────
+dataset:
+  train_file: "fine_tuning/datasets/legal_sft_train.jsonl"
+  eval_file:  "fine_tuning/datasets/legal_sft_eval.jsonl"
+  # Column names in the JSONL dataset
+  instruction_column: "instruction"
+  input_column:       "input"
+  output_column:      "output"
+  # Prompt template (will be formatted with instruction/input/output)
+  prompt_template: |
+    ### Instruction:
+    {instruction}
+
+    ### Input:
+    {input}
+
+    ### Response:
+    {output}
+
+# ── Adapter output ────────────────────────────────────────────────────────────
+adapter:
+  output_dir: "fine_tuning/adapters/lora-legal-v1"
+  merge_and_save: false     # Set true to merge LoRA into base model weights
+
+# ── GPU configuration ─────────────────────────────────────────────────────────
+# For multi-GPU training, use:
+#   torchrun --nproc_per_node=2 fine_tuning/train_lora.py --config ...
+# or DeepSpeed:
+#   deepspeed fine_tuning/train_lora.py --deepspeed configs/ds_config.json
+gpu:
+  use_gpus: [1, 2]           # GPUs to use for training (avoid GPU 3 — in use)
+  gradient_checkpointing: true   # Save VRAM at cost of ~20% speed

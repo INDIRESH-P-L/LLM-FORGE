@@ -1,0 +1,73 @@
+# LegalMind AI — .gitignore
+
+# ── Model weights (never commit) ──────────────────────────────────────────
+models/
+*.safetensors
+*.bin
+*.pt
+*.ckpt
+
+# ── Generated data ────────────────────────────────────────────────────────
+data/*
+!data/dataset_manifest.json
+embeddings/
+vector_db/
+*.parquet
+*.log
+server.log
+.pytest_cache/
+*.backup*
+
+# ── Training artifacts ────────────────────────────────────────────────────
+fine_tuning/checkpoints/
+fine_tuning/adapters/
+logs/
+
+# ── Python virtualenv ────────────────────────────────────────────────────
+.venv/
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+*.egg
+
+# ── Jupyter ───────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── OS ────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+
+# ── Secrets ───────────────────────────────────────────────────────────────
+.env
+*.key
+
+# ── FAISS tmp ─────────────────────────────────────────────────────────────
+*.faiss.tmp
+
+# ── Chat history database (user data — never commit) ──────────────────────
+# $LEGALMIND_DB_PATH, default ./data/legalmind.db. The -wal and -shm sidecars
+# are created by WAL journalling and must be ignored too.
+data/legalmind.db
+data/legalmind.db-wal
+data/legalmind.db-shm
+*.db
+*.db-wal
+*.db-shm
+
+# ── TLS material (local CA + server cert; regenerate with bin/setup_https.sh) ──
+certs/
+*.key
+*.crt
+*.pem
+*.csr
+*.srl

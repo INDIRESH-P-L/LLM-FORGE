@@ -1,0 +1,23 @@
+[Unit]
+Description=LegalMind AI FastAPI Server & Model Daemon
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/sece2026-student12/LegalMindAI
+Environment=PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+Environment=LLM_GPU=1
+Environment=EMBED_GPU=4
+Environment=GENERATION_TIMEOUT_SECONDS=480
+Environment=PYTHONUNBUFFERED=1
+Environment=LEGALMIND_RETRIEVAL_SETS=data/chunks/legislation,data/chunks/case_laws,data/chunks/judgments
+ExecStart=/home/sece2026-student12/LegalMindAI/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8443 --workers 1
+Restart=always
+RestartSec=5
+KillMode=mixed
+TimeoutStopSec=15
+StandardOutput=append:/home/sece2026-student12/LegalMindAI/logs/legalmind_server.log
+StandardError=append:/home/sece2026-student12/LegalMindAI/logs/legalmind_server.log
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# LegalMind AI Terminal CLI Launcher
+DIR="/home/sece2026-student12/LegalMindAI"
+export PYTHONPATH="${DIR}:${PYTHONPATH:-}"
+export LEGALMIND_SERVER_URL="${LEGALMIND_SERVER_URL:-https://localhost:8443}"
+exec "${DIR}/.venv/bin/python3" -m legalmind_cli "$@"

@@ -1,0 +1,48 @@
+# ============================================================
+# LegalMind AI — Python Requirements
+# ============================================================
+# Environment: /opt/llm-training (Python 3.x)
+# Install missing packages into a user-level venv or via:
+#   pip install --user <package>
+# ============================================================
+
+# ── Already installed in /opt/llm-training ─────────────────
+# torch==2.11.0+cu128        (pre-installed)
+# transformers==5.16.1       (pre-installed)
+# datasets==5.0.1            (pre-installed)
+# accelerate==1.14.0         (pre-installed)
+# peft==0.20.0               (pre-installed)
+# numpy==2.5.2               (pre-installed)
+# pandas==3.0.5              (pre-installed)
+
+# ── RAG / Retrieval ─────────────────────────────────────────
+sentence-transformers>=3.3.0        # Embedding model (BGE-M3)
+faiss-gpu                           # Vector index (GPU-accelerated)
+rank-bm25>=0.2.2                    # BM25 keyword retrieval (rank_bm25)
+
+# ── Document parsing ────────────────────────────────────────
+pymupdf>=1.24.0                     # PDF parsing (import as fitz)
+pypdf>=4.3.0                        # PDF fallback parser
+beautifulsoup4>=4.12.0              # HTML parsing
+lxml>=5.2.0                         # HTML/XML parser backend
+
+# ── API / Serving ───────────────────────────────────────────
+fastapi>=0.115.0                    # REST API framework
+uvicorn[standard]>=0.30.0           # ASGI server
+python-multipart>=0.0.9             # File upload support
+
+# ── Training ────────────────────────────────────────────────
+trl>=0.12.0                         # SFT / RLHF training utilities
+
+# ── Persistence (chat history) ───────────────────────────────
+# None. storage/chat_store.py uses the stdlib `sqlite3` module and FTS5, both
+# already present in CPython 3.12 — no new dependency was added for chat
+# persistence. See docs/persistence.md for the Postgres path when accounts
+# arrive (psycopg[binary] is the only package that step needs).
+
+# ── Utilities ───────────────────────────────────────────────
+tqdm>=4.66.0                        # Progress bars
+rich>=13.7.0                        # Pretty terminal output
+python-dotenv>=1.0.0                # Environment variable management
+aiofiles>=23.2.0                    # Async file I/O for FastAPI
+httpx>=0.27.0                       # Async HTTP client

@@ -1,0 +1,253 @@
+{
+  "rag": {
+    "mode": "rag",
+    "api_url": "http://127.0.0.1:8080/query",
+    "num_questions": 10,
+    "avg_rouge_l": 0.1224,
+    "avg_hallucination_rate": 0.0,
+    "abstention_accuracy": 0.0,
+    "avg_latency_s": 55.992,
+    "results": [
+      {
+        "question": "What does Article 21 of the Constitution of India guarantee?",
+        "answer": "Based on the retrieved legal evidence provided, **Article 21 of the Constitution of India is not mentioned or defined.** The provided text contains excerpts from Articles 12, 13, 19, and 377, but does not include the text for Article 21.\n\nHowever, relying on **general legal knowledge** of the Constitution of India, Article 21 guarantees the **Protection of Life and Personal Liberty**. It states that \"No person shall be deprived of his life or personal liberty except according to procedure establ",
+        "reference_answer": "Article 21 guarantees the right to life and personal liberty. No person shall be deprived of his life or personal liberty except according to procedure established by law.",
+        "rouge_l": 0.3108,
+        "hallucination_rate": 0.0,
+        "abstention_correct": null,
+        "num_retrieved": 7,
+        "citations": [
+          "[1] Constitution of India",
+          "[2] Constitution of India",
+          "[3] Constitution of India",
+          "[4] Constitution of India",
+          "[5] Constitution of India",
+          "[6] Constitution of India",
+          "[7] Constitution of India"
+        ],
+        "generation_latency": 36.802
+      },
+      {
+        "question": "What are the conditions for anticipatory bail under Section 438 CrPC?",
+        "answer": "The provided retrieved legal evidence **does not contain** the conditions for anticipatory bail under Section 438 of the Code of Criminal Procedure (CrPC), 1973.\n\nThe retrieved documents contain:\n1.  **Section 438 of the Companies Act, 2013**, which deals with the application of the CrPC to Special Courts, not anticipatory bail.\n2.  **Section 438 of the Bharatiya Nagarik Suraksha Sanhita (BNSS), 2023**, which deals with the power of the High Court or Sessions Judge to call for records to exercis",
+        "reference_answer": "The court considers nature of accusation, antecedents of applicant, possibility of fleeing justice, and whether accusation is made to humiliate. Conditions like appearing for interrogation and surrendering passport may be imposed.",
+        "rouge_l": 0.106,
+        "hallucination_rate": 0.0,
+        "abstention_correct": null,
+        "num_retrieved": 7,
+        "citations": [
+          "[1] Companies Act",
+          "[2] Companies Act",
+          "[3] Bharatiya Nagarik Suraksha Sanhita",
+          "[4] Code of Civil Procedure",
+          "[5] Bharatiya Nagarik Suraksha Sanhita",
+          "[6] Code of Civil Procedure",
+          "[7] Code of Civil Procedure"
+        ],
+        "generation_latency": 68.03
+      },
+      {
+        "question": "What is habeas corpus and what are its limits?",
+        "answer": "The provided retrieved legal evidence **does not contain information** regarding the definition, scope, or limits of the writ of *habeas corpus*. The retrieved documents exclusively consist of tables detailing specific criminal offenses, punishments, and procedural classifications (such as cognizability and bail status) under the **Bharatiya Nagarik Suraksha Sanhita (BNSS)**, 2023.\n\nHowever, based on **general legal knowledge** of the Indian legal system (as permitted by the system instructions ",
+        "reference_answer": "Habeas corpus is a writ compelling the production of a person before a court to determine if detention is lawful. It can be suspended during national emergency under Article 359.",
+        "rouge_l": 0.081,
+        "hallucination_rate": 0.0,
+        "abstention_correct": null,
+        "num_retrieved": 7,
+        "citations": [
+          "[1] Bharatiya Nagarik Suraksha Sanhita",
+          "[2] Bharatiya Nagarik Suraksha Sanhita",
+          "[3] Bharatiya Nagarik Suraksha Sanhita",
+          "[4] Bharatiya Nagarik Suraksha Sanhita",
+          "[5] Bharatiya Nagarik Suraksha Sanhita",
+          "[6] Bharatiya Nagarik Suraksha Sanhita",
+          "[7] Bharatiya Nagarik Suraksha Sanhita"
+        ],
+        "generation_latency": 64.601
+      },
+      {
+        "question": "Explain the doctrine of basic structure in Indian constitutional law.",
+        "answer": "The doctrine of basic structure is a fundamental principle of Indian constitutional law which holds that the Parliament's power to amend the Constitution under Article 368 is not unlimited. It cannot alter or destroy the \"basic structure\" or essential features of the Constitution. While the term \"basic structure\" is not explicitly defined in the text of the Constitution, it was judicially evolved to protect core constitutional values such as the supremacy of the Constitution, the rule of law, ju",
+        "reference_answer": "The basic structure doctrine holds that Parliament cannot amend the Constitution to destroy its basic features. Established in Kesavananda Bharati v. State of Kerala (1973).",
+        "rouge_l": 0.1134,
+        "hallucination_rate": 0.0,
+        "abstention_correct": null,
+        "num_retrieved": 7,
+        "citations": [
+          "[1] Arbitration and Conciliation Act",
+          "[2] Arbitration and Conciliation Act",
+          "[3] Arbitration and Conciliation Act",
+          "[4] Constitution of India",
+          "[5] Constitution of India",
+          "[6] Constitution of India",
+          "[7] Constitution of India"
+        ],
+        "generation_latency": 60.551
+      },
+      {
+        "question": "What constitutes mens rea in Indian criminal law?",
+        "answer": "Based on the retrieved legal evidence, there is no specific section in the provided excerpts from the **Bharatiya Nyaya Sanhita (BNS), 2023** that explicitly defines the general concept of *mens rea* (guilty mind). The provided text consists primarily of specific offence provisions (Sections 132–136, 69) and general exceptions (Sections 17–18).\n\nHowever, the retrieved evidence illustrates the application of *mens rea* through specific statutory language and general exceptions:\n1.  **Specific Int",
+        "reference_answer": "Mens rea is the mental element — intention, knowledge, or recklessness — required for criminal liability. Most IPC offences require proof of mens rea.",
+        "rouge_l": 0.0453,
+        "hallucination_rate": 0.0,
+        "abstention_correct": null,
+        "num_retrieved": 7,
+        "citations": [
+          "[1] Bharatiya Nyaya Sanhita",
+          "[2] Bharatiya Nyaya Sanhita",
+          "[3] Bharatiya Nyaya Sanhita",
+          "[4] Bharatiya Nyaya Sanhita",
+          "[5] Bharatiya Nyaya Sanhita",
+          "[6] Bharatiya Nyaya Sanhita",
+          "[7] Bharatiya Nyaya Sanhita"
+        ],
+        "generation_latency": 63.459
+      },
+      {
+        "question": "What is the right to equality under Article 14?",
+        "answer": "Based on the retrieved legal evidence, there is no text explicitly defining the \"right to equality\" under **Article 14** of the Constitution of India. The provided documents contain excerpts from **Article 16** (Equality of opportunity in matters of public employment) [Source 1], **Article 13** (Laws inconsistent with or in derogation of fundamental rights) [Source 4, 6, 7], and **Article 19** (Protection of certain rights regarding freedom of speech, etc.) [Source 4].\n\nHowever, relying on **gen",
+        "reference_answer": "Article 14 guarantees equality before law and equal protection of laws to all persons within India.",
+        "rouge_l": 0.1419,
+        "hallucination_rate": 0.0,
+        "abstention_correct": null,
+        "num_retrieved": 7,
+        "citations": [
+          "[1] Constitution of India",
+          "[2] Juvenile Justice",
+          "[3] Arbitration and Conciliation Act",
+          "[4] Constitution of India",
+          "[5] Bharatiya Nyaya Sanhita",
+          "[6] Constitution of India",
+          "[7] Constitution of India"
+        ],
+        "generation_latency": 52.887
+      },
+      {
+        "question": "What was the salary of the plaintiff in an unspecified local court case from 1987?",
+        "answer": "Based on the retrieved legal evidence, it is **not possible** to determine the specific salary of the plaintiff in an unspecified local court case from 1987. The provided documents consist of statutory provisions (The Legal Services Authorities Act, 1987, and the Code of Civil Procedure, 1908) and template forms. While Source 5 and Source 6 contain a template for a contract of employment mentioning a placeholder for an \"annual salary of…..rupees,\" this is a generic form and does not contain spec",
+        "reference_answer": null,
+        "rouge_l": null,
+        "hallucination_rate": 0.0,
+        "abstention_correct": false,
+        "num_retrieved": 7,
+        "citations": [
+          "[1] Legal Services Authorities Act",
+          "[2] Code of Civil Procedure",
+          "[3] Code of Civil Procedure",
+          "[4] Legal Services Authorities Act",
+          "[5] Code of Civil Procedure",
+          "[6] Code of Civil Procedure",
+          "[7] Legal Services Authorities Act"
+        ],
+        "generation_latency": 48.001
+      },
+      {
+        "question": "Is there a 2025 Supreme Court judgment that overruled Kesavananda Bharati?",
+        "answer": "No, there is no 2025 Supreme Court judgment that overruled *Kesavananda Bharati v. State of Kerala* (1973). The retrieved legal evidence does not contain any such judgment. Furthermore, under Indian constitutional law, the *Kesavananda Bharati* case established the \"Basic Structure Doctrine,\" which remains the prevailing legal position. While the Indian Parliament has recently replaced older criminal and civil procedural codes with the *Bharatiya Nagarik Suraksha Sanhita, 2023* and the *Bharatiy",
+        "reference_answer": null,
+        "rouge_l": null,
+        "hallucination_rate": 0.0,
+        "abstention_correct": false,
+        "num_retrieved": 7,
+        "citations": [
+          "[1] Bharatiya Nagarik Suraksha Sanhita",
+          "[2] Bharatiya Nyaya Sanhita",
+          "[3] Bharatiya Nagarik Suraksha Sanhita",
+          "[4] Code of Civil Procedure",
+          "[5] Code of Civil Procedure",
+          "[6] Code of Civil Procedure",
+          "[7] Code of Civil Procedure"
+        ],
+        "generation_latency": 50.637
+      },
+      {
+        "question": "What are the essential elements of a valid contract under Indian law?",
+        "answer": "Under Indian law, specifically the Indian Contract Act, 1872, the essential elements of a valid contract are derived primarily from Section 10. For an agreement to be a valid contract, it must satisfy the following conditions:\n1.  **Free Consent:** The agreement must be made by the free consent of the parties [Source 5]. Consent is defined as an agreement upon the same thing in the same sense [Source 7].\n2.  **Competency of Parties:** The parties must be competent to contract. This requires them",
+        "reference_answer": "A valid contract requires offer, acceptance, consideration, capacity of parties, free consent, and lawful object under the Indian Contract Act 1872.",
+        "rouge_l": 0.0847,
+        "hallucination_rate": 0.0,
+        "abstention_correct": null,
+        "num_retrieved": 7,
+        "citations": [
+          "[1] Indian Contract Act",
+          "[2] Indian Contract Act",
+          "[3] Indian Contract Act",
+          "[4] Indian Contract Act",
+          "[5] Indian Contract Act",
+          "[6] Indian Contract Act",
+          "[7] Indian Contract Act"
+        ],
+        "generation_latency": 54.828
+      },
+      {
+        "question": "Explain Section 302 of the Indian Penal Code.",
+        "answer": "Based on the retrieved legal evidence, **Section 302 of the Bharatiya Nagarik Suraksha Sanhita (BNSS)** does not define the offence of murder or culpable homicide. Instead, the provided text identifies Section 302 of the BNSS as the provision for **\"Uttering words, etc., with deliberate intent to wound religious feelings.\"**\n\nThe punishment prescribed under this section is imprisonment for up to 1 year, or a fine, or both. The offence is classified as **bailable** and **non-cognizable**, and it ",
+        "reference_answer": "Section 302 IPC provides for punishment for murder — death or imprisonment for life, and fine.",
+        "rouge_l": 0.0963,
+        "hallucination_rate": 0.0,
+        "abstention_correct": null,
+        "num_retrieved": 7,
+        "citations": [
+          "[1] Bharatiya Nagarik Suraksha Sanhita",
+          "[2] Bharatiya Nyaya Sanhita",
+          "[3] Bharatiya Nagarik Suraksha Sanhita",
+          "[4] Bharatiya Nyaya Sanhita",
+          "[5] Bharatiya Nagarik Suraksha Sanhita",
+          "[6] Bharatiya Nagarik Suraksha Sanhita",
+          "[7] Bharatiya Nagarik Suraksha Sanhita"
+        ],
+        "generation_latency": 60.124
+      }
+    ]
+  },
+  "rag+lora": {
+    "mode": "rag+lora",
+    "num_questions": 10,
+    "avg_rouge_l": null,
+    "avg_hallucination_rate": null,
+    "abstention_accuracy": null,
+    "avg_latency_s": null,
+    "results": [
+      {
+        "question": "What does Article 21 of the Constitution of India guarantee?",
+        "error": "CUDA error: device-side assert triggered\nSearch for `cudaErrorAssert' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\n"
+      },
+      {
+        "question": "What are the conditions for anticipatory bail under Section 438 CrPC?",
+        "error": "CUDA error: device-side assert triggered\nSearch for `cudaErrorAssert' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nThe CUDA driver logged these messages, which may provide useful details:\nSticky error detected\nReturning 710 (CUDA_ERROR_ASSERT) from cuStreamIsCapturing\n\n"
+      },
+      {
+        "question": "What is habeas corpus and what are its limits?",
+        "error": "CUDA error: device-side assert triggered\nSearch for `cudaErrorAssert' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nThe CUDA driver logged these messages, which may provide useful details:\nSticky error detected\nReturning 710 (CUDA_ERROR_ASSERT) from cuStreamIsCapturing\n\n"
+      },
+      {
+        "question": "Explain the doctrine of basic structure in Indian constitutional law.",
+        "error": "CUDA error: device-side assert triggered\nSearch for `cudaErrorAssert' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nThe CUDA driver logged these messages, which may provide useful details:\nSticky error detected\nReturning 710 (CUDA_ERROR_ASSERT) from cuStreamIsCapturing\n\n"
+      },
+      {
+        "question": "What constitutes mens rea in Indian criminal law?",
+        "error": "CUDA error: device-side assert triggered\nSearch for `cudaErrorAssert' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nThe CUDA driver logged these messages, which may provide useful details:\nSticky error detected\nReturning 710 (CUDA_ERROR_ASSERT) from cuStreamIsCapturing\n\n"
+      },
+      {
+        "question": "What is the right to equality under Article 14?",
+        "error": "CUDA error: device-side assert triggered\nSearch for `cudaErrorAssert' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nThe CUDA driver logged these messages, which may provide useful details:\nSticky error detected\nReturning 710 (CUDA_ERROR_ASSERT) from cuStreamIsCapturing\n\n"
+      },
+      {
+        "question": "What was the salary of the plaintiff in an unspecified local court case from 1987?",
+        "error": "CUDA error: device-side assert triggered\nSearch for `cudaErrorAssert' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nThe CUDA driver logged these messages, which may provide useful details:\nSticky error detected\nReturning 710 (CUDA_ERROR_ASSERT) from cuStreamIsCapturing\n\n"
+      },
+      {
+        "question": "Is there a 2025 Supreme Court judgment that overruled Kesavananda Bharati?",
+        "error": "CUDA error: device-side assert triggered\nSearch for `cudaErrorAssert' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nThe CUDA driver logged these messages, which may provide useful details:\nSticky error detected\nReturning 710 (CUDA_ERROR_ASSERT) from cuStreamIsCapturing\n\n"
+      },
+      {
+        "question": "What are the essential elements of a valid contract under Indian law?",
+        "error": "CUDA error: device-side assert triggered\nSearch for `cudaErrorAssert' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nThe CUDA driver logged these messages, which may provide useful details:\nSticky error detected\nReturning 710 (CUDA_ERROR_ASSERT) from cuStreamIsCapturing\n\n"
+      },
+      {
+        "question": "Explain Section 302 of the Indian Penal Code.",
+        "error": "CUDA error: device-side assert triggered\nSearch for `cudaErrorAssert' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nThe CUDA driver logged these messages, which may provide useful details:\nSticky error detected\nReturning 710 (CUDA_ERROR_ASSERT) from cuStreamIsCapturing\n\n"
+      }
+    ]
+  }
+}

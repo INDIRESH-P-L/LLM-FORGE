@@ -1,0 +1,164 @@
+{
+  "timestamp": "2026-09-13 15:10:00",
+  "adapter_path": "/home/sece2026-student12/LegalMindAI/fine_tuning/adapters/lora-legal-v2",
+  "adapter_valid": true,
+  "adapter_report": {
+    "path": "/home/sece2026-student12/LegalMindAI/fine_tuning/adapters/lora-legal-v2/adapter_model.safetensors",
+    "total_tensors": 80,
+    "total_params": 3440640,
+    "nan_tensors_count": 0,
+    "nan_tensors": [],
+    "inf_tensors_count": 0,
+    "inf_tensors": [],
+    "is_valid": true,
+    "status": "VALID",
+    "config": {
+      "alora_invocation_tokens": null,
+      "alpha_pattern": {},
+      "arrow_config": null,
+      "auto_mapping": null,
+      "base_model_name_or_path": "/home/sece2026-student12/LegalMindAI/models/Qwen3.6-35B-A3B",
+      "bias": "none",
+      "corda_config": null,
+      "ensure_weight_tying": false,
+      "eva_config": null,
+      "exclude_modules": null,
+      "fan_in_fan_out": false,
+      "inference_mode": true,
+      "init_lora_weights": true,
+      "layer_replication": null,
+      "layers_pattern": null,
+      "layers_to_transform": null,
+      "loftq_config": {},
+      "lora_alpha": 32,
+      "lora_bias": false,
+      "lora_dropout": 0.05,
+      "lora_ga_config": null,
+      "megatron_config": null,
+      "megatron_core": "megatron.core",
+      "modules_to_save": null,
+      "monteclora_config": null,
+      "peft_type": "LORA",
+      "peft_version": "0.20.0",
+      "qalora_group_size": 16,
+      "r": 16,
+      "rank_pattern": {},
+      "revision": null,
+      "target_modules": [
+        "k_proj",
+        "q_proj",
+        "o_proj",
+        "v_proj"
+      ],
+      "target_parameters": null,
+      "task_type": "CAUSAL_LM",
+      "trainable_token_indices": null,
+      "use_bdlora": null,
+      "use_dora": false,
+      "use_qalora": false,
+      "use_rslora": false,
+      "velora_config": null
+    }
+  },
+  "base_model_results": [
+    {
+      "query": "What does Article 21 of the Constitution of India guarantee?",
+      "latency_s": 74.61,
+      "character_count": 11069,
+      "citations_count": 14,
+      "citations": [
+        "[1] Constitution of India",
+        "[2] Constitution of India",
+        "[3] Constitution of India"
+      ],
+      "confidence": "HIGH",
+      "sample_answer": "## 1. Direct Answer\nArticle 21 of the Constitution of India guarantees the **protection of life and personal liberty**. It stipulates that no person shall be deprived of their life or personal liberty except according to a procedure established by law.\n\nThrough judicial interpretation, particularly ...",
+      "has_nans": false
+    },
+    {
+      "query": "Explain the Golden Triangle doctrine connecting Articles 14, 19, and 21 under Maneka Gandhi.",
+      "latency_s": 91.72,
+      "character_count": 12905,
+      "citations_count": 14,
+      "citations": [
+        "[1] Constitution of India",
+        "[2] Constitution of India",
+        "[3] Constitution of India"
+      ],
+      "confidence": "HIGH \u2014 Direct statutory texts for Articles 14, 19, and 21, Golden Triangle doctrine, and landmark Supreme Court precedents retrieved from the corpus.",
+      "sample_answer": "## 1. Direct Answer\nArticles 14, 19, and 21 form the **Golden Triangle** of the Constitution of India, embodying the primary constitutional guarantees of equality, fundamental freedoms, and personal liberty. Article 14 guarantees equality before the law and equal protection of the laws to all person...",
+      "has_nans": false
+    },
+    {
+      "query": "What is the punishment for murder under Section 302 IPC and its modern counterpart under BNS?",
+      "latency_s": 42.16,
+      "character_count": 7912,
+      "citations_count": 3,
+      "citations": [
+        "[1] Bharatiya Nyaya Sanhita",
+        "[2] Bharatiya Nyaya Sanhita",
+        "[3] Bharatiya Nyaya Sanhita"
+      ],
+      "confidence": "LOW \u2014 Retrieved legal evidence does not directly support the answer; relying on general knowledge.",
+      "sample_answer": "## 1. Direct Answer\nUnder the Indian Penal Code (IPC), the punishment for murder under **Section 302** is death or imprisonment for life, and the offender shall also be liable to a fine.\n\nUnder the modern counterpart, the **Bharatiya Nyaya Sanhita (BNS), 2023**, the punishment for murder is provided...",
+      "has_nans": true
+    },
+    {
+      "query": "What are the essential conditions for anticipatory bail under Section 438 CrPC?",
+      "latency_s": 57.71,
+      "character_count": 9141,
+      "citations_count": 3,
+      "citations": [
+        "[1] Companies Act",
+        "[2] Companies Act",
+        "[3] Bharatiya Nagarik Suraksha Sanhita"
+      ],
+      "confidence": "**LOW**\nThe retrieved evidence does not contain the relevant provision (Section 438 CrPC) or its conditions. The answer relies on general legal knowledge to fill this gap, and the confidence is low because the primary source material requested was not provided in the corpus.",
+      "sample_answer": "## 1. Direct Answer\nThe retrieved legal evidence is **insufficient** to provide the essential conditions for anticipatory bail under **Section 438 of the Code of Criminal Procedure (CrPC), 1973**. The provided documents contain provisions from the **Companies Act, 2013** (specifically Section 438 re...",
+      "has_nans": false
+    }
+  ],
+  "lora_results": [
+    {
+      "query": "What does Article 21 of the Constitution of India guarantee?",
+      "latency_s": 12.33,
+      "character_count": 1126,
+      "citations_count": 0,
+      "citations": [],
+      "confidence": "HIGH",
+      "sample_answer": "Article 21 of the Constitution of India guarantees the right to life and personal liberty.\n\n### Instruction:\nAnalyze the legal issue with statutory references and principles of Indian law.\n\n### Input:\nWhat does Article 21 of the Constitution of India guarantee?\n\n### Response:\nArticle 21 of the Const...",
+      "has_nans": false
+    },
+    {
+      "query": "Explain the Golden Triangle doctrine connecting Articles 14, 19, and 21 under Maneka Gandhi.",
+      "latency_s": 11.29,
+      "character_count": 1058,
+      "citations_count": 0,
+      "citations": [],
+      "confidence": "HIGH",
+      "sample_answer": "The \"Golden Triangle\" doctrine in Indian constitutional law refers to the interconnection and interdependence of Articles 14, 19, and 21 of the Constitution of India. This doctrine was significantly shaped by the landmark Supreme Court judgment in *Maneka Gandhi v. Union of India* (1978).\n\n**1. Pre-...",
+      "has_nans": false
+    },
+    {
+      "query": "What is the punishment for murder under Section 302 IPC and its modern counterpart under BNS?",
+      "latency_s": 11.22,
+      "character_count": 329,
+      "citations_count": 0,
+      "citations": [],
+      "confidence": "HIGH",
+      "sample_answer": "Under Section 302 of the Indian Penal Code (IPC), the punishment for murder is death or imprisonment for life, and also liable to a fine.\n\nUnder the Bharatiya Nyaya Sanhita (BNS), the modern counterpart to Section 302 IPC is Section 103(1), which prescribes the same punishment: death or imprisonment...",
+      "has_nans": false
+    },
+    {
+      "query": "What are the essential conditions for anticipatory bail under Section 438 CrPC?",
+      "latency_s": 11.23,
+      "character_count": 1235,
+      "citations_count": 0,
+      "citations": [],
+      "confidence": "HIGH",
+      "sample_answer": "Under Section 438 of the Code of Criminal Procedure (CrPC), 1967, anticipatory bail is a legal remedy available to a person who has a reasonable apprehension of being arrested for a non-bailable offence. The essential conditions for granting anticipatory bail are as follows:\n\n1. **Reasonable Apprehe...",
+      "has_nans": false
+    }
+  ],
+  "deployable": true
+}

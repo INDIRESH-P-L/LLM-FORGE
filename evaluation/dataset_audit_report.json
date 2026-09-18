@@ -1,0 +1,1163 @@
+{
+  "seed": 20260913,
+  "sample_per_file": 4000,
+  "parquet": [
+    {
+      "file": "in_supreme-court_judgments.parquet",
+      "label": "Supreme Court",
+      "total_chunk_rows": 1113313,
+      "sampled": 4000,
+      "columns": [
+        "bench",
+        "bench_strength",
+        "box_aware",
+        "case_id",
+        "case_number",
+        "char_end",
+        "char_start",
+        "chunk_id",
+        "chunk_index",
+        "citation",
+        "court",
+        "court_code",
+        "court_type",
+        "date_of_registration",
+        "decision_date",
+        "description",
+        "disposition",
+        "judges",
+        "language_code",
+        "page_end",
+        "page_start",
+        "petitioner",
+        "respondent",
+        "section_priority",
+        "section_type",
+        "source_url",
+        "text",
+        "text_original",
+        "title",
+        "total_chunks",
+        "year"
+      ],
+      "null_or_empty": {
+        "bench": 4000,
+        "case_number": 4000,
+        "source_url": 4000,
+        "disposition": 149,
+        "petitioner": 3,
+        "respondent": 3
+      },
+      "text_problems": {
+        "indic_script": 2392,
+        "mojibake": 132,
+        "symbol_soup": 27,
+        "hyphen_linebreak": 117,
+        "legacy_font_corruption": 267,
+        "lost_word_breaks": 26,
+        "letter_spaced": 6,
+        "control_chars": 1
+      },
+      "date_formats": {
+        "ISO   YYYY-MM-DD": 4000
+      },
+      "content_mismatch": {
+        "year_vs_decision_date_disagree": 539,
+        "lang_regional_but_latin_text": 315,
+        "party_name_absent_from_text": 2
+      },
+      "worst": [
+        {
+          "chunk_id": "2019_INSC_1231_232_pun",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Supreme Court of India",
+          "date": "2019-11-09",
+          "citation": "[2019] 18 S.C.R. 1",
+          "text_sample": "Case: M SIDDIQ (D) THR LRS  versus V. MAHANT SURESH DAS & ORS [[2019] 18 S.C.R. 1] (2019)\nSection: PARAGRAPH\n\n(iii) \u0a3e\u0a3e\u0a3e\u0a02\u0a26\u0a47\u0a05\u0a27\u0a3e\u0a30\u0a07\u0a15\u0a38\u0a3e\u0a30\u0a24\u0a3e\u0a32\u0a2e\u0a47\u0a32\u0a25\u0a42\u0a70\u0a2e\u0a39\u0a38\u0a35\u0a3f\u0a71\u0a1a\u0a28\u0a4d\u0a39\u0a40\u0a02\u0a39\u0a28\u0a4d\n\n\u0a06\u0a30\u0a38\u0a40\u0a20\u0a3e\u0a15\u0a30\u0a3e\u0a28\u0a4d (\u0a2a\u0a40\u0a21\u0a2c\u0a32\u0a2f  30), \u0a05\u0a38\u0a3c\u0a4b\u0a15\u0a26\u0a3f\u0a71\u0a24\u0a3e (\u0a2a\u0a40\u0a21\u0a2c\u0a32\u0a2f  31) \u0a05\u0a24\u0a47\u0a21\u0a3e\u0a38\u0a41\u0a38\u0a2a\u0a30\u0a06\u0a35\u0a30"
+        },
+        {
+          "chunk_id": "1989_INSC_321_018_hin",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Supreme Court of India",
+          "date": "1989-10-25",
+          "citation": "[1989] SUPP. 1 S.C.R. 623",
+          "text_sample": "Case: SYNTHETICS & CHEMICALS LTD. ETC. versus STATE OF U.P. AND ORS. [[1989] SUPP. 1 S.C.R. 623] (1989)\nSection: BODY\n\n[SECTION] ## \u0906\u0908\u0964\n\n\" \u0939\u092e\u093e\u0930\u0940\u0930\u093e\u092f\u092e\u0947\u0902, \u0908-\u092e\u093e\u0926\u0915\u092a\u0926\u093e\u0930\u094d\u0925\u094b\u0902\u092e\u0947\u0902\u0932\u0947\u0928\u0926\u0947\u0928\u0915\u094b\u0928\u093f\u092f\u0902\u0924\u094d\u0930\u093f\u0924\u0915\u0930\u0928\u0947\u0935\u093e\u0932\u0940\u0938\u0939\u0940\u0938\u094d\u0925\u093f\u0924\u093f\u0938\u0902\u0935\u093f\u0927\u093e\u0928\u092e\u0947\u0902\u092c\u0924\u093e\u0908\u0917\u0908\u0939"
+        },
+        {
+          "chunk_id": "1965_INSC_6_009_ori",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Supreme Court of India",
+          "date": "1965-01-14",
+          "citation": "[1965] 2 S.C.R. 720",
+          "text_sample": "Case: S. P. JAIN versus KALINGA TUBES LTD. [[1965] 2 S.C.R. 720] (1965)\nSection: BODY\n\n\u0b28\u0b3f\u0b30\u0b26\u0b47\u0b36 \u0b2a\u0b3e\u0b07\u0b01 \u0b2a\u0b4d\u0b30\u0b3e\u0b30\u0b4d\u0b47\u0b28\u0b3e \u0b15\u0b30\u0b3f\u0b25\u0b3f\u0b30\u0b32, \u0b15\u0b3e\u0b30\u0b23 \u0b0f\u0b15 \u0b38\u0b2e\u0b43\u0b26\u0b4d\u0b27 \u0b05\u0b2c\u0b38\u0b4d\u0b25\u0b3e\u0b30\u0b30 \u0b25\u0b3f\u0b2c\u0b3e \u0b15\u0b2e\u0b4d\u0b2a\u0b3e\u0b28\u0b40\u0b30 \u0b2a\u0b30\u0b3f\u0b38\u0b2e\u0b3e\u0b2a\u0b4d\u0b24\u0b3f \u0b06\u0b30\u0b2c\u0b26\u0b28\u0b15\u0b3e\u0b30\u0b40 \u0b0f\u0b2c\u0b02 \u0b38\u0b02\u0b16\u0b4d\u0b5f\u0b3e\u0b32\u0b18\u0b41 \u0b30 \u0b3e\u0b37\u0b4d\u0b20\u0b40\u0b30 \u0b05\u0b28\u0b5f \u0b38\u0b26\u0b38\u0b5f\u0b2e\u0b3e\u0b28\u0b19\u0b4d\u0b15\u0b41 \u0b05\u0b28\u0b5f\u0b3e"
+        },
+        {
+          "chunk_id": "2003_INSC_332_002_guj",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Supreme Court of India",
+          "date": "2003-07-25",
+          "citation": "[2003] SUPP. 1 S.C.R. 745",
+          "text_sample": "Case: P.V. RADHAKRLSHNA versus STATE OF KARNATAKA [[2003] SUPP. 1 S.C.R. 745] (2003)\nSection: BODY\n\n\u0a97\u0aa3\u0ab5\u0abe\u0aae\u0abe\u0a82 \u0a86\u0ab5\u0ac0 \u0ab9\u0aa4\u0ac0.  \u0a95\u0ac7\u0ab8 \u0aa8\u0acb\u0a82\u0aa7\u0acd\u0aaf\u0abe \u0aac\u0abe\u0aa6 \u0aa4\u0aaa\u0abe\u0ab8 \u0ab6\u0ab0\u0ac2 \u0a95\u0ab0\u0ab5\u0abe\u0aae\u0abe\u0a82 \u0a86\u0ab5\u0ac0\u0ab9\u0aa4\u0ac0.\u0ab9\u0acb\u0ab8\u0acd\u0aaa\u0abf\u0a9f\u0ab2\u0aae\u0abe\u0a82 \u0aae\u0ac3\u0aa4\u0a95\u0a8f \u0aee.\u0ae8.\u0ae7\u0aef\u0aef\u0ae9 \u0aaa\u0ab0 \u0ab8\u0abe\u0ab0\u0ab5\u0abe\u0ab0 \u0aa6\u0ab0\u0aae\u0abf\u0aaf\u0abe\u0aa8 \u0aac\u0aaa\u0acb\u0ab0\u0ac7\u0ab2\u0a97\u0aad\u0a97 \u0ae7\u0ae6.\u0ae8\u0aeb \u0ab5"
+        },
+        {
+          "chunk_id": "2019_INSC_1080_012_pun",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Supreme Court of India",
+          "date": "2019-09-25",
+          "citation": "[2019] 12 S.C.R. 678",
+          "text_sample": "Case: JIGNESH SHAH & ANR. versus UNION OF INDIA & ANR. [[2019] 12 S.C.R. 678] (2019)\nSection: PARAGRAPH\n\n22. \u0a1c\u0a32\u0a1c\u0a2e\u0a1f\u0a47\u0a38\u0a3c\u0a28 \u0a10\u0a15\u0a1f, 1963 \u0a26\u0a40 \u0a05\u0a28\u0a41\u0a1b\u0a47\u0a26 14 \u0a05\u0a1c\u0a27\u0a15\u0a3c\u0a3e\u0a30 \u0a16\u0a47\u0a24\u0a30 \u0a24\u0a4b\u0a02 \u0a1c\u0a2c\u0a28\u0a3e\u0a02 \u0a05\u0a26\u0a3c\u0a3e\u0a32\u0a24 \u0a1c\u0a35\u0a3f\u0a71\u0a1a \u0a38\u0a39\u0a40 \u0a22\u0a70\u0a17 \u0a28\u0a3c\u0a3e\u0a32 \u0a05\u0a3f\u0a71\u0a17\u0a47 \u0a35\u0a27\u0a23 \u0a1c\u0a35\u0a3f\u0a71\u0a1a \u0a32\u0a3f\u0a71\u0a17\u0a23 \u0a35\u0a3c\u0a3e\u0a32\u0a47 \u0a38"
+        },
+        {
+          "chunk_id": "2000_INSC_267_001_tam",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Supreme Court of India",
+          "date": "2000-04-28",
+          "citation": "[2000] 3 S.C.R. 800",
+          "text_sample": "Case: LIAQ AHMED AND ORS. versus SHRI HABEEB-UR-REHMAN [[2000] 3 S.C.R. 800] (2000)\nSection: BODY\n\n3.2\u0bb5\u0bbe\u0b9f\u0b95\u0bc8 \u0b9a\u0b9f\u0b9f\u0b99\u0b95\u0bb3 \u0b89\u0ba3\u0bae\u0bc8\u0baf\u0bbe\u0ba9 \u0bae\u0bb1\u0bb1\u0bae \u0baa\u0ba9\u0ba4\u0bae\u0bbe\u0ba9 \u0baa\u0bbe\u0ba4\u0b95\u0bbe\u0baa\u0baa\u0bbf\u0ba9\u0bc8\n\n\u0bb5\u0bbe\u0b9f\u0b95\u0bc8\u0ba4\u0bbe\u0bb0\u0bb0\u0b95\u0bb3\u0b95\u0b95 \u0b85\u0bb3\u0b95\u0b95\u0bae\u0baa\u0bcb\u0ba4 \u0b85\u0bb5\u0bc8\u0b95\u0bb3 \u0b85\u0ba4\u0bc0\u0ba4\u0ba4\u0bca\u0bb4\u0bb2 \u0ba8\u0b9f\u0baa \u0b85\u0bb2\u0bb2\u0ba4\u0ba4\u0bbe\u0bb0\u0bbe\u0bb3\u0ba8\u0bcb\u0b95\u0b95\u0ba4\u0ba4\u0b9f\u0ba9 \u0bb0\u0ba4\u0ba4\u0b9a\u0bc6\u0baf\u0baf\u0baa\u0baa\u0b9f\u0b9f\u0bbe\u0bb2"
+        },
+        {
+          "chunk_id": "2009_INSC_1047_001_pun",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Supreme Court of India",
+          "date": "2009-08-17",
+          "citation": "[2009] 13 S.C.R. 301",
+          "text_sample": "Case: M/S. MARUTI SUZUKI LTD versus COMMISSIONER OF CENTRAL EXCISE-III, DELHI [[2009] 13 S.C.R. 301] (2009)\nSection: PARAGRAPH\n\n\u0a09\u0a24\u0a2a\u0a3e\u0a26\u0a26\u0a3e\u0a15\u0a32\u0a48\u0a15\u0a1f\u0a30\u0a2c\u0a28\u0a3e\u0a2e\u0a30\u0a3e\u0a1c\u0a38\u0a25\u0a3e\u0a28\u0a38\u0a1f\u0a47\u0a1f\u0a15\u0a48\u0a2e\u0a40\u0a15\u0a32\u0a35\u0a30\u0a15\u0a38 1991 (55) \u0a08\u0a10\u0a32\u0a1f\u0a40 444 \u0a15\u0a47\u0a02\u0a26\u0a30\u0a40\u0a38\u0a3c\u0a41\u0a32\u0a15(\u0a10\u0a38.\u0a38\u0a40.), \u0a26\u0a3e\u0a39\u0a35\u0a3e\u0a32\u0a3e\u0a26\u0a3f\u0a71\u0a24\u0a3e"
+        },
+        {
+          "chunk_id": "2016_INSC_1075_029_pun",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Supreme Court of India",
+          "date": "2016-11-29",
+          "citation": "[2016] 9 S.C.R. 373",
+          "text_sample": "Case: RAVINDRA RAMCHANDRA WAGHMARE versus INDORE MUNICIPAL CORPORATION & ORS. [[2016] 9 S.C.R. 373] (2016)\nSection: BODY\n\n\u201c59. \u0a39\u0a3f\u0a70\u0a26\u0a41\u0a38\u0a24\u0a3e\u0a28\u0a2a\u0a48\u0a1f\u0a30\u0a4b\u0a32\u0a40\u0a05\u0a2e\u0a15\u0a3e\u0a30\u0a2a\u0a4b.(2005) 7 \u0a10\u0a38.\u0a38\u0a40.\u0a38\u0a40. \u0a32\u0a3f\u0a2e\u0a3f\u0a1f\u0a47\u0a21\u0a2c\u0a28\u0a3e\u0a2e\u0a26\u0a3e\u0a30\u0a40\u0a05\u0a38\u0a38\u0a3c\u0a3e\u0a2a\u0a41\u0a30\u0a1a\u0a47\u0a28\u0a3e\u0a08627 \u0a35\u0a3f\u0a71\u0a1a,5-\u0a0f\u0a26\u0a40\u0a35\u0a3f\u0a06\u0a16\u0a3f\u0a06\u0a15\u0a30"
+        },
+        {
+          "chunk_id": "1995_INSC_253_002_mar",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Supreme Court of India",
+          "date": "1995-04-07",
+          "citation": "[1995] 3 S.C.R. 217",
+          "text_sample": "Case: R.MANICKA NAICKER ETC.  versus E. ELUMALAI NAICKER ETC. [[1995] 3 S.C.R. 217] (1995)\nSection: BODY\n\n\u0928\u093f\u0915\u093e\u0932 \u0926\u0947\u0923\u094d\u092f\u093e\u0924 \u0906\u0932\u093e.  \u092e\u093e\u0924\u094d\u0930,  \u0916\u091f\u0932\u093e \u092a\u094d\u0930\u0932\u0902\u092c\u093f\u0924 \u0905\u0938\u0924\u093e\u0928\u093e \u092f\u093e\n\n\u0915\u093e\u092f\u0926\u094d\u092f\u093e\u0928\u094d\u0935\u092f\u0947 \u0938\u0939\u093e\u092f\u094d\u092f\u0915 \u0938\u0947\u091f\u0932\u092e\u0947\u0902\u091f \u0911\u092b\u093f\u0938\u0930\u0928\u0947 \u0939\u0930\u0915\u0924\u0940 \u0910\u0915\u0942\u0928 \u0918\u0947\u0924\u0932\u094d\u092f\u093e\u0928\u0902\u0924\u0930\n"
+        },
+        {
+          "chunk_id": "1981_INSC_158_002_pun",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Supreme Court of India",
+          "date": "1981-09-03",
+          "citation": "[1982] 1 S.C.R. 607",
+          "text_sample": "Case: SMT. RUKHAMANBAI versus SHIVRAM & ORS. [[1982] 1 S.C.R. 607] (1982)\nSection: PARAGRAPH\n\n2. \u0a38\u0a2e\u0a1d\u0a4c\u0a24\u0a47 \u0a26\u0a47 \u0a07\u0a30\u0a3e\u0a26\u0a47 \u0a28\u0a3e\u0a32 \u0a2e\u0a3f\u0a32 \u0a15\u0a47 \u0a07\u0a71\u0a15 \u0a38\u0a3c\u0a41\u0a71\u0a27 \u0a38\u0a3c\u0a3e\u0a2c\u0a26\u0a3f\u0a15 \u0a21\u0a40\u0a21 \u0a2c\u0a23\u0a24\u0a30 '\u0a24\u0a47, \u0a05\u0a2a\u0a40\u0a32\u0a15\u0a30\u0a24\u0a3e\u0a35\u0a3e\u0a02 \u0a26\u0a3e \u0a1c\u0a3e\u0a07\u0a26\u0a3e\u0a26 \u0a35\u0a3f\u0a71\u0a1a \u0a39\u0a3f\u0a71\u0a24 \u0a1c\u0a40\u0a35\u0a28 \u0a2d\u0a30 \u0a32\u0a08 \u0a07\u0a71\u0a15 \u0a28\u0a3f\u0a39\u0a3f\u0a24 \u0a39\u0a3f\u0a71\u0a24 \u0a38\u0a40 \u0a1c\u0a3f\u0a38"
+        },
+        {
+          "chunk_id": "1994_INSC_521_005_ben",
+          "flags": [
+            "mojibake",
+            "indic_script"
+          ],
+          "court": "Supreme Court of India",
+          "date": "1994-11-16",
+          "citation": "[1994] SUPP. 5 S.C.R. 515",
+          "text_sample": "Case: STATE OF WEST BENGAL ETC. ETC. versus ASHUTOSH LAHIRI AND ORS. [[1994] SUPP. 5 S.C.R. 515] (1994)\nSection: BODY\n\nTWO GWA Par Gay CHAM WNW\u2019 BEM Pal VT Bava rc Gao rv AqBACT AT AAS, spn Nrocaqa wvivacnsp Alor Caray A"
+        },
+        {
+          "chunk_id": "2011_INSC_722_012_pun",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Supreme Court of India",
+          "date": "2011-09-28",
+          "citation": "[2011] 15 S.C.R. 92",
+          "text_sample": "Case: RAJESH KUMAR versus STATE THROUGH GOVT. OF NCT OF DELHI-II [[2011] 15 S.C.R. 92] (2011)\nSection: BODY\n\n(\u0a21\u0a40) \u0a1c\u0a47\u0a15\u0a30 \u0a07\u0a39 \u0a2c\u0a30\u0a40 \u0a15\u0a30\u0a28 \u0a26\u0a3c\u0a3e \u0a2b\u0a48\u0a38\u0a32\u0a3c\u0a3e \u0a39\u0a48, \u0a24\u0a3e\u0a02 \u0a1a\u0a2c\u0a06\u0a28 \u0a15\u0a30\u0a47\u0a17\u0a3c\u0a3e \u0a1c\u0a41\u0a30\u0a2e \u0a1a\u0a1c\u0a38 \u0a1a\u0a35\u0a71\u0a3f \u0a26\u0a4b\u0a38\u0a40 \u0a28 \u0a42\u0a70 \u0a2c\u0a30\u0a40 \u0a15\u0a30 \u0a1a\u0a26\u0a71\u0a24\u0a3c\u0a3e \u0a1c\u0a3e\u0a02\u0a26\u0a3c\u0a3e \u0a39\u0a48 \u0a05\u0a24\u0a47 \u0a1a\u0a38\u0a71\u0a27\u0a3c\u0a3e "
+        }
+      ],
+      "coverage": {
+        "distinct_case_ids_in_sample": 3574,
+        "year_range": [
+          "1950",
+          "2025"
+        ],
+        "top_years": [
+          [
+            "2022",
+            169
+          ],
+          [
+            "2023",
+            144
+          ],
+          [
+            "2013",
+            137
+          ],
+          [
+            "1996",
+            131
+          ],
+          [
+            "2019",
+            124
+          ],
+          [
+            "2021",
+            113
+          ],
+          [
+            "2017",
+            110
+          ],
+          [
+            "2010",
+            105
+          ]
+        ],
+        "thin_years": [],
+        "courts": [
+          [
+            "Supreme Court of India",
+            4000
+          ]
+        ],
+        "dispositions": [
+          [
+            "Dismissed",
+            1447
+          ],
+          [
+            "Appeal(s) allowed",
+            1313
+          ],
+          [
+            "Disposed off",
+            647
+          ],
+          [
+            "Case Partly allowed",
+            186
+          ],
+          [
+            "Case Allowed",
+            77
+          ]
+        ],
+        "languages": [
+          [
+            "en",
+            1316
+          ],
+          [
+            "pun",
+            1134
+          ],
+          [
+            "hin",
+            1090
+          ],
+          [
+            "guj",
+            104
+          ],
+          [
+            "mal",
+            76
+          ]
+        ]
+      },
+      "duplicate_chunk_texts": 0,
+      "scripts": {
+        "gurmukhi": 1114,
+        "latin": 1631,
+        "devanagari": 931,
+        "gujarati": 102,
+        "tamil": 70,
+        "bengali": 48,
+        "malayalam": 74,
+        "telugu": 30
+      }
+    },
+    {
+      "file": "in_allahabad_judgments.parquet",
+      "label": "High Court",
+      "total_chunk_rows": 2007927,
+      "sampled": 666,
+      "columns": [
+        "bench",
+        "bench_strength",
+        "box_aware",
+        "case_id",
+        "case_number",
+        "char_end",
+        "char_start",
+        "chunk_id",
+        "chunk_index",
+        "citation",
+        "court",
+        "court_code",
+        "court_type",
+        "date_of_registration",
+        "decision_date",
+        "description",
+        "disposition",
+        "judges",
+        "language_code",
+        "page_end",
+        "page_start",
+        "petitioner",
+        "respondent",
+        "section_priority",
+        "section_type",
+        "source_url",
+        "text",
+        "text_original",
+        "title",
+        "total_chunks",
+        "year"
+      ],
+      "null_or_empty": {
+        "citation": 666,
+        "case_number": 206,
+        "source_url": 666,
+        "disposition": 1
+      },
+      "text_problems": {
+        "hyphen_linebreak": 4,
+        "indic_script": 9,
+        "lost_word_breaks": 4,
+        "mojibake": 2,
+        "legacy_font_corruption": 2
+      },
+      "date_formats": {
+        "ISO datetime": 666
+      },
+      "content_mismatch": {
+        "lang_en_but_indic_text": 9
+      },
+      "worst": [
+        {
+          "chunk_id": "UPHC011391572019_002",
+          "flags": [
+            "hyphen_linebreak"
+          ],
+          "court": "Allahabad High Court",
+          "date": "2020-06-23 00:00:00",
+          "citation": "",
+          "text_sample": "Case: BAIL/28288/2019 of MADAN SONI Vs UNION OF INDIA (2020)\nCourt: Allahabad High Court\nSection: PARAGRAPH\n\n9.The Apex Court in the case of Satpal Singh (Supra) has held thatfor ascertaining whether the accused is not l"
+        },
+        {
+          "chunk_id": "UPHC012424742022_000",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Allahabad High Court",
+          "date": "2023-04-06 00:00:00",
+          "citation": "",
+          "text_sample": "Case: BAIL/56325/2022 of RAMWATI Vs State of U.P. (2023)\nCourt: Allahabad High Court\nSection: BODY\n\nCase :- CRIMINAL MISC. BAIL APPLICATION No. - 56325 of 2022\n\nApplicant :- RamwatiOpposite Party :- State of U.P.\n\nCounse"
+        },
+        {
+          "chunk_id": "UPHC011867992023_002",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Allahabad High Court",
+          "date": "2023-10-28 00:00:00",
+          "citation": "",
+          "text_sample": "Case: BAIL/37532/2023 of AKIL Vs STATE OF U.P. (2023)\nCourt: Allahabad High Court\nSection: PARAGRAPH\n\n9. Initially FIR of the present case was lodged under Section 364IPC but after recovery of the dead body, case was con"
+        },
+        {
+          "chunk_id": "UPHC011472612022_000",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "Allahabad High Court",
+          "date": "2022-09-15 00:00:00",
+          "citation": "",
+          "text_sample": "Case: WRIA/12430/2022 of OMKAR NATH PANDEY Vs State of U.P. AND 4 OTHERS (2022)\nCourt: Allahabad High Court\nSection: PARAGRAPH\n\nCase :- WRIT - A No. - 12430 of 2022\n\nPetitioner :- Omkar Nath PandeyRespondent :- State Of "
+        },
+        {
+          "chunk_id": "UPHC012181522022_000",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Allahabad High Court",
+          "date": "2023-01-16 00:00:00",
+          "citation": "",
+          "text_sample": "Case: BAIL/51038/2022 of SMT. GEETA DEVI Vs State of U.P. (2023)\nCourt: Allahabad High Court\nSection: BODY\n\nCase :- CRIMINAL MISC. BAIL APPLICATION No. - 51038 of 2022\n\nApplicant :- Smt. Geeta DeviOpposite Party :- State"
+        },
+        {
+          "chunk_id": "UPHC012335852023_001",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Allahabad High Court",
+          "date": "2023-11-09 00:00:00",
+          "citation": "",
+          "text_sample": "Case: WRIC/36933/2023 of RANDHIR SINGH Vs STATE OF U.P. AND 4 OTHERS (2023)\nCourt: Allahabad High Court\nSection: PARAGRAPH\n\n3. Learned counsel for the petitioner submitted that mutation\n\norder dated 27.12.2018 passed by "
+        },
+        {
+          "chunk_id": "UPHC020497382024_000",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Allahabad High Court",
+          "date": "2024-07-24 00:00:00",
+          "citation": "",
+          "text_sample": "Case: /6504/2024 of FATEH BAHADUR SINGH AND ANOTHER Vs STATE OF U.P. THRU. PRIN. SECY. DEPTT. OF HOME LKO.... (2024)\nCourt: Allahabad High Court\nSection: PARAGRAPH\n\nCourt No. - 13\n\nCase :- APPLICATION U/S 482 No. - 6504 "
+        },
+        {
+          "chunk_id": "UPHC010528472025_005",
+          "flags": [
+            "mojibake",
+            "indic_script",
+            "legacy_font_corruption"
+          ],
+          "court": "Allahabad High Court",
+          "date": "2025-03-19 00:00:00",
+          "citation": "",
+          "text_sample": "Case: BAIL/3950/2025 of RAVI SINGH Vs STATE OF U.P. (2025)\nCourt: Allahabad High Court\nSection: BODY\n\n6\n\nBail Application No. 3950 of 2025Ravi Singh Vs. State of UP\n\n16.05.2024 \u0932\u0947\u0939\u093f\u0915\u0928\ufffd\u092c\u0935\ufffd\u0915\u094b\u0917\u093e \u092e\u0947\u0902\u091c\u093f\ufffd\u092f\u093e \u092e\u0947\u0902\u092c\u093e \u092e\u0947\u0902\u0926 \u0915\u094b\u091f4 6\u092f("
+        },
+        {
+          "chunk_id": "UPHC020759532024_002",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "Allahabad High Court",
+          "date": "2024-11-12 00:00:00",
+          "citation": "",
+          "text_sample": "Case: /10106/2024 of FAUJI ALIAS OM PRAKASH SHARMA Vs STATE OF U.P. THRU. ADDL. CHIEF SECY. DEPTT. OF HOME... (2024)\nCourt: Allahabad High Court\nSection: PARAGRAPH\n\n19.  We  thus  sum-up  and  hold  that  asopposed  to  "
+        },
+        {
+          "chunk_id": "UPHC011878482022_001",
+          "flags": [
+            "mojibake",
+            "indic_script",
+            "legacy_font_corruption"
+          ],
+          "court": "Allahabad High Court",
+          "date": "2023-01-13 00:00:00",
+          "citation": "",
+          "text_sample": "Case: SPLAD/466/2022 of LALIT KUMAR Vs State of U.P. AND 3 OTHERS (2023)\nCourt: Allahabad High Court\nSection: PARAGRAPH\n\n\u201c\u0909\u092a\u0930\u094b\u0915\u094d\u0924 \u092a\u0930\u093f\u0930\u091a\u091a\ufffd \u0938\u0947 \u0938\u094d\u092a\u094d\u0937\u094d\u091f \u0939\u0948 \u0915\u093f\ufffd \u091c\u0939\ufffd\u0902 \u090f\ufffd \u0913\u0930 \u0905\u092d\u093f\ufffd\u092f\u094b\u091c\u0928 \u0926\u094d\u0935\ufffd\u0930\ufffd \u092c\u0924\ufffd\u092f\u0947 \u0917\u092f\u0947\u0918\u091f\u0928\ufffd\u0915\u094d\u0930\u092e \u092e\u0947\u0902 \u0924\ufffd\u0930\u094d\u0915\u093f\ufffd\ufffd \u0924\ufffd\u0924\ufffd\u092e\u094d"
+        },
+        {
+          "chunk_id": "UPHC013800312025_002",
+          "flags": [
+            "indic_script"
+          ],
+          "court": "Allahabad High Court",
+          "date": "2025-08-04 00:00:00",
+          "citation": "",
+          "text_sample": "Case: NA528/28133/2025 of IKRAMUDDIN ALIAS  BULI Vs STATE OF U.P.  AND ANOTHER (2025)\nCourt: Allahabad High Court\nSection: PARAGRAPH\n\nIt is made clear that no application for extension of time shall be entertainedif this"
+        },
+        {
+          "chunk_id": "UPHC011306082022_012",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "Allahabad High Court",
+          "date": "2022-10-13 00:00:00",
+          "citation": "",
+          "text_sample": "Case: WRIC/21595/2022 of SHAILA TAHIR Vs State of U.P. AND 2 OTHERS (2022)\nCourt: Allahabad High Court\nSection: BODY\n\n8(1992) 4 SCC 605\n\n9(2010) 13 SCC 336\n\n\u201c3. The giving of reasons for a decision is an essentialattribu"
+        }
+      ],
+      "coverage": {
+        "distinct_case_ids_in_sample": 666,
+        "year_range": [
+          "2018",
+          "2025"
+        ],
+        "top_years": [
+          [
+            "2023",
+            141
+          ],
+          [
+            "2022",
+            135
+          ],
+          [
+            "2019",
+            84
+          ],
+          [
+            "2025",
+            74
+          ],
+          [
+            "2021",
+            72
+          ],
+          [
+            "2018",
+            67
+          ],
+          [
+            "2020",
+            50
+          ],
+          [
+            "2024",
+            43
+          ]
+        ],
+        "thin_years": [],
+        "courts": [
+          [
+            "Allahabad High Court",
+            666
+          ]
+        ],
+        "dispositions": [
+          [
+            "ALLOWED",
+            205
+          ],
+          [
+            "DISMISSED",
+            191
+          ],
+          [
+            "DISPOSED",
+            164
+          ],
+          [
+            "Allowed/Partly Allowed on meri",
+            65
+          ],
+          [
+            "REJECTED",
+            25
+          ]
+        ],
+        "languages": [
+          [
+            "en",
+            666
+          ]
+        ]
+      },
+      "duplicate_chunk_texts": 0,
+      "scripts": {
+        "latin": 657,
+        "devanagari": 9
+      }
+    },
+    {
+      "file": "in_andaman-nicobar_legislation.parquet",
+      "label": "High Court",
+      "total_chunk_rows": 4626,
+      "sampled": 666,
+      "columns": [
+        "act_id",
+        "act_status",
+        "acts_referenced",
+        "amendment_count",
+        "chapter",
+        "chunk_id",
+        "defined_terms",
+        "delegation_type",
+        "department",
+        "doc_type",
+        "has_non_obstante",
+        "has_proviso",
+        "in_force",
+        "instrument_type",
+        "jurisdiction",
+        "language_code",
+        "legal_subject",
+        "mirror_url",
+        "provision_type",
+        "regulatory_body",
+        "section_number",
+        "section_title",
+        "section_type",
+        "source_publisher",
+        "source_url",
+        "state",
+        "text",
+        "title",
+        "year"
+      ],
+      "null_or_empty": {
+        "year": 29
+      },
+      "text_problems": {
+        "hyphen_linebreak": 17,
+        "mojibake": 6,
+        "symbol_soup": 6,
+        "lost_word_breaks": 1
+      },
+      "date_formats": {
+        "(missing)": 666
+      },
+      "content_mismatch": {},
+      "worst": [
+        {
+          "chunk_id": "IND_state_19320_s008",
+          "flags": [
+            "hyphen_linebreak"
+          ],
+          "court": "",
+          "date": "",
+          "citation": "",
+          "text_sample": "Act: The Wildlife (Protection) Act, 1972 (Act 53 of 1972) | India | State | In Force\nChapter VII: ** | Section 8: For section 43 of the principal Act, the following section shall be substituted, namely-\n\n28. For section "
+        },
+        {
+          "chunk_id": "IND_state_18982_s020",
+          "flags": [
+            "hyphen_linebreak"
+          ],
+          "court": "",
+          "date": "",
+          "citation": "",
+          "text_sample": "Act: The Andaman and Nicobar Islands Cooperative Socities Regulation 1973 (Act 3 of 1973) | India | State | In Force\nChapter III: ** | Section 20: Admission of member before general meeting of a society** :- No co-\n\n**20"
+        },
+        {
+          "chunk_id": "IND_state_19314_b000_p34",
+          "flags": [
+            "mojibake",
+            "symbol_soup"
+          ],
+          "court": "",
+          "date": "",
+          "citation": "",
+          "text_sample": "Act: The Indian Port Act, 1908 (Act 1908 of 1908) | India | State | In Force\n\n\ufffd\ufffd\ufffd\ufffd!\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd#\ufffd)\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd$\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd#\ufffd\ufffd*\ufffd\ufffd\ufffd*\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd#\ufffd\"\ufffd\ufffd\ufffd\ufffd*\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd)\ufffd\ufffd\ufffd#\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd$\ufffd\ufffd\ufffd\ufffd*\ufffd\ufffd\ufffd\ufffd"
+        },
+        {
+          "chunk_id": "IND_state_18984_s065_p0",
+          "flags": [
+            "hyphen_linebreak"
+          ],
+          "court": "",
+          "date": "",
+          "citation": "",
+          "text_sample": "Act: The andaman and nicobar islands excise regulati0n, 2012 (Act 3 of 2012) | India | State | In Force\nChapter IV: ## ExCISE REVENUE | Section 65: (J) Notwithstanding anything con~ined in this Regulation or any other la"
+        },
+        {
+          "chunk_id": "IND_state_19314_b000_p37",
+          "flags": [
+            "mojibake",
+            "symbol_soup"
+          ],
+          "court": "",
+          "date": "",
+          "citation": "",
+          "text_sample": "Act: The Indian Port Act, 1908 (Act 1908 of 1908) | India | State | In Force\n\n\ufffd6\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd)\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd[(] /5\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd0\ufffd)\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd1\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd)\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\"\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\"#\ufffd\ufffd\ufffd\ufffd \ufffd$\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd#\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd)\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd)\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd"
+        },
+        {
+          "chunk_id": "IND_state_18999_s006_3",
+          "flags": [
+            "hyphen_linebreak"
+          ],
+          "court": "",
+          "date": "",
+          "citation": "",
+          "text_sample": "Act: The factories act, 1948 (Act 63 of 1948) | India | State | In Force\nChapter VI: ``` | Section 6(3): Further restrictions on employment of women. (1) The\n\n(3) The rules made under sub-section (2) shall remain in forc"
+        },
+        {
+          "chunk_id": "IND_state_19314_b000_p57",
+          "flags": [
+            "mojibake",
+            "symbol_soup"
+          ],
+          "court": "",
+          "date": "",
+          "citation": "",
+          "text_sample": "Act: The Indian Port Act, 1908 (Act 1908 of 1908) | India | State | In Force\n\n|||||\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd|\n|---|---|---|---|---|\n|||\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd<br>\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd|\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd<br>\ufffd\ufffd\ufffd\ufffd\ufffd#\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd<br>\ufffd*\"\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd|%\ufffd\ufffd<br>\ufffd\ufffd#\ufffd\ufffd\ufffd\ufffd\ufffd<"
+        },
+        {
+          "chunk_id": "IND_state_19000_s136_p4",
+          "flags": [
+            "hyphen_linebreak"
+          ],
+          "court": "",
+          "date": "",
+          "citation": "",
+          "text_sample": "Act: The Andaman and Nicobar Islands Municipal Regulation 1994 (Act 5 of 1994) | India | State | In Force\nChapter IV: EJ..E(.7I'')NS | Section 136: If 1he Senior Medical Officer certifies that the cultivation of any desc"
+        },
+        {
+          "chunk_id": "IND_state_18989_s197_p0",
+          "flags": [
+            "hyphen_linebreak"
+          ],
+          "court": "",
+          "date": "",
+          "citation": "",
+          "text_sample": "Act: The andaman and nicobar islands land revenue and reforms regulation 1966 (Act 2 of 1966) | India | State | In Force\nChapter XVI: ** | Section 197: In preparing the Nistar Patrak as provided in section 196 the Deputy"
+        },
+        {
+          "chunk_id": "IND_state_18999_s41F",
+          "flags": [
+            "hyphen_linebreak"
+          ],
+          "court": "",
+          "date": "",
+          "citation": "",
+          "text_sample": "Act: The factories act, 1948 (Act 63 of 1948) | India | State | In Force\nChapter IV: ``` | Section 41F: ```\n\n41F.\n```\n\n```\nPermissible limits of exposure of chemical and toxic sub-stances.\n```\n\n```\n3*[41F. Permissible li"
+        },
+        {
+          "chunk_id": "IND_state_18989_s212_p0",
+          "flags": [
+            "hyphen_linebreak"
+          ],
+          "court": "",
+          "date": "",
+          "citation": "",
+          "text_sample": "Act: The andaman and nicobar islands land revenue and reforms regulation 1966 (Act 2 of 1966) | India | State | In Force\nChapter XVII: Miscellaneous** | Section 212: Notwithstanding anything contained in this Regulation-"
+        },
+        {
+          "chunk_id": "IND_state_19314_b000_p52",
+          "flags": [
+            "mojibake",
+            "symbol_soup"
+          ],
+          "court": "",
+          "date": "",
+          "citation": "",
+          "text_sample": "Act: The Indian Port Act, 1908 (Act 1908 of 1908) | India | State | In Force\n\n|\ufffd\ufffd\ufffdD\ufffd\ufffd#\ufffd=*\ufffd\ufffd\ufffd\ufffd|\ufffd\ufffd\ufffdD\ufffd\ufffd#\ufffd=*\ufffd\ufffd\ufffd\ufffd||||\ufffd\ufffd\ufffd\ufffd<br>\ufffd\ufffd\ufffd<br>\ufffd*\"\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd|\ufffd\ufffd\ufffd\ufffd<br>\ufffd\ufffd\ufffd<br>\ufffd*\"\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd|\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd2\ufffd<br>\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd#\ufffd<br>\ufffd\ufffd#\ufffd<br>\ufffd\ufffd\ufffd\ufffd<br>\ufffd\ufffd\"\ufffd\ufffd\ufffd\ufffd#<br>\ufffd\ufffd<"
+        }
+      ],
+      "coverage": {
+        "distinct_case_ids_in_sample": 0,
+        "year_range": [
+          "1894.0",
+          "2016.0"
+        ],
+        "top_years": [
+          [
+            "1939.0",
+            101
+          ],
+          [
+            "1994.0",
+            71
+          ],
+          [
+            "1972.0",
+            70
+          ],
+          [
+            "1948.0",
+            55
+          ],
+          [
+            "1973.0",
+            49
+          ],
+          [
+            "2016.0",
+            38
+          ],
+          [
+            "1966.0",
+            35
+          ],
+          [
+            "1957.0",
+            32
+          ]
+        ],
+        "thin_years": [
+          "1955.0",
+          "1956.0",
+          "1964.0",
+          "1979.0",
+          "1980.0",
+          "1989.0"
+        ],
+        "courts": [],
+        "dispositions": [],
+        "languages": [
+          [
+            "en",
+            666
+          ]
+        ]
+      },
+      "duplicate_chunk_texts": 4,
+      "scripts": {
+        "latin": 666
+      }
+    },
+    {
+      "file": "in_andhra-pradesh_judgments.parquet",
+      "label": "High Court",
+      "total_chunk_rows": 661353,
+      "sampled": 666,
+      "columns": [
+        "bench",
+        "bench_strength",
+        "box_aware",
+        "case_id",
+        "case_number",
+        "char_end",
+        "char_start",
+        "chunk_id",
+        "chunk_index",
+        "citation",
+        "court",
+        "court_code",
+        "court_type",
+        "date_of_registration",
+        "decision_date",
+        "description",
+        "disposition",
+        "judges",
+        "language_code",
+        "page_end",
+        "page_start",
+        "petitioner",
+        "respondent",
+        "section_priority",
+        "section_type",
+        "source_url",
+        "text",
+        "text_original",
+        "title",
+        "total_chunks",
+        "year"
+      ],
+      "null_or_empty": {
+        "citation": 666,
+        "source_url": 666,
+        "case_number": 28,
+        "petitioner": 22,
+        "respondent": 22,
+        "court": 23,
+        "decision_date": 10,
+        "disposition": 2
+      },
+      "text_problems": {
+        "lost_word_breaks": 231,
+        "symbol_soup": 7,
+        "hyphen_linebreak": 8,
+        "letter_spaced": 2
+      },
+      "date_formats": {
+        "ISO datetime": 642,
+        "ISO   YYYY-MM-DD": 14,
+        "(missing)": 10
+      },
+      "content_mismatch": {
+        "party_name_absent_from_text": 12,
+        "year_vs_decision_date_disagree": 10
+      },
+      "worst": [
+        {
+          "chunk_id": "APHC010560902024_002",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "High Court of Andhra Pradesh",
+          "date": "2024-12-18 00:00:00",
+          "citation": "",
+          "text_sample": "Case: WP/29276/2024 of SIMHADRI DHANUNJAYA RAO Vs THE STATE OF AP (2024)\nCourt: High Court of Andhra Pradesh\nSection: CONCLUSION\n\n3.In view of the above submission, this Court deemsit appropriate todispose of this Writ P"
+        },
+        {
+          "chunk_id": "APHC010057782006_000",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "High Court of Andhra Pradesh",
+          "date": "2024-09-05 00:00:00",
+          "citation": "",
+          "text_sample": "Case: MACMA/1338/2006 of THE ORIENTAL INSURANCE CO, LTD Vs BOYA K. SIVAIAH AND ANOTHER (2024)\nCourt: High Court of Andhra Pradesh\nSection: BODY\n\n[TITLE] # IN THE HIGH COURT OF ANDHRA PRADESH AT AMARAVATI\n\nTHURSDAY. THE F"
+        },
+        {
+          "chunk_id": "APHC010287802025_005",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "High Court of Andhra Pradesh",
+          "date": "2025-06-30 00:00:00",
+          "citation": "",
+          "text_sample": "Case: CRP/1354/2025 of Mitaigiri Sulthan Hussain @ Mitaigiri Mohammed Sultan, Vs Dudekula Hussain Sab, (2025)\nCourt: High Court of Andhra Pradesh\nSection: SECTION\n\nby the respondents No.1to 3. When the petitioner attende"
+        },
+        {
+          "chunk_id": "APHC010169972023_026",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "High Court of Andhra Pradesh",
+          "date": "2023-06-22 00:00:00",
+          "citation": "",
+          "text_sample": "Case: WP/8665/2023 of YELIPE SATYANARAYANA Vs THE STATE OF AP (2023)\nCourt: High Court of Andhra Pradesh\nSection: BODY\n\nKalyanaMandapam.Tirupati.TirupatiDistrict.AndhraPradesh.6.TheChiefGeneralManager(HRD).APSPDCL.Corpor"
+        },
+        {
+          "chunk_id": "APHC010886912017_003",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "High Court of Andhra Pradesh",
+          "date": "2023-09-23 00:00:00",
+          "citation": "",
+          "text_sample": "Case: COMPA/852/2017 of M/S THE COMMERCIAL BENEFIT CORPORATION (IN LIQN), Vs (2023)\nCourt: High Court of Andhra Pradesh\nSection: BODY\n\nCounsel for the Applicant:Sri T.V.P. SAI VIHARI(SC FOR OFFICIAL LIQUIDATOR)\n\nCounsel "
+        },
+        {
+          "chunk_id": "APHC010262372019_011",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "High Court of Andhra Pradesh",
+          "date": "2022-08-01 00:00:00",
+          "citation": "",
+          "text_sample": "Case: WP/11948/2019 of Bathula Siva Prasad, Vs State of Andhra Pradesh (2022)\nCourt: High Court of Andhra Pradesh\nSection: BODY\n\n[SECTION] ## lA NO: 1 OF 2020\n\nPetition under Section 151 CPC praying thatin thecircumstanc"
+        },
+        {
+          "chunk_id": "APHC010154442023_009",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "High Court of Andhra Pradesh",
+          "date": "2024-05-07 00:00:00",
+          "citation": "",
+          "text_sample": "Case: WP/7914/2023 of Sudhabathula Vishnu Mohana Rao, Vs The State of Andhra Pradesh, (2024)\nCourt: High Court of Andhra Pradesh\nSection: SECTION\n\nPetition under Section151 CPCpraying thatin thecircumstancesstated in the"
+        },
+        {
+          "chunk_id": "APHC010112102013_001",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "High Court of Andhra Pradesh",
+          "date": "2025-07-17 00:00:00",
+          "citation": "",
+          "text_sample": "Case: WA/995/2013 of CHAIRMAN & M.D., TRANSMISSION CORPN.OF AP.LTD  & 2 OTHERS Vs M/S.SRI LAKSHMI MODERN B... (2025)\nCourt: High Court of Andhra Pradesh\nSection: ARGUMENTS\n\n...Appellant(s)\n\nVs.\n\nM/s Vijaya Laxmi Sea Food"
+        },
+        {
+          "chunk_id": "APHC010545942022_018",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "High Court of Andhra Pradesh",
+          "date": "2024-02-27 00:00:00",
+          "citation": "",
+          "text_sample": "Case: WP/33349/2022 of A.RAVI KUMAR Vs THE STATE OF ANDHRA PRADESH (2024)\nCourt: High Court of Andhra Pradesh\nSection: CONCLUSION\n\n[SECTION] ## lA NO: 1 OF 2022\n\nPetition under Section 151 CPC praying that in the[circums"
+        },
+        {
+          "chunk_id": "APHC010385862016_002",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "High Court of Andhra Pradesh",
+          "date": "2023-02-13 00:00:00",
+          "citation": "",
+          "text_sample": "Case: MACMA/543/2016 of T MURALI, VIZIANAGARAM AND FOUR OTHERS Vs SARIPALLI APPALARAJU, VISAKHAPATNAM AND ... (2023)\nCourt: High Court of Andhra Pradesh\nSection: BODY\n\n12.Thelearnedcounselforappellantswouldcontendthatthe"
+        },
+        {
+          "chunk_id": "APHC010201862022_023",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "High Court of Andhra Pradesh",
+          "date": "2022-12-01 00:00:00",
+          "citation": "",
+          "text_sample": "Case: WP/14138/2022 of MUNTHA SRINIVASULU Vs THE STATE OF ANDHRA PRADESH (2022)\nCourt: High Court of Andhra Pradesh\nSection: BODY\n\nin respect of work I.D.No.057064409005080017 under MGNREGS plusCMTIPPINGSchemes,28)Amount"
+        },
+        {
+          "chunk_id": "APHC010786572013_002",
+          "flags": [
+            "lost_word_breaks"
+          ],
+          "court": "High Court of Andhra Pradesh",
+          "date": "2024-10-14 00:00:00",
+          "citation": "",
+          "text_sample": "Case: WP/28282/2013 of Mutyala Subba Rao, Vs IDBI Bank Limited, (2024)\nCourt: High Court of Andhra Pradesh\nSection: BODY\n\nTHE HONOURABLE SRI JUSTICE VENKATESWARLU NIMMAGADDA\n\nWRIT PETITION NO: 28282/2013\n\nBetween:\n\nMutya"
+        }
+      ],
+      "coverage": {
+        "distinct_case_ids_in_sample": 663,
+        "year_range": [
+          "2019",
+          "2025"
+        ],
+        "top_years": [
+          [
+            "2024",
+            187
+          ],
+          [
+            "2025",
+            129
+          ],
+          [
+            "2023",
+            108
+          ],
+          [
+            "2022",
+            88
+          ],
+          [
+            "2021",
+            79
+          ],
+          [
+            "2020",
+            47
+          ],
+          [
+            "2019",
+            28
+          ]
+        ],
+        "thin_years": [],
+        "courts": [
+          [
+            "High Court of Andhra Pradesh",
+            642
+          ],
+          [
+            "High Court of Hyderabad",
+            1
+          ]
+        ],
+        "dispositions": [
+          [
+            "ALLOWED",
+            222
+          ],
+          [
+            "DISMISSED",
+            220
+          ],
+          [
+            "DISPOSED",
+            152
+          ],
+          [
+            "CLOSED NO COSTS",
+            25
+          ],
+          [
+            "DISPOSED OF NO COSTS",
+            17
+          ]
+        ],
+        "languages": [
+          [
+            "en",
+            666
+          ]
+        ]
+      },
+      "duplicate_chunk_texts": 0,
+      "scripts": {
+        "latin": 666
+      }
+    }
+  ],
+  "jsonl": [
+    {
+      "file": "data/chunks/case_laws/indexed_chunks.jsonl",
+      "label": "case-law chunks (INDEXED)",
+      "total_rows": 26085,
+      "sampled": 3000,
+      "broken_json": 0,
+      "null_or_empty": {},
+      "text_problems": {},
+      "worst": [],
+      "duplicate_rows_in_sample": 59
+    },
+    {
+      "file": "data/chunks/legislation/chunks.jsonl",
+      "label": "legislation chunks (INDEXED, used by app)",
+      "total_rows": 26097,
+      "sampled": 3000,
+      "broken_json": 0,
+      "null_or_empty": {},
+      "text_problems": {
+        "symbol_soup": 17,
+        "letter_spaced": 7,
+        "hyphen_linebreak": 12,
+        "mojibake": 52,
+        "indic_script": 52,
+        "lost_word_breaks": 1
+      },
+      "worst": [
+        {
+          "row": 21294,
+          "sample": "Act: Juvenile Justice\nSection: 13 - The Juvenile Justice (Child care and protection)\n\nAct: The Juvenile Justice (Child care and protection) | India | State | In Force\nSection 13(6): \u092c\u093e\u0932 \ufffd\u092f\u093e\u092f\u093e\u0932\u092f \u0914\u0930 \u093f\u0928\u0917\u0930\u093e\u0928\u0940 \ufffd\u093e\u093f\u0927\u0915\u0930\u0923\ufffd \u0915\u0947 \u0938\u0902\u092c"
+        },
+        {
+          "row": 21432,
+          "sample": "Act: Juvenile Justice\nSection: 10 - The Juvenile Justice (Child care and protection)\n\nAct: The Juvenile Justice (Child care and protection) | India | State | In Force\nSection 10: \u0909\u0928 \u092c\u093e\u0932\u0915\ufffd \u092e\ufffd \u0938\u0947 \u0910\u0938\u0947 \u092c\u093e\u0932\u0915\ufffd \u0915\ufffd \u0938\u0902\ufffd\u092f\u093e \u093f\u091c\ufffd\u0939\ufffd\u0928\u0947"
+        },
+        {
+          "row": 21561,
+          "sample": "Act: Juvenile Justice\nSection: 69 - The Juvenile Justice (Child care and protection)\n\nAct: The Juvenile Justice (Child care and protection) | India | State | In Force\nSection 69(2): \u092c\u093e\u0932\u0915\ufffd \u0915\u093e \u0938\u0902\ufffd \u0925\u093e\u0917\u0924 \ufffd\u092c\u0902\u0927\u0928\n\n(2) \u093f\u0924\u092e\u093e\u0939\u0940 \ufffd\u0917"
+        },
+        {
+          "row": 21576,
+          "sample": "Act: Juvenile Justice\nSection: 21 - The Juvenile Justice (Child care and protection)\n\nAct: The Juvenile Justice (Child care and protection) | India | State | In Force\nSection 21: \u092a\u093e\ufffd\u0930\u0935\u093e\ufffd\u0930\u0915 \u0938\u0926\ufffd\u092f\ufffd \u0915\u0947 \u092c\u0940\u091a \u0938\u0902\u092c\u0902\u0927\n\n21. \u092a\u093e\ufffd\u0930\u0935\u093e\ufffd"
+        },
+        {
+          "row": 21623,
+          "sample": "Act: Juvenile Justice\nSection: 50 - The Juvenile Justice (Child care and protection)\n\nAct: The Juvenile Justice (Child care and protection) | India | State | In Force\nSection 50: \u0938\u092e\u0942\u0939 \u0915\ufffd \u0938\u0926\ufffd \u092f\u0924\u093e \u0915\u093e (\u0915\u0943\u092a\u092f\u093e \ufffd \u092a\ufffd \u091f \u093f\u0935\u0935\u0930\u0923)\n\n"
+        },
+        {
+          "row": 21630,
+          "sample": "Act: Juvenile Justice\nSection: 19 - The Juvenile Justice (Child care and protection)\n\nAct: The Juvenile Justice (Child care and protection) | India | State | In Force\nSection 19(25): \u091c\u093e\u0902\u091a \u0915\ufffd \ufffd\ufffd\ufffd\u092f\u093e\n\n(25) \u093f\u0935\u0936\u0947\u0937\u0940\u0915\u0943\u0924 \u0926\ufffd\u0915\ufffd\u0939\u0923 "
+        }
+      ],
+      "duplicate_rows_in_sample": 161
+    },
+    {
+      "file": "fine_tuning/datasets/legal_sft_train.jsonl",
+      "label": "SFT train",
+      "total_rows": 1607,
+      "sampled": 1607,
+      "broken_json": 0,
+      "null_or_empty": {},
+      "text_problems": {
+        "very_short": 239,
+        "symbol_soup": 2,
+        "letter_spaced": 1,
+        "indic_script": 1
+      },
+      "worst": [],
+      "duplicate_rows_in_sample": 184
+    },
+    {
+      "file": "fine_tuning/datasets/legal_sft_eval.jsonl",
+      "label": "SFT eval",
+      "total_rows": 402,
+      "sampled": 402,
+      "broken_json": 0,
+      "null_or_empty": {},
+      "text_problems": {
+        "very_short": 66,
+        "symbol_soup": 1
+      },
+      "worst": [],
+      "duplicate_rows_in_sample": 48
+    }
+  ],
+  "leakage": {
+    "sft_train_vs_eval": {
+      "train_rows": 1607,
+      "eval_rows": 402,
+      "exact_overlap": 1,
+      "exact_overlap_pct": 0.25,
+      "near_dup_checked": 200,
+      "near_dup_found": 0,
+      "near_dup_pct": 0.0,
+      "worst": []
+    }
+  }
+}
