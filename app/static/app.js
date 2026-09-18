@@ -155,8 +155,7 @@ async function boot() {
     }
 
     const wanted = params.get('c');
-    await Promise.all([loadConversations(), loadActivity({ reset: true })]);
-    startActivityPolling();
+    await loadConversations();
 
     if (wanted) {
         try {
@@ -178,12 +177,25 @@ function wireEvents() {
         this.style.height = 'auto';
         this.style.height = this.scrollHeight + 'px';
         if (this.value.trim() === '') this.style.height = '56px';
+        updateSubmitButtonState();
     });
+
+    const submitBtn = document.getElementById('submit-btn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            onSubmit(e);
+        });
+    }
 
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            if (input.value.trim() !== '') form.requestSubmit();
+            if (state.sending) {
+                stopAnalysis();
+            } else if (input.value.trim() !== '' || !!state.attachedDoc) {
+                onSubmit(e);
+            }
         }
     });
 
@@ -196,19 +208,18 @@ function wireEvents() {
     document.getElementById('conv-export-md').addEventListener('click', () => exportActive('md'));
     document.getElementById('conv-export-txt').addEventListener('click', () => exportActive('txt'));
 
-    document.getElementById('tab-mine').addEventListener('click', () => {
-        switchTab('mine');
-        const q = document.getElementById('history-search').value;
-        if (q.trim()) runSearch(q);
-        else {
-            state.searchMode = false;
-            renderConversationList();
-        }
-    });
-    document.getElementById('tab-everyone').addEventListener('click', () => {
-        switchTab('everyone');
-        loadActivity({ reset: true });
-    });
+    const tabMine = document.getElementById('tab-mine');
+    if (tabMine) {
+        tabMine.addEventListener('click', () => {
+            switchTab('mine');
+            const q = document.getElementById('history-search').value;
+            if (q.trim()) runSearch(q);
+            else {
+                state.searchMode = false;
+                renderConversationList();
+            }
+        });
+    }
 
     const search = document.getElementById('history-search');
     const clearBtn = document.getElementById('search-clear-btn');
@@ -222,8 +233,7 @@ function wireEvents() {
         updateClearBtn();
         clearTimeout(debounce);
         debounce = setTimeout(() => {
-            if (feed.tab === 'everyone') loadActivity({ reset: true });
-            else runSearch(search.value);
+            runSearch(search.value);
         }, 220);
     });
 
@@ -231,12 +241,8 @@ function wireEvents() {
         clearBtn.addEventListener('click', () => {
             search.value = '';
             updateClearBtn();
-            if (feed.tab === 'everyone') {
-                loadActivity({ reset: true });
-            } else {
-                state.searchMode = false;
-                renderConversationList();
-            }
+            state.searchMode = false;
+            renderConversationList();
             search.focus();
         });
     }
@@ -389,14 +395,122 @@ function wireEvents() {
         }
     }
 
+    // Escape key stops ongoing analysis
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && state.sending) {
+            e.preventDefault();
+            stopAnalysis();
+        }
+    });
+
     initScrollListeners();
 }
+
+let currentQueryText = '';
+let currentPendingEl = null;
+let currentAccumulatedText = '';
+
+function updateSubmitButtonState() {
+    const input = document.getElementById('query-input');
+    const btn = document.getElementById('submit-btn');
+    if (!input || !btn) return;
+    if (state.sending) return;
+    const hasText = input.value.trim().length > 0 || !!state.attachedDoc;
+    if (hasText) {
+        btn.classList.add('has-input');
+    } else {
+        btn.classList.remove('has-input');
+    }
+}
+
+function setAnalyzingState(isAnalyzing) {
+    state.sending = isAnalyzing;
+    const btn = document.getElementById('submit-btn');
+    if (!btn) return;
+
+    if (isAnalyzing) {
+        btn.classList.add('stop-state');
+        btn.disabled = false;
+        btn.title = 'Stop Analyzing (Esc)';
+        btn.innerHTML = '<i class="ri-stop-fill"></i>';
+    } else {
+        btn.classList.remove('stop-state');
+        btn.disabled = false;
+        btn.title = 'Send message (Enter)';
+        btn.innerHTML = '<i class="ri-arrow-up-line"></i>';
+        updateSubmitButtonState();
+    }
+}
+
+window.stopAnalysis = function () {
+    if (!state.sending) return;
+    state.userAborted = true;
+
+    if (state.activeAbortController) {
+        try {
+            state.activeAbortController.abort();
+        } catch (e) {
+            console.warn('[Abort] Error during abort:', e);
+        }
+    }
+
+    setAnalyzingState(false);
+
+    if (currentPendingEl) {
+        const loadingEl = currentPendingEl.querySelector('.loading-state');
+        const payloadEl = currentPendingEl.querySelector('.answer-payload');
+        const markdownEl = payloadEl ? payloadEl.querySelector('.markdown-body') : null;
+
+        if (currentAccumulatedText && currentAccumulatedText.trim()) {
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (payloadEl) payloadEl.style.display = 'block';
+            if (markdownEl) {
+                if (typeof marked !== 'undefined') {
+                    markdownEl.innerHTML = marked.parse(currentAccumulatedText);
+                } else {
+                    markdownEl.textContent = currentAccumulatedText;
+                }
+            }
+        } else {
+            try {
+                currentPendingEl.remove();
+            } catch (_) {
+                if (loadingEl) loadingEl.style.display = 'none';
+            }
+        }
+    }
+
+    // Restore the typed query into the search bar for immediate correction
+    const input = document.getElementById('query-input');
+    if (input && currentQueryText) {
+        input.value = currentQueryText;
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 240) + 'px';
+        input.focus();
+        input.select();
+        updateSubmitButtonState();
+    }
+};
+
+window.restoreQuery = function (text) {
+    const input = document.getElementById('query-input');
+    if (input && text) {
+        input.value = text;
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 240) + 'px';
+        input.focus();
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+};
 
 /* ── Submitting a question ──────────────────────────────────────────────── */
 
 async function onSubmit(e) {
-    e.preventDefault();
-    if (state.sending) return;
+    if (e) e.preventDefault();
+    if (state.sending) {
+        stopAnalysis();
+        return;
+    }
 
     const input = document.getElementById('query-input');
     const query = input.value.trim();
@@ -406,11 +520,15 @@ async function onSubmit(e) {
        click or a resubmitted form can never create a second row — and never
        runs the model twice. Position in the script has nothing to do with it. */
     const clientToken = uuid();
+    currentQueryText = query;
+    currentAccumulatedText = '';
+    state.userAborted = false;
+    state.activeAbortController = new AbortController();
 
-    state.sending = true;
     input.value = '';
     input.style.height = '56px';
-    document.getElementById('submit-btn').disabled = true;
+    setAnalyzingState(true);
+
     // If currently viewing a read-only shared conversation from someone else,
     // detach and start a new conversation for this user.
     if (feed.readOnly) {
@@ -424,6 +542,7 @@ async function onSubmit(e) {
 
     appendUserMessage({ content: query, status: 'complete' });
     const pending = appendBotLoading();
+    currentPendingEl = pending;
     scrollToBottom(true);
 
     // Prepare full query with attached document or mode instructions
@@ -450,12 +569,15 @@ async function onSubmit(e) {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: { 'Content-Type': 'application/json' },
+                signal: state.activeAbortController.signal,
                 body: JSON.stringify({
                     query: fullQuery,
                     conversation_id: state.conversationId,
                     client_token: clientToken,
                 }),
             });
+
+            if (state.userAborted) return;
 
             if (streamRes.ok && (streamRes.headers.get('content-type') || '').includes('text/event-stream')) {
                 const reader = streamRes.body.getReader();
@@ -468,14 +590,21 @@ async function onSubmit(e) {
                 let finalData = null;
 
                 while (true) {
+                    if (state.userAborted) {
+                        try { await reader.cancel(); } catch (_) {}
+                        break;
+                    }
                     const { done, value } = await reader.read();
                     if (done) break;
+                    if (state.userAborted) break;
+
                     buffer += decoder.decode(value, { stream: true });
                     const lines = buffer.split('\n');
                     buffer = lines.pop() || '';
 
                     let currentEvent = 'message';
                     for (const line of lines) {
+                        if (state.userAborted) break;
                         const trimmed = line.trim();
                         if (!trimmed) continue;
                         if (trimmed.startsWith('event:')) {
@@ -501,6 +630,7 @@ async function onSubmit(e) {
                                     }
                                     const chunk = parsed.delta || parsed.token || '';
                                     accumulatedText += chunk;
+                                    currentAccumulatedText = accumulatedText;
                                     if (typeof marked !== 'undefined') {
                                         markdownEl.innerHTML = marked.parse(accumulatedText);
                                     } else {
@@ -519,26 +649,37 @@ async function onSubmit(e) {
                     }
                 }
 
+                if (state.userAborted) return;
+
                 if (finalData && finalData.assistant_message) {
                     fillBotMessage(pending, finalData.assistant_message);
                     setConversationBar(finalData.conversation);
-                    await Promise.all([loadConversations(), loadActivity({ reset: true, silent: true })]);
+                    await loadConversations();
                     streamSucceeded = true;
                 }
             }
         } catch (streamErr) {
+            if (state.userAborted || (streamErr && streamErr.name === 'AbortError')) {
+                console.info('[Stream] Aborted by user.');
+                return;
+            }
             console.warn('[Stream] Fallback to /api/chat due to:', streamErr);
         }
+
+        if (state.userAborted) return;
 
         if (!streamSucceeded) {
             const data = await api('/api/chat', {
                 method: 'POST',
+                signal: state.activeAbortController ? state.activeAbortController.signal : undefined,
                 body: JSON.stringify({
                     query: fullQuery,
                     conversation_id: state.conversationId,
                     client_token: clientToken,
                 }),
             });
+
+            if (state.userAborted) return;
 
             state.conversationId = data.conversation_id;
             syncUrl();
@@ -549,17 +690,20 @@ async function onSubmit(e) {
                 fillBotError(pending, data.error || 'No answer was recorded.');
             }
             setConversationBar(data.conversation);
-            // Refresh both lists: your question belongs in the shared feed too.
-            await Promise.all([loadConversations(), loadActivity({ reset: true, silent: true })]);
+            await loadConversations();
         }
     } catch (err) {
+        if (state.userAborted || (err && err.name === 'AbortError')) {
+            console.info('[Chat] Aborted by user.');
+            return;
+        }
         /* The question itself is already committed server-side, so a failure
            here costs the answer, never the question — a reload shows it. */
         fillBotError(pending, err.message);
         await loadConversations();
     } finally {
-        state.sending = false;
-        document.getElementById('submit-btn').disabled = false;
+        setAnalyzingState(false);
+        state.activeAbortController = null;
         if (!userScrolledUp) {
             setTimeout(() => scrollToBottom(false), 80);
         }
@@ -784,67 +928,48 @@ function setConversationBar(conv) {
 
 /* ── Shared activity feed ───────────────────────────────────────────────── */
 
-function switchTab(tab) {
-    feed.tab = tab;
-    document.getElementById('tab-mine').classList.toggle('is-active', tab === 'mine');
-    document.getElementById('tab-everyone').classList.toggle('is-active', tab === 'everyone');
-    document.getElementById('tab-mine').setAttribute('aria-selected', tab === 'mine');
-    document.getElementById('tab-everyone').setAttribute('aria-selected', tab === 'everyone');
+function switchTab(tab = 'mine') {
+    feed.tab = 'mine';
+    const tabMine = document.getElementById('tab-mine');
+    if (tabMine) {
+        tabMine.classList.add('is-active');
+        tabMine.setAttribute('aria-selected', 'true');
+    }
+    const tabEveryone = document.getElementById('tab-everyone');
+    if (tabEveryone) {
+        tabEveryone.classList.remove('is-active');
+        tabEveryone.setAttribute('aria-selected', 'false');
+        tabEveryone.style.display = 'none';
+    }
 
     const convList = document.getElementById('conversation-list');
     const actList = document.getElementById('activity-list');
     
-    convList.hidden = tab !== 'mine';
-    convList.style.display = tab === 'mine' ? 'flex' : 'none';
-
-    actList.hidden = tab !== 'everyone';
-    actList.style.display = tab === 'everyone' ? 'flex' : 'none';
+    if (convList) {
+        convList.hidden = false;
+        convList.style.display = 'flex';
+    }
+    if (actList) {
+        actList.hidden = true;
+        actList.style.display = 'none';
+    }
 
     const searchInput = document.getElementById('history-search');
-    searchInput.placeholder =
-        tab === 'everyone' ? 'Search everyone\u2019s searches\u2026' : 'Search your history\u2026';
-    const clearBtn = document.getElementById('search-clear-btn');
-    if (clearBtn) clearBtn.hidden = !(searchInput.value && searchInput.value.trim());
-    renderFoot();
-}
-
-async function loadActivity({ reset = false, silent = false } = {}) {
-    if (reset) { feed.offset = 0; feed.entries = []; }
-    const q = document.getElementById('history-search').value.trim();
-    const params = new URLSearchParams({ limit: ACTIVITY_PAGE, offset: feed.offset });
-    if (q && feed.tab === 'everyone') params.set('q', q);
-
-    try {
-        const data = await api(`/api/activity?${params}`);
-        feed.entries = reset ? data.entries : feed.entries.concat(data.entries);
-        feed.total = data.total;
-        feed.offset = feed.entries.length;
-        feed.hasMore = data.has_more;
-    } catch (e) {
-        if (!silent) {
-            document.getElementById('activity-list').innerHTML =
-                '<p class="sidebar-empty">Shared history unavailable.</p>';
-        }
-        return;
+    if (searchInput) {
+        searchInput.placeholder = 'Search your history…';
     }
-    renderActivity();
+    const clearBtn = document.getElementById('search-clear-btn');
+    if (clearBtn && searchInput) clearBtn.hidden = !(searchInput.value && searchInput.value.trim());
     renderFoot();
 }
 
-/* Another person's search lands in a different process, so there is nothing
-   to push into this tab — poll instead, and only while the tab is visible. */
+async function loadActivity() {
+    // Shared "Everyone" activity feed disabled: application strictly preserves "My chats"
+    return;
+}
+
 function startActivityPolling() {
     stopActivityPolling();
-    feed.timer = setInterval(() => {
-        if (document.hidden) return;
-        if (feed.tab !== 'everyone') return;
-        loadActivity({ reset: true, silent: true });
-    }, ACTIVITY_POLL_MS);
-    document.addEventListener('visibilitychange', () => {
-        if (!document.hidden && feed.tab === 'everyone') {
-            loadActivity({ reset: true, silent: true });
-        }
-    });
 }
 
 function stopActivityPolling() {
@@ -954,6 +1079,12 @@ function renderConversationList() {
     const container = document.getElementById('conversation-list');
     container.innerHTML = '';
 
+    const badge = document.getElementById('chats-count-badge');
+    const totalCount = (state.conversations || []).length;
+    if (badge) {
+        badge.textContent = `${totalCount} chat${totalCount === 1 ? '' : 's'}`;
+    }
+
     if (!state.conversations || !state.conversations.length) {
         container.innerHTML = '<p class="sidebar-empty">No conversations yet. Ask something to start one.</p>';
         return;
@@ -1025,12 +1156,8 @@ function markActiveRow() {
 
 function renderFoot() {
     const foot = document.getElementById('sidebar-foot');
-    if (feed.tab === 'everyone') {
-        foot.textContent =
-            `${feed.total} search(es) from everyone · shared across all devices`;
-        return;
-    }
-    const total = state.conversations.reduce((n, c) => n + (c.message_count || 0), 0);
+    if (!foot) return;
+    const total = (state.conversations || []).reduce((n, c) => n + (c.message_count || 0), 0);
     const uid = state.userId ? state.userId.slice(0, 8) : '—';
     foot.textContent = `${state.conversations.length} conversation(s) · ${total} message(s) · browser ${uid}`;
 }
@@ -1159,6 +1286,11 @@ async function runSearch(raw) {
         const total = matchedConvIds.size;
         head.textContent = `${total} result${total === 1 ? '' : 's'} for "${q}"`;
         container.appendChild(head);
+
+        const badge = document.getElementById('chats-count-badge');
+        if (badge) {
+            badge.textContent = `${total} found`;
+        }
 
         if (total === 0) {
             container.insertAdjacentHTML('beforeend',

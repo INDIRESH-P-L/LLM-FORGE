@@ -108,22 +108,15 @@
                     <i class="ri-close-line"></i>
                 </button>
             </div>
-            <div class="tabs" role="tablist">
-                <button class="tab is-active" id="tab-mine" role="tab" aria-selected="true">
+            <div class="tabs tabs-single" role="region" aria-label="My chats">
+                <button type="button" class="tab is-active" id="tab-mine" role="tab" aria-selected="true" title="My chats">
                     <i class="ri-user-line"></i> My chats
                 </button>
-                <button class="tab" id="tab-everyone" role="tab" aria-selected="false">
-                    <i class="ri-group-line"></i> Everyone
-                </button>
+                <span class="chats-count-badge" id="chats-count-badge" title="Total conversations"></span>
             </div>
 
             <!-- This browser's own conversations -->
             <div class="sidebar-list" id="conversation-list">
-                <p class="sidebar-empty">Loading…</p>
-            </div>
-
-            <!-- Shared, global activity feed: every question from every user -->
-            <div class="sidebar-list" id="activity-list" hidden style="display: none;">
                 <p class="sidebar-empty">Loading…</p>
             </div>
 
@@ -188,9 +181,9 @@
                             <button type="button" class="attachment-remove" id="attachment-remove"
                                 title="Remove attachment"><i class="ri-close-line"></i></button>
                         </div>
-                        <form id="query-form">
+                        <form id="query-form" novalidate onsubmit="return false;">
                             <div class="input-wrapper">
-                                <textarea id="query-input" placeholder="Ask anything" rows="1" required></textarea>
+                                <textarea id="query-input" placeholder="Ask anything" rows="1"></textarea>
                                 <div class="input-controls">
                                     <input type="file" id="doc-file-input"
                                         accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.webp" hidden>
@@ -204,9 +197,8 @@
                                             <i class="ri-mic-line"></i>
                                         </button>
                                     </div>
-                                    <button type="submit" id="submit-btn" class="submit-btn">
-                                        <span>Analyze</span>
-                                        <i class="ri-send-plane-fill"></i>
+                                    <button type="button" id="submit-btn" class="submit-btn" title="Send message (Enter)" aria-label="Send message">
+                                        <i class="ri-arrow-up-line"></i>
                                     </button>
                                 </div>
                             </div>
