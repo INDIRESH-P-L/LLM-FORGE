@@ -370,14 +370,13 @@ app.include_router(dossier_router)
 app.include_router(temporal_router)
 app.include_router(bail_router)
 
-# Cross-origin access is off by default (the frontend is served by this same
-# app). Set LEGALMIND_CORS_ORIGINS to a comma-separated list of origins —
-# e.g. "http://10.0.0.5:8080,http://lab-server:8080" — when the page is served
-# from somewhere other than this process. "*" is accepted for a trusted LAN.
-_cors_origins = [o.strip() for o in os.environ.get("LEGALMIND_CORS_ORIGINS", "").split(",") if o.strip()]
-if _cors_origins:
-    from fastapi.middleware.cors import CORSMiddleware
+# Enable CORS middleware so cross-origin, IP-based, and LAN requests
+# (e.g. https://192.168.4.99:8443) never fail preflight OPTIONS checks or get blocked.
+from fastapi.middleware.cors import CORSMiddleware
 
+_raw_cors = os.environ.get("LEGALMIND_CORS_ORIGINS", "").strip()
+if _raw_cors:
+    _cors_origins = [o.strip() for o in _raw_cors.split(",") if o.strip()]
     app.add_middleware(
         CORSMiddleware,
         allow_origins=_cors_origins,
@@ -385,7 +384,16 @@ if _cors_origins:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    log.info(f"CORS enabled for origins: {_cors_origins}")
+    log.info(f"CORS enabled for specific origins: {_cors_origins}")
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origin_regex=r"^https?://.*$",
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    log.info("CORS enabled with permissive origin regex for LAN/local clients")
 app.include_router(fir_audit_router)
 app.include_router(citation_check_router)
 app.include_router(pleading_router)

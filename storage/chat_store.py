@@ -303,18 +303,113 @@ def new_id() -> str:
     return str(uuid.uuid4())
 
 
+ACRONYMS = {
+    'pmla': 'PMLA', 'ipc': 'IPC', 'crpc': 'CrPC', 'bns': 'BNS', 'bnss': 'BNSS', 'bsa': 'BSA',
+    'fir': 'FIR', 'sc': 'SC', 'hc': 'HC', 'ni': 'NI', 'rag': 'RAG', 'ai': 'AI', 'cbi': 'CBI',
+    'ed': 'ED', 'llm': 'LLM', 'it': 'IT', 'gst': 'GST', 'posh': 'POSH', 'pocso': 'POCSO',
+    'cpc': 'CPC', 'nclt': 'NCLT', 'nclat': 'NCLAT', 'rbi': 'RBI', 'sebi': 'SEBI', 'sih': 'SIH',
+    'cfrd': 'CFRD'
+}
+
+
+def title_case_word(w: str) -> str:
+    clean = w.strip(' ,.;:!?\"\'()[]{}')
+    lower = clean.lower()
+    if lower in ACRONYMS:
+        return ACRONYMS[lower]
+    if re.match(r'^(x{0,3})(ix|iv|v?i{0,3})$', lower) and len(lower) > 0:
+        return lower.upper()
+    if re.match(r'^\d+[a-z]?$', lower):
+        return lower.upper()
+    return clean.capitalize()
+
+
 def make_title(text: str, max_chars: int = TITLE_MAX_CHARS) -> str:
-    """Cleaned truncation of the first user message. Never returns empty."""
-    cleaned = re.sub(r"\s+", " ", (text or "").strip())
-    cleaned = re.sub(r"^[\s\-*>#`]+", "", cleaned)
-    if not cleaned:
+    """
+    Generate a clean, concise 3-5 word Title Cased headline for conversations,
+    matching ChatGPT/Claude summary styling. Never returns empty.
+    """
+    if not text or not text.strip():
         return "Untitled conversation"
-    if len(cleaned) <= max_chars:
-        return cleaned
-    cut = cleaned[:max_chars]
-    if " " in cut[int(max_chars * 0.6):]:        # avoid chopping mid-word
-        cut = cut.rsplit(" ", 1)[0]
-    return cut.rstrip(" ,.;:—-") + "…"
+
+    clean = re.sub(r"\s+", " ", text.strip())
+    clean = re.sub(r"^[\s\-*>#`]+", "", clean)
+    clean = re.sub(r'\[ATTACHED DOCUMENT:[^\]]+\]\s*"""[\s\S]*?"""\s*', '', clean)
+    clean = re.sub(r'\[USER QUERY\]\s*', '', clean)
+    clean = clean.strip()
+    if not clean:
+        return "Untitled conversation"
+
+    # Specific common legal provisions (e.g. Articles 14, 19 & 21)
+    art_nums = re.findall(r'\b(?:article|art\.?)\s*(\d+)\b', clean, re.IGNORECASE)
+    if art_nums:
+        nums_str = ", ".join(art_nums[:-1]) + (" & " if len(art_nums) > 1 else "") + art_nums[-1] if len(art_nums) > 1 else art_nums[0]
+        prefix = "Articles" if len(art_nums) > 1 else "Article"
+        if 'differ' in clean.lower() or 'distin' in clean.lower():
+            return f"{prefix} {nums_str} Differences"
+        if 'right' in clean.lower():
+            return f"{prefix} {nums_str} Rights"
+        return f"{prefix} {nums_str} Analysis"
+
+    # Specific common acts
+    if 'pmla' in clean.lower() and ('bail' in clean.lower() or '45' in clean.lower()):
+        return "PMLA Section 45 Bail"
+
+    if '138' in clean.lower() and ('ni' in clean.lower() or 'cheque' in clean.lower() or 'notice' in clean.lower()):
+        return "Section 138 Cheque Notice"
+
+    if 'breach of trust' in clean.lower() and 'cheat' in clean.lower():
+        return "Breach Of Trust Vs Cheating"
+    if 'breach of trust' in clean.lower():
+        return "Criminal Breach Of Trust"
+
+    # Check for actionable initial verbs (Fix, Explain, Choose, Update, Remove, Develop...)
+    first_action_match = re.match(r'^(fix|explain|choose|update|remove|develop|create|build|draft|verify|audit|calculate|compare|setup|install)\b', clean, re.IGNORECASE)
+    action_verb = first_action_match.group(1).capitalize() if first_action_match else ""
+
+    # Strip conversational prefixes
+    clean_prompt = re.sub(
+        r'^(please\s+)?(can\s+you\s+(?:please\s+)?|could\s+you\s+(?:please\s+)?|help\s+me\s+(?:to\s+)?|tell\s+me\s+(?:about\s+)?|'
+        r'explain\s+(?:the\s+)?(?:differences?\s+between\s+|difference\s+between\s+|how\s+|what\s+is\s+|what\s+are\s+)?|'
+        r'what\s+is\s+(?:the\s+)?|what\s+are\s+(?:the\s+)?(?:differences?\s+between\s+|essential\s+ingredients\s+of\s+|provisions\s+of\s+)?|'
+        r'how\s+to\s+|how\s+can\s+(?:i\s+|we\s+)?|is\s+it\s+possible\s+to\s+|discuss\s+(?:the\s+)?|analyze\s+(?:the\s+)?|'
+        r'draft\s+(?:a\s+)?|write\s+(?:a\s+)?|provide\s+(?:a\s+)?|give\s+(?:me\s+)?(?:a\s+)?(?:brief\s+on\s+)?|'
+        r'summarize\s+(?:the\s+)?|can\s+bail\s+be\s+denied\s+under\s+)',
+        '',
+        clean,
+        flags=re.IGNORECASE
+    ).strip()
+
+    # Strip trailing conversational fluff
+    clean_prompt = re.sub(
+        r'[\s,.;:!?]+(cite\s+recent\s+sc\s+judgments?|cite\s+recent\s+judgments?|cite\s+landmark\s+cases?|'
+        r'cite\s+supreme\s+court\s+cases?|with\s+case\s+laws?|as\s+per\s+indian\s+law|in\s+india|'
+        r'under\s+indian\s+law|explain\s+in\s+detail|step\s+by\s+step|for\s+law\s+students?|'
+        r'in\s+high\s+court|in\s+supreme\s+court|in\s+court|for\s+courtroom\s+attire|'
+        r'after\s+computer\s+science\s+graduation|on\s+server|in\s+android|for\s+sih).*$',
+        '',
+        clean_prompt,
+        flags=re.IGNORECASE
+    ).strip()
+
+    stop_words = {'the', 'a', 'an', 'of', 'in', 'on', 'at', 'to', 'for', 'with', 'by', 'from', 'and', 'or', 'if', 'is', 'are', 'be', 'under', 'as', 'it', 'this', 'that', 'between'}
+    tokens = [w for w in re.split(r'[\s\-_,.:;!?/()]+', clean_prompt) if w and w.lower() not in stop_words]
+
+    if action_verb and (not tokens or tokens[0].lower() != action_verb.lower()):
+        tokens = [action_verb] + tokens
+
+    if len(tokens) >= 4:
+        target_words = tokens[:4]
+    elif len(tokens) >= 2:
+        target_words = tokens[:3]
+    elif len(tokens) == 1:
+        target_words = tokens
+    else:
+        raw_words = [w for w in clean.split() if w.lower() not in stop_words]
+        target_words = raw_words[:4] if raw_words else clean.split()[:4]
+
+    titled = ' '.join(title_case_word(w) for w in target_words).strip()
+    return titled if titled else "Legal Inquiry"
 
 
 def slugify(text: str, max_len: int = 60) -> str:

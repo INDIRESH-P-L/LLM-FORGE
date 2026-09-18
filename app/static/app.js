@@ -82,10 +82,14 @@ async function api(path, options = {}) {
             headers: headers,
         });
     } catch (err) {
-        // fetch() rejects only when the request never completed: server down or
-        // restarting, wrong host/port, blocked by CORS, or a bad certificate.
-        // "Failed to fetch" alone says none of that, so name the target.
         if (err && err.name === 'AbortError') throw err;
+        const method = (options.method || 'GET').toUpperCase();
+        if (method === 'GET' && !options._isRetry) {
+            try {
+                await new Promise(r => setTimeout(r, 600));
+                return await api(path, { ...options, _isRetry: true });
+            } catch (_) {}
+        }
         const target = new URL(url, window.location.href).origin;
         throw new Error(`Could not reach the server at ${target} (${err && err.message ? err.message : 'network error'}). `
                         + 'It may be restarting, unreachable from this browser, or blocking this origin.');
@@ -115,8 +119,11 @@ window.fillPrompt = function(text) {
 function syncUrl() {
     const params = new URLSearchParams(window.location.search);
     if (state.userId) params.set('uid', state.userId);
-    if (state.conversationId) params.set('c', state.conversationId);
-    else params.delete('c');
+    if (state.conversationId && !state.conversationId.startsWith('pending-')) {
+        params.set('c', state.conversationId);
+    } else {
+        params.delete('c');
+    }
     const next = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({ c: state.conversationId }, '', next);
 }
@@ -157,7 +164,7 @@ async function boot() {
     const wanted = params.get('c');
     await loadConversations();
 
-    if (wanted) {
+    if (wanted && !wanted.startsWith('pending-')) {
         try {
             await openConversation(wanted, { allowPublic: true });
         } catch (e) {
@@ -165,6 +172,8 @@ async function boot() {
             showToast('That conversation is not available.', null);
             state.conversationId = null;
         }
+    } else if (wanted && wanted.startsWith('pending-')) {
+        state.conversationId = null;
     }
     syncUrl();
 }
@@ -503,6 +512,99 @@ window.restoreQuery = function (text) {
     }
 };
 
+/* ── Concise 3-5 word Title Generator (ChatGPT / Claude style) ─────────────── */
+
+const ACRONYMS_SET = new Set([
+    'pmla', 'ipc', 'crpc', 'bns', 'bnss', 'bsa', 'fir', 'sc', 'hc', 'ni',
+    'rag', 'ai', 'cbi', 'ed', 'llm', 'it', 'gst', 'posh', 'pocso', 'cpc',
+    'nclt', 'nclat', 'rbi', 'sebi', 'sih', 'cfrd'
+]);
+
+function titleCaseWord(w) {
+    if (!w) return '';
+    const clean = w.replace(/^[ ,.;:!?"'()[\]{}]+|[ ,.;:!?"'()[\]{}]+$/g, '');
+    const lower = clean.toLowerCase();
+    if (ACRONYMS_SET.has(lower)) return lower.toUpperCase();
+    if (/^(x{0,3})(ix|iv|v?i{0,3})$/i.test(lower) && lower.length > 0) return lower.toUpperCase();
+    if (/^\d+[a-z]?$/i.test(lower)) return lower.toUpperCase();
+    return clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
+}
+
+function generateConciseTitle(text) {
+    if (!text || !text.trim()) return 'New Chat';
+
+    let clean = text.trim()
+        .replace(/\[ATTACHED DOCUMENT:[^\]]+\]\s*"""[\s\S]*?"""\s*/g, '')
+        .replace(/\[USER QUERY\]\s*/g, '')
+        .replace(/\s+/g, ' ');
+
+    // Check for Articles: e.g. Article 14, Article 19, and Article 21 -> Articles 14, 19 & 21
+    const artMatches = [...clean.matchAll(/\b(?:article|art\.?)\s*(\d+)\b/gi)];
+    if (artMatches.length > 0) {
+        const nums = artMatches.map(m => m[1]);
+        const numsStr = nums.length > 1
+            ? nums.slice(0, -1).join(', ') + ' & ' + nums[nums.length - 1]
+            : nums[0];
+        const prefix = nums.length > 1 ? 'Articles' : 'Article';
+        const lower = clean.toLowerCase();
+        if (lower.includes('differ') || lower.includes('distin')) return `${prefix} ${numsStr} Differences`;
+        if (lower.includes('right')) return `${prefix} ${numsStr} Rights`;
+        return `${prefix} ${numsStr} Analysis`;
+    }
+
+    const lowerClean = clean.toLowerCase();
+    if (lowerClean.includes('pmla') && (lowerClean.includes('bail') || lowerClean.includes('45'))) {
+        return 'PMLA Section 45 Bail';
+    }
+    if (lowerClean.includes('138') && (lowerClean.includes('ni') || lowerClean.includes('cheque') || lowerClean.includes('notice'))) {
+        return 'Section 138 Cheque Notice';
+    }
+    if (lowerClean.includes('breach of trust') && lowerClean.includes('cheat')) {
+        return 'Breach Of Trust Vs Cheating';
+    }
+    if (lowerClean.includes('breach of trust')) {
+        return 'Criminal Breach Of Trust';
+    }
+
+    // Check for actionable initial verbs
+    const actionMatch = clean.match(/^(fix|explain|choose|update|remove|develop|create|build|draft|verify|audit|calculate|compare|setup|install)\b/i);
+    const actionVerb = actionMatch ? actionMatch[1].charAt(0).toUpperCase() + actionMatch[1].slice(1).toLowerCase() : '';
+
+    // Strip conversational prefixes
+    let cleanPrompt = clean.replace(
+        /^(please\s+)?(can\s+you\s+(?:please\s+)?|could\s+you\s+(?:please\s+)?|help\s+me\s+(?:to\s+)?|tell\s+me\s+(?:about\s+)?|explain\s+(?:the\s+)?(?:differences?\s+between\s+|difference\s+between\s+|how\s+|what\s+is\s+|what\s+are\s+)?|what\s+is\s+(?:the\s+)?|what\s+are\s+(?:the\s+)?(?:differences?\s+between\s+|essential\s+ingredients\s+of\s+|provisions\s+of\s+)?|how\s+to\s+|how\s+can\s+(?:i\s+|we\s+)?|is\s+it\s+possible\s+to\s+|discuss\s+(?:the\s+)?|analyze\s+(?:the\s+)?|draft\s+(?:a\s+)?|write\s+(?:a\s+)?|provide\s+(?:a\s+)?|give\s+(?:me\s+)?(?:a\s+)?(?:brief\s+on\s+)?|summarize\s+(?:the\s+)?|can\s+bail\s+be\s+denied\s+under\s+)/i,
+        ''
+    ).trim();
+
+    // Strip trailing conversational fluff
+    cleanPrompt = cleanPrompt.replace(
+        /[\s,.;:!?]+(cite\s+recent\s+sc\s+judgments?|cite\s+recent\s+judgments?|cite\s+landmark\s+cases?|cite\s+supreme\s+court\s+cases?|with\s+case\s+laws?|as\s+per\s+indian\s+law|in\s+india|under\s+indian\s+law|explain\s+in\s+detail|step\s+by\s+step|for\s+law\s+students?|in\s+high\s+court|in\s+supreme\s+court|in\s+court|for\s+courtroom\s+attire|after\s+computer\s+science\s+graduation|on\s+server|in\s+android|for\s+sih).*$/i,
+        ''
+    ).trim();
+
+    const stopWords = new Set(['the', 'a', 'an', 'of', 'in', 'on', 'at', 'to', 'for', 'with', 'by', 'from', 'and', 'or', 'if', 'is', 'are', 'be', 'under', 'as', 'it', 'this', 'that', 'between']);
+    let tokens = cleanPrompt.split(/[\s\-_,.:;!?/()]+/).filter(w => w && !stopWords.has(w.toLowerCase()));
+
+    if (actionVerb && (!tokens.length || tokens[0].toLowerCase() !== actionVerb.toLowerCase())) {
+        tokens.unshift(actionVerb);
+    }
+
+    let targetWords = [];
+    if (tokens.length >= 4) {
+        targetWords = tokens.slice(0, 4);
+    } else if (tokens.length >= 2) {
+        targetWords = tokens.slice(0, 3);
+    } else if (tokens.length === 1) {
+        targetWords = tokens;
+    } else {
+        const rawWords = clean.split(/\s+/).filter(w => !stopWords.has(w.toLowerCase()));
+        targetWords = rawWords.length ? rawWords.slice(0, 4) : clean.split(/\s+/).slice(0, 4);
+    }
+
+    const titled = targetWords.map(titleCaseWord).join(' ').trim();
+    return titled || 'Legal Inquiry';
+}
+
 /* ── Submitting a question ──────────────────────────────────────────────── */
 
 async function onSubmit(e) {
@@ -545,6 +647,45 @@ async function onSubmit(e) {
     currentPendingEl = pending;
     scrollToBottom(true);
 
+    // Instantly update the chat feed with a clean 3-5 word Title Cased summary
+    const optimisticTitle = generateConciseTitle(query);
+    const nowIso = new Date().toISOString();
+    const tempId = state.conversationId || ('pending-' + clientToken);
+
+    if (!state.conversationId) {
+        state.conversationId = tempId;
+        const tempConv = {
+            id: tempId,
+            title: optimisticTitle,
+            created_at: nowIso,
+            updated_at: nowIso,
+            message_count: 1,
+            pinned: 0,
+        };
+        state.conversations = [tempConv, ...(state.conversations || []).filter(c => c.id !== tempId)];
+    } else {
+        const existing = (state.conversations || []).find(c => c.id === state.conversationId);
+        if (existing) {
+            existing.updated_at = nowIso;
+            existing.message_count = (existing.message_count || 0) + 1;
+            // Move updated conversation to top of list
+            state.conversations = [existing, ...(state.conversations || []).filter(c => c.id !== existing.id)];
+        } else {
+            state.conversations = [{
+                id: state.conversationId,
+                title: optimisticTitle,
+                created_at: nowIso,
+                updated_at: nowIso,
+                message_count: 1,
+                pinned: 0,
+            }, ...(state.conversations || [])];
+        }
+    }
+    renderConversationList();
+    renderFoot();
+    markActiveRow();
+    syncUrl();
+
     // Prepare full query with attached document or mode instructions
     let fullQuery = query;
     if (state.attachedDoc && state.attachedDoc.extracted_text) {
@@ -572,7 +713,7 @@ async function onSubmit(e) {
                 signal: state.activeAbortController.signal,
                 body: JSON.stringify({
                     query: fullQuery,
-                    conversation_id: state.conversationId,
+                    conversation_id: state.conversationId && !state.conversationId.startsWith('pending-') ? state.conversationId : null,
                     client_token: clientToken,
                 }),
             });
@@ -614,10 +755,18 @@ async function onSubmit(e) {
                             if (!rawData) continue;
                             try {
                                 const parsed = JSON.parse(rawData);
-                                if (currentEvent === 'meta' || currentEvent === 'metadata') {
+                                if (currentEvent === 'init' || currentEvent === 'meta' || currentEvent === 'metadata') {
                                     if (parsed.conversation_id) {
+                                        const oldId = state.conversationId;
                                         state.conversationId = parsed.conversation_id;
+                                        const convInList = (state.conversations || []).find(c => c.id === oldId || c.id === parsed.conversation_id);
+                                        if (convInList) {
+                                            convInList.id = parsed.conversation_id;
+                                            if (parsed.title) convInList.title = parsed.title;
+                                        }
                                         syncUrl();
+                                        renderConversationList();
+                                        markActiveRow();
                                     }
                                     if (loadingEl) {
                                         const lt = loadingEl.querySelector('.loading-text');
@@ -656,25 +805,47 @@ async function onSubmit(e) {
                     setConversationBar(finalData.conversation);
                     await loadConversations();
                     streamSucceeded = true;
+                } else if (accumulatedText && accumulatedText.trim().length > 0) {
+                    console.info('[Stream] Completed with accumulated tokens.');
+                    streamSucceeded = true;
+                    if (loadingEl) loadingEl.style.display = 'none';
+                    if (payloadEl) payloadEl.style.display = 'block';
+                    setTimeout(() => loadConversations(), 1200);
                 }
+            } else if (!streamRes.ok) {
+                let errText = `HTTP ${streamRes.status}`;
+                try {
+                    const j = await streamRes.json();
+                    if (j.detail) errText = errorDetailText(j.detail);
+                } catch (_) {}
+                throw new Error(errText);
             }
         } catch (streamErr) {
             if (state.userAborted || (streamErr && streamErr.name === 'AbortError')) {
                 console.info('[Stream] Aborted by user.');
                 return;
             }
-            console.warn('[Stream] Fallback to /api/chat due to:', streamErr);
+            console.warn('[Stream] Stream error or disconnect:', streamErr);
+            if (currentAccumulatedText && currentAccumulatedText.trim().length > 0) {
+                console.info('[Stream] Retaining accumulated tokens, skipping fallback.');
+                streamSucceeded = true;
+                const payloadEl = pending.querySelector('.answer-payload');
+                const loadingEl = pending.querySelector('.loading-state');
+                if (loadingEl) loadingEl.style.display = 'none';
+                if (payloadEl) payloadEl.style.display = 'block';
+            }
         }
 
         if (state.userAborted) return;
 
-        if (!streamSucceeded) {
+        // Only fall back to /api/chat if no tokens were ever received
+        if (!streamSucceeded && (!currentAccumulatedText || !currentAccumulatedText.trim())) {
             const data = await api('/api/chat', {
                 method: 'POST',
                 signal: state.activeAbortController ? state.activeAbortController.signal : undefined,
                 body: JSON.stringify({
                     query: fullQuery,
-                    conversation_id: state.conversationId,
+                    conversation_id: state.conversationId && !state.conversationId.startsWith('pending-') ? state.conversationId : null,
                     client_token: clientToken,
                 }),
             });
@@ -878,6 +1049,14 @@ function renderAuthorities(payload, citations) {
 /* ── Opening a stored conversation ──────────────────────────────────────── */
 
 async function openConversation(id, opts = {}) {
+    // If currently streaming and user clicks the active conversation, simply switch view back to research
+    if (state.sending && state.conversationId && (id === state.conversationId || id.startsWith('pending-'))) {
+        switchSuite('research');
+        markActiveRow();
+        setTimeout(scrollToBottom, 50);
+        return;
+    }
+
     let data;
     let readOnly = false;
     try {
@@ -1141,7 +1320,14 @@ function conversationRow(conv) {
     const row = clone.querySelector('.conv-row');
     row.dataset.id = conv.id;
 
-    const titleText = ((conv && conv.title) ? String(conv.title) : 'Untitled').trim().replace(/[\r\n\t]+/g, ' ') || 'Untitled';
+    let titleText = ((conv && conv.title) ? String(conv.title) : 'Untitled').trim().replace(/[\r\n\t]+/g, ' ') || 'Untitled';
+    if (titleText.length > 25 || titleText.endsWith('…') || titleText.endsWith('...') || /^(explain|what|can|how|discuss|whether)/i.test(titleText)) {
+        const concise = generateConciseTitle(titleText);
+        if (concise && concise !== 'Untitled conversation' && concise !== 'New Chat') {
+            titleText = concise;
+        }
+    }
+
     const titleEl = row.querySelector('.conv-row-title');
     titleEl.textContent = titleText;
     titleEl.title = titleText;

@@ -32,6 +32,7 @@ import re
 import threading
 import time
 import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 
@@ -700,10 +701,20 @@ def chat_stream(request: Request, body: ChatRequest):
         accumulated_text = []
 
         try:
+            # Emit immediate init event with conversation_id and title so client updates instantly
+            init_payload = {
+                "conversation_id": conversation_id,
+                "title": store.make_title(query),
+                "created_at": datetime.now(timezone.utc).isoformat(),
+            }
+            yield f"event: init\ndata: {json.dumps(init_payload)}\n\n"
+
             with _inference_lock:
                 if infer_stream is not None:
                     for ev_type, ev_data in infer_stream(query, body.top_k, chat_history):
                         if ev_type == "meta":
+                            if isinstance(ev_data, dict):
+                                ev_data["conversation_id"] = conversation_id
                             yield f"event: meta\ndata: {json.dumps(ev_data)}\n\n"
                         elif ev_type == "token":
                             accumulated_text.append(ev_data)
@@ -757,7 +768,12 @@ def chat_stream(request: Request, body: ChatRequest):
             err_payload = _exchange_payload(uid, conversation_id, user_message_id, assistant_message_id, failed=True, error=err_msg)
             yield f"event: error\ndata: {json.dumps(err_payload)}\n\n"
 
-    return StreamingResponse(event_generator(), media_type="text/event-stream")
+    headers = {
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no",
+    }
+    return StreamingResponse(event_generator(), media_type="text/event-stream", headers=headers)
 
 
 def conv_model_missing(conversation_id: str, uid: str) -> bool:
