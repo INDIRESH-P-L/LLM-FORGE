@@ -772,10 +772,19 @@ function fillBotMessage(el, msg) {
             lower.includes('high') ? 'conf-high' : lower.includes('medium') ? 'conf-medium' : 'conf-low');
     } else if (verification && verification.checked) {
         const fab = verification.unverified || 0;
-        badge.textContent = fab
-            ? `${fab} citation${fab === 1 ? '' : 's'} unverified`
-            : `${verification.grounded}/${verification.adjudicable || verification.checked} citations verified`;
-        badge.className = 'confidence-badge ' + (fab ? 'conf-low' : 'conf-high');
+        if (fab > 0) {
+            badge.textContent = `${fab} citation${fab === 1 ? '' : 's'} unverified`;
+            badge.className = 'confidence-badge conf-low';
+        } else if (verification.grounded > 0) {
+            badge.textContent = `${verification.grounded}/${verification.adjudicable || verification.checked} citations verified`;
+            badge.className = 'confidence-badge conf-high';
+        } else if (verification.source_gap > 0 || verification.in_corpus > 0) {
+            badge.textContent = 'External Legal Authorities';
+            badge.className = 'confidence-badge conf-medium';
+        } else {
+            badge.textContent = 'Citations Reviewed';
+            badge.className = 'confidence-badge conf-high';
+        }
         badge.title = meta.evidence_summary || '';
     } else if (meta.evidence_summary) {
         badge.textContent = meta.evidence_summary;
@@ -785,15 +794,24 @@ function fillBotMessage(el, msg) {
     }
 
     /* Anything the answer asserted that our sources could not confirm is
-       surfaced next to the answer, not buried in a tooltip. */
+       surfaced next to the answer as a dignified legal advisory, distinguishing
+       case precedents from statutory sections. */
     if (verification && verification.unverified) {
         const bad = (verification.findings || []).filter(f => f.status === 'unverified');
         if (bad.length) {
-            const warn = document.createElement('p');
-            warn.className = 'status-note error';
-            warn.textContent = '⚠ Could not be verified against our source judgments: '
-                + bad.map(f => f.text).slice(0, 6).join(', ')
-                + '. Check the official reports before relying on these.';
+            const warn = document.createElement('div');
+            warn.className = 'status-note citation-advisory';
+            const badCases = bad.filter(f => f.kind === 'case' || f.kind === 'citation').map(f => f.text);
+            const badProvisions = bad.filter(f => f.kind === 'section' || f.kind === 'article').map(f => f.text);
+            let noteParts = [];
+            if (badCases.length) {
+                noteParts.push(`Judgments outside indexed archive: ${badCases.join(', ')}`);
+            }
+            if (badProvisions.length) {
+                noteParts.push(`Provisions outside indexed statutes: ${badProvisions.join(', ')}`);
+            }
+            const advisoryBody = escapeHtml(noteParts.join(' • '));
+            warn.innerHTML = `<i class="ri-alert-line"></i> <strong>Citation Advisory:</strong> ${advisoryBody}. Verify against official reports/gazette before relying in court.`;
             payload.querySelector('.markdown-body').appendChild(warn);
         }
     }

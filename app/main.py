@@ -47,8 +47,8 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_PROJECT_ROOT))
 sys.path.insert(0, str(_PROJECT_ROOT / "scripts"))
 
-from fastapi import FastAPI, HTTPException, Request, APIRouter, File, UploadFile
-from fastapi.responses import HTMLResponse, JSONResponse, Response
+from fastapi import FastAPI, HTTPException, Request, APIRouter, File, UploadFile, Header
+from fastapi.responses import HTMLResponse, JSONResponse, Response, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -84,6 +84,8 @@ VECTOR_DB_DIR   = os.environ.get("VECTOR_DB_DIR",   "vector_db/legislation/")
 RETRIEVAL_SETS  = os.environ.get("LEGALMIND_RETRIEVAL_SETS", "data/chunks/legislation|vector_db/legislation,data/chunks/case_laws|vector_db/case_laws").strip()
 EMBED_MODEL     = os.environ.get("EMBED_MODEL",     "BAAI/bge-m3")
 RERANK_MODEL    = os.environ.get("RERANK_MODEL",    "BAAI/bge-reranker-v2-m3")
+ADMIN_TOKEN     = os.environ.get("ADMIN_TOKEN",     "supersecretadmin")
+
 
 # ---------------------------------------------------------------------------
 # Global singletons
@@ -481,6 +483,66 @@ async def api_health():
         "database": db_status,
         "citation_verifier": citation_status
     }
+
+
+@app.get("/api/model-status")
+async def model_status():
+    global _model, _retriever
+    state = "Ready" if _model else "Loading"
+    import torch
+    
+    return {
+        "success": True,
+        "data": {
+            "status": state,
+            "model": MODEL_PATH.split("/")[-1],
+            "llm_gpu": LLM_GPU,
+            "embed_gpu": EMBED_GPU,
+            "retriever_status": "Ready" if _retriever else "Loading",
+            "cuda_available": torch.cuda.is_available(),
+        },
+        "error": None
+    }
+
+
+@app.get("/api/admin/export-dataset")
+async def export_dataset(authorization: str = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    token = authorization.split(" ")[1]
+    if token != ADMIN_TOKEN:
+        raise HTTPException(status_code=403, detail="Forbidden")
+        
+    dataset = []
+    with chat_store.get_connection() as conn:
+        cursor = conn.execute("SELECT DISTINCT conversation_id FROM messages WHERE feedback = 1")
+        conv_ids = [row[0] for row in cursor.fetchall()]
+        
+    for cid in conv_ids:
+        msgs = chat_store.get_messages(cid)
+        openai_msgs = [{"role": "system", "content": "You are LegalMind AI, an expert Indian legal assistant."}]
+        has_assistant_reply = False
+        
+        for m in msgs:
+            if m.status in ("error", "partial") or not m.content:
+                continue
+            
+            # Strip <think> tags for clean fine-tuning
+            clean_content = re.sub(r'<think>.*?</think>', '', m.content, flags=re.DOTALL).strip()
+            
+            openai_msgs.append({"role": m.role, "content": clean_content})
+            if m.role == "assistant":
+                has_assistant_reply = True
+                
+        # Only export conversations that have at least one back-and-forth
+        if len(openai_msgs) > 1 and has_assistant_reply:
+            dataset.append(json.dumps({"messages": openai_msgs}))
+            
+    if not dataset:
+        return PlainTextResponse("", media_type="application/jsonl")
+        
+    return PlainTextResponse("\n".join(dataset), media_type="application/jsonl")
+
 
 @app.get("/diagnostics", response_class=HTMLResponse)
 async def diagnostics():

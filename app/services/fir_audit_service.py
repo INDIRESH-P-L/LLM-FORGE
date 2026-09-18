@@ -632,7 +632,7 @@ class FIRAuditorService:
         # ─────────────────────────────────────────────────────────────────
         # ISSUE 3: CRIMINAL INTIMIDATION SPECIFICITY
         # ─────────────────────────────────────────────────────────────────
-        if f["telephoneThreat"]["value"] or "Criminal intimidation" in f["allegedOffences"]["value"]:
+        if f["telephoneThreat"]["value"] or "Criminal intimidation" in (f["allegedOffences"]["value"] or []):
             intim_read = f["telephoneThreat"]["sourceSpan"] or "Threat alleged during telephone conversation without exact words."
             if f["threatWordsMissing"]:
                 intim_read += " Exact words of alleged threat and circumstances are not specified."
@@ -719,7 +719,7 @@ class FIRAuditorService:
         # ─────────────────────────────────────────────────────────────────
         # ISSUE 6: INDEPENDENT WITNESSES (TEST CASE B SPECIFIC)
         # ─────────────────────────────────────────────────────────────────
-        if f["witnessState"] == "NOT_STATED" and ("Assault / Hurt" in f["allegedOffences"]["value"] or f["injuryStated"]["value"]):
+        if f["witnessState"] == "NOT_STATED" and ("Assault / Hurt" in (f["allegedOffences"]["value"] or []) or f["injuryStated"]["value"]):
             wit_read = "The supplied narrative does not state whether independent eyewitnesses were present or examined."
             material_not_established.append("Statements of independent eyewitnesses")
             documents_required.append("Witness statements under Section 180 BNSS (Section 161 CrPC)")
@@ -931,7 +931,7 @@ class FIRAuditorService:
         # OFFENCE INGREDIENT ANALYSIS (CURRENT BNS PROVISIONS)
         # ─────────────────────────────────────────────────────────────────
         ingredient_analysis_list: list[dict] = []
-        for off_name in f["allegedOffences"]["value"]:
+        for off_name in (f["allegedOffences"]["value"] or []):
             if off_name == "Criminal trespass":
                 ingredient_analysis_list.append({
                     "offence_name": "Criminal trespass",
