@@ -1843,21 +1843,8 @@ state.mootHistory = [];
 window.switchSuite = function(suiteName) {
     state.currentSuite = suiteName;
 
-    // Auto-expand "More" if the selected feature is inside features-more-wrap
-    const moreSuites = ['bail', 'firaudit', 'citcheck', 'limitation', 'pleading'];
-    if (moreSuites.includes(suiteName)) {
-        const wrap = document.getElementById('features-more-wrap');
-        const btnText = document.getElementById('more-btn-text');
-        if (wrap && (wrap.hidden || wrap.style.display === 'none')) {
-            wrap.hidden = false;
-            wrap.style.display = 'flex';
-            if (btnText) btnText.textContent = 'Less';
-        }
-    }
-
     // Update nav tab highlights
     document.querySelectorAll('.suite-tab, .feature-item').forEach(tab => {
-        if (tab.classList.contains('feature-more-btn')) return;
         if (tab.getAttribute('data-tab') === suiteName) {
             tab.classList.add('active');
         } else {
@@ -1865,8 +1852,8 @@ window.switchSuite = function(suiteName) {
         }
     });
 
-    // Toggle panels
-    const panels = ['research', 'drafter', 'moot', 'dossier', 'temporal', 'bail', 'firaudit', 'citcheck', 'limitation', 'pleading'];
+    // Toggle panels: Legal Research, AI Drafter, Moot Court, Case Dossier
+    const panels = ['research', 'drafter', 'moot', 'dossier'];
     panels.forEach(p => {
         const el = document.getElementById(`workspace-${p}`);
         if (el) {
@@ -1887,21 +1874,16 @@ window.switchSuite = function(suiteName) {
             if (window.onBenchSelectChange) window.onBenchSelectChange();
         }
     }
-};
-
-window.toggleMoreFeatures = function() {
-    const wrap = document.getElementById('features-more-wrap');
-    const btnText = document.getElementById('more-btn-text');
-    if (!wrap) return;
-    const isHidden = wrap.hidden || wrap.style.display === 'none';
-    if (isHidden) {
-        wrap.hidden = false;
-        wrap.style.display = 'flex';
-        if (btnText) btnText.textContent = 'Less';
-    } else {
-        wrap.hidden = true;
-        wrap.style.display = 'none';
-        if (btnText) btnText.textContent = 'More';
+    if (suiteName === 'dossier') {
+        const title = document.getElementById('dossier-title')?.value.trim();
+        const query = document.getElementById('dossier-query')?.value.trim();
+        const facts = document.getElementById('dossier-facts')?.value.trim();
+        if (!title || !query || !facts || !state.dossierCompiled) {
+            const paperEl = document.getElementById('dossier-paper');
+            const emptyEl = document.getElementById('dossier-empty-state');
+            if (paperEl) paperEl.style.setProperty('display', 'none', 'important');
+            if (emptyEl) emptyEl.style.display = 'flex';
+        }
     }
 };
 
@@ -3289,18 +3271,167 @@ window.toggleCompendiumAccordion = function() {
 
 /* ── 5. Case Dossier & Court Brief Generator ────────────────────────────── */
 
-window.generateDossierBrief = async function() {
-    const court = document.getElementById('dossier-court')?.value || 'IN THE SUPREME COURT OF INDIA';
-    const title = document.getElementById('dossier-title')?.value || 'Cause Title';
-    const query = document.getElementById('dossier-query')?.value || 'Legal Question';
-    const facts = document.getElementById('dossier-facts')?.value || 'Factual matrix';
+window.resetDossier = function() {
+    state.dossierCompiled = false;
+    state.lastCompiledDossier = null;
+    const courtInput = document.getElementById('dossier-court');
+    const titleInput = document.getElementById('dossier-title');
+    const queryInput = document.getElementById('dossier-query');
+    const factsInput = document.getElementById('dossier-facts');
+    if (courtInput) courtInput.value = '';
+    if (titleInput) titleInput.value = '';
+    if (queryInput) queryInput.value = '';
+    if (factsInput) factsInput.value = '';
 
-    if (!query.trim() && !facts.trim()) {
-        alert('Please enter the core legal proposition and factual matrix.');
+    const emptyEl = document.getElementById('dossier-empty-state');
+    if (emptyEl) emptyEl.style.display = 'flex';
+    const toolbarEl = document.getElementById('dossier-paper-toolbar');
+    if (toolbarEl) toolbarEl.style.display = 'none';
+    const paperEl = document.getElementById('dossier-paper');
+    if (paperEl) paperEl.style.setProperty('display', 'none', 'important');
+
+    const chEl = document.getElementById('pv-court-heading');
+    if (chEl) chEl.innerText = '';
+    const ctEl = document.getElementById('pv-cause-title');
+    if (ctEl) ctEl.innerText = '';
+    const qList = document.getElementById('pv-questions-list');
+    if (qList) qList.innerHTML = '';
+    const statMatrix = document.getElementById('pv-statutory-matrix');
+    if (statMatrix) statMatrix.innerHTML = '';
+    const statSec = document.getElementById('pv-section-statutory');
+    if (statSec) statSec.style.display = 'none';
+    const subBody = document.getElementById('pv-submissions-body');
+    if (subBody) subBody.innerText = '';
+    const authSec = document.getElementById('pv-section-authorities');
+    if (authSec) authSec.style.display = 'none';
+    const authTable = document.getElementById('pv-table-authorities')?.querySelector('tbody');
+    if (authTable) authTable.innerHTML = '';
+};
+
+window.DOSSIER_PRESETS = {
+    art14: {
+        court: 'IN THE SUPREME COURT OF INDIA',
+        title: 'Arun Sharma v. State of Maharashtra & Ors.',
+        query: 'Whether the administrative authority violated Article 14 of the Constitution of India and the principles of natural justice (audi alteram partem) by issuing an adverse order without prior show cause notice or access to primary records?',
+        facts: 'The petitioner, Arun Sharma, was employed in a departmental undertaking in Maharashtra. Disciplinary proceedings were initiated against him alleging discrepancies in official inventory documentation. The inquiry concluded without supplying copies of the inspection report to the petitioner or affording an oral hearing. An adverse termination order was passed summarily, which was subsequently confirmed in appeal without assigning independent reasons. The petitioner seeks judicial review under extraordinary constitutional jurisdiction.'
+    },
+    bail: {
+        court: 'IN THE HIGH COURT OF DELHI',
+        title: 'Vikas Gupta v. Central Bureau of Investigation',
+        query: 'Whether the applicant is entitled to regular bail under Section 483 of the Bharatiya Nagarik Suraksha Sanhita, 2023 (Section 439 CrPC) in view of prolonged pre-trial incarceration and conclusion of investigation?',
+        facts: 'The applicant was arrested in connection with an alleged financial irregularities investigation. He has remained in judicial custody for over fourteen months. The investigating agency has completed the investigation and submitted a comprehensive charge sheet before the Special Court. There are 45 prosecution witnesses and thousands of pages of documentary evidence, precluding early culmination of trial. Continued pre-trial detention violates Article 21 and the applicant undertakes to abide by all stringent conditions.'
+    },
+    cheque: {
+        court: 'IN THE COURT OF CHIEF METROPOLITAN MAGISTRATE, NEW DELHI',
+        title: 'Apex Logistics Pvt. Ltd. v. Global Freight Solutions & Anr.',
+        query: 'Whether statutory proceedings under Section 138 of the Negotiable Instruments Act, 1881 are maintainable when statutory demand notice was issued within limitation upon dishonour of instrument for legally enforceable debt?',
+        facts: 'The complainant company provided inter-state freight transportation services to the respondent. In discharge of admitted running balance liabilities, the respondent issued an account payee cheque for Rs. 28,50,000/-. Upon presentment through lawful banking channels, the instrument was dishonoured with remarks "Funds Insufficient". The complainant issued a statutory demand notice within thirty days of memo receipt. Despite expiry of the statutory fifteen-day compliance window, the respondent failed to liquidate the outstanding liability.'
+    },
+    quashing: {
+        court: 'IN THE HIGH COURT OF JUDICATURE AT BOMBAY',
+        title: 'Kavita Rao & Anr. v. State of Maharashtra & Anr.',
+        query: 'Whether criminal proceedings and the impugned FIR are liable to be quashed under Section 528 of BNSS, 2023 (Section 482 CrPC) on grounds that the dispute is purely civil and contractual in nature?',
+        facts: 'The petitioners entered into a software consultancy agreement with the respondent complainant. Following commercial disagreements concerning milestone deliverables and billing adjustments, the complainant lodged an FIR alleging cheating and criminal breach of trust. The core controversy stems entirely from an admitted commercial contract with mutual accounting claims. The uncontroverted allegations disclose no fraudulent intention at inception, rendering criminal recourse an abuse of judicial process under the Bhajan Lal principles.'
+    }
+};
+
+window.loadSamplePreset = function(presetKey) {
+    const data = window.DOSSIER_PRESETS[presetKey];
+    if (!data) return;
+
+    const courtInput = document.getElementById('dossier-court');
+    const titleInput = document.getElementById('dossier-title');
+    const queryInput = document.getElementById('dossier-query');
+    const factsInput = document.getElementById('dossier-facts');
+
+    if (courtInput) courtInput.value = data.court;
+    if (titleInput) titleInput.value = data.title;
+    if (queryInput) queryInput.value = data.query;
+    if (factsInput) factsInput.value = data.facts;
+
+    document.querySelectorAll('.dossier-chip').forEach(c => c.classList.remove('active'));
+    const activeChip = document.getElementById(`chip-preset-${presetKey}`);
+    if (activeChip) activeChip.classList.add('active');
+
+    const btn = document.getElementById('btn-load-sample-dossier');
+    if (btn) {
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="ri-check-line"></i> <span>Loaded!</span>';
+        btn.style.borderColor = '#10b981';
+        btn.style.color = '#10b981';
+        setTimeout(() => {
+            btn.innerHTML = originalHtml;
+            btn.style.borderColor = '';
+            btn.style.color = '';
+        }, 1200);
+    }
+};
+
+window.loadSampleDossier = function() {
+    window.loadSamplePreset('art14');
+};
+
+window.copyBriefText = async function() {
+    const briefText = state.lastCompiledDossier?.full_brief_text ||
+                      document.getElementById('pv-submissions-body')?.innerText || '';
+    if (!briefText) {
+        alert('No compiled brief available to copy.');
+        return;
+    }
+    try {
+        await navigator.clipboard.writeText(briefText);
+    } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = briefText;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+    }
+    const label = document.getElementById('copy-brief-label');
+    if (label) {
+        const original = label.innerText;
+        label.innerText = 'Copied!';
+        setTimeout(() => { label.innerText = original; }, 1500);
+    }
+};
+
+window.printDossierPaper = function() {
+    window.print();
+};
+
+const DOSSIER_DUMMY_STRINGS = ['cause title', 'legal question', 'factual matrix', 'legal memorandum for advocate', 'n/a', 'none'];
+
+window.generateDossierBrief = async function() {
+    const court = document.getElementById('dossier-court')?.value.trim() || 'IN THE SUPREME COURT OF INDIA';
+    const title = document.getElementById('dossier-title')?.value.trim();
+    const query = document.getElementById('dossier-query')?.value.trim();
+    const facts = document.getElementById('dossier-facts')?.value.trim();
+    const compileBtn = document.getElementById('btn-compile-dossier');
+    const origBtnHtml = compileBtn ? compileBtn.innerHTML : '';
+
+    if (!title || DOSSIER_DUMMY_STRINGS.includes(title.toLowerCase())) {
+        alert('Please enter a valid Cause Title / Case Name (e.g. Arun Sharma v. State of Maharashtra).');
+        document.getElementById('dossier-title')?.focus();
+        return;
+    }
+    if (!query || DOSSIER_DUMMY_STRINGS.includes(query.toLowerCase())) {
+        alert('Please enter a valid Core Legal Proposition / Question.');
+        document.getElementById('dossier-query')?.focus();
+        return;
+    }
+    if (!facts || DOSSIER_DUMMY_STRINGS.includes(facts.toLowerCase())) {
+        alert('Please enter the Factual Matrix / Legal Research Synthesis.');
+        document.getElementById('dossier-facts')?.focus();
         return;
     }
 
     try {
+        if (compileBtn) {
+            compileBtn.disabled = true;
+            compileBtn.innerHTML = '<i class="ri-loader-4-line spin"></i> <span>Analyzing & Synthesizing Brief...</span>';
+        }
+
         const res = await api('/api/dossier/generate', {
             method: 'POST',
             body: JSON.stringify({
@@ -3308,60 +3439,142 @@ window.generateDossierBrief = async function() {
                 query: query,
                 answer: facts,
                 court: court,
-                citations: ['(2024) INSC 595', '(2022) 10 SCC 51']
+                citations: []
             })
         });
 
         const d = res.dossier || {};
+        state.dossierCompiled = true;
+        state.lastCompiledDossier = d;
+
+        // Toggle visibility: hide empty state, reveal real paper preview and action toolbar
+        const emptyEl = document.getElementById('dossier-empty-state');
+        if (emptyEl) emptyEl.style.display = 'none';
+        const toolbarEl = document.getElementById('dossier-paper-toolbar');
+        if (toolbarEl) toolbarEl.style.display = 'flex';
+        const paperEl = document.getElementById('dossier-paper');
+        if (paperEl) paperEl.style.setProperty('display', 'block', 'important');
+
+        // Docket stamp
+        const docketId = document.getElementById('pv-docket-id');
+        if (docketId) docketId.innerText = `DOSSIER REF: ${d.dossier_id || 'DOSSIER-2026-01'}`;
+        const docketDate = document.getElementById('pv-docket-date');
+        if (docketDate) docketDate.innerText = `OFFICIAL BENCH MEMORANDUM • ${d.date || 'SUPREME COURT OF INDIA'}`;
+
         const chEl = document.getElementById('pv-court-heading');
         if (chEl) chEl.innerText = d.court_heading || court;
         const ctEl = document.getElementById('pv-cause-title');
         if (ctEl) ctEl.innerText = d.case_title || title;
 
-        // Populate Questions
+        // Populate Questions Framed
         const qList = document.getElementById('pv-questions-list');
         if (qList && (d.questions_framed || d.issues_framed)) {
             const issues = d.questions_framed || d.issues_framed;
             qList.innerHTML = issues.map(q => `<li>${escapeHtml(q)}</li>`).join('');
         }
 
-        // Populate Table of Authorities
-        const authTable = document.getElementById('pv-table-authorities')?.querySelector('tbody');
-        if (authTable && d.table_of_authorities) {
-            authTable.innerHTML = d.table_of_authorities.map(a => `
-                <tr>
-                    <td><strong>${escapeHtml(a.case_name || a.title || 'Precedent')}</strong></td>
-                    <td>${escapeHtml(a.citation || '')}</td>
-                    <td>${escapeHtml(a.ratio || a.holding || '')}</td>
-                </tr>
-            `).join('');
-        }
+        let romanStep = 2;
+        const ROMAN = ['I', 'II', 'III', 'IV', 'V'];
 
-        // Populate Statutory Matrix
+        // Populate Statutory Matrix (only show if present in user data)
+        const statSec = document.getElementById('pv-section-statutory');
+        const statBadge = document.getElementById('pv-statutory-badge');
         const statMatrix = document.getElementById('pv-statutory-matrix');
-        if (statMatrix && d.statutory_matrix) {
-            statMatrix.innerHTML = d.statutory_matrix.map(s => `
-                <p><strong>${escapeHtml(s.act)}:</strong> ${escapeHtml(s.provisions)}</p>
-            `).join('');
+        if (d.statutory_matrix && d.statutory_matrix.length > 0) {
+            if (statBadge) statBadge.innerText = `${ROMAN[romanStep-1]}. STATUTORY MATRIX`;
+            if (statMatrix) {
+                statMatrix.innerHTML = d.statutory_matrix.map(s => `
+                    <p style="margin-bottom: 4px;"><strong>${escapeHtml(s.act)}:</strong> ${escapeHtml(s.provisions)}</p>
+                `).join('');
+            }
+            if (statSec) statSec.style.display = 'block';
+            romanStep++;
+        } else {
+            if (statSec) statSec.style.display = 'none';
         }
 
-        // Populate Submissions
+        // Populate Synthesized Brief with Structured CSS Classes
+        const subBadge = document.getElementById('pv-submissions-badge');
+        if (subBadge) subBadge.innerText = `${ROMAN[romanStep-1]}. ADVOCATE'S BENCH MEMORANDUM & SYNTHESIS`;
         const subBody = document.getElementById('pv-submissions-body');
         if (subBody) {
-            subBody.innerText = d.synopsis || d.executive_summary || facts;
+            const rawBrief = d.full_brief_text || d.synopsis || '';
+            if (rawBrief) {
+                const sections = rawBrief.split(/\n\n+/);
+                subBody.innerHTML = sections.map(sec => {
+                    const cleanSec = escapeHtml(sec.replace(/^#+\s*/, '').trim());
+                    const lines = cleanSec.split('\n');
+                    const firstLine = lines[0].trim();
+                    if (/^(?:I|II|III|IV|V)\.\s+[A-Z\s/&-]+$/i.test(firstLine)) {
+                        const bodyLines = lines.slice(1).map(l => {
+                            const trimmed = l.trim();
+                            if (/^(?:\d+\.|\([a-z]\))\s+/.test(trimmed)) {
+                                return `<div class="dossier-bullet-item"><strong>${trimmed.slice(0, 3)}</strong> ${trimmed.slice(3)}</div>`;
+                            }
+                            return `<p class="dossier-para">${trimmed}</p>`;
+                        }).join('');
+                        return `
+                            <div class="dossier-sub-section">
+                                <div class="dossier-sub-heading">${firstLine}</div>
+                                ${bodyLines}
+                            </div>
+                        `;
+                    } else {
+                        return `<p class="dossier-para">${cleanSec.replace(/\n/g, '<br>')}</p>`;
+                    }
+                }).join('');
+            } else {
+                subBody.innerText = 'Legal brief synthesis pending.';
+            }
+        }
+        romanStep++;
+
+        // Populate Table of Authorities (only show if user cited precedents)
+        const authSec = document.getElementById('pv-section-authorities');
+        const authBadge = document.getElementById('pv-authorities-badge');
+        const authTable = document.getElementById('pv-table-authorities')?.querySelector('tbody');
+        if (d.table_of_authorities && d.table_of_authorities.length > 0) {
+            if (authBadge) authBadge.innerText = `${ROMAN[Math.min(romanStep-1, ROMAN.length-1)]}. TABLE OF AUTHORITIES`;
+            if (authTable) {
+                authTable.innerHTML = d.table_of_authorities.map(a => `
+                    <tr>
+                        <td><strong>${escapeHtml(a.case_name || a.title || 'Precedent')}</strong></td>
+                        <td>${escapeHtml(a.citation || '')}</td>
+                        <td>${escapeHtml(a.ratio || a.holding || '')}</td>
+                    </tr>
+                `).join('');
+            }
+            if (authSec) authSec.style.display = 'block';
+        } else {
+            if (authSec) authSec.style.display = 'none';
         }
     } catch (e) {
         console.error('Dossier generation error:', e);
         alert(`Error generating dossier: ${e.message}`);
+    } finally {
+        if (compileBtn) {
+            compileBtn.disabled = false;
+            compileBtn.innerHTML = origBtnHtml || '<i class="ri-sparkling-fill"></i> <span>Compile Case Dossier</span>';
+        }
     }
 };
 
 window.exportDossierToPdf = async function() {
-    const court = document.getElementById('dossier-court')?.value || 'IN THE SUPREME COURT OF INDIA';
-    const title = document.getElementById('dossier-title')?.value || 'Cause Title';
-    const query = document.getElementById('dossier-query')?.value || 'Legal Question';
-    const facts = document.getElementById('dossier-facts')?.value || 'Factual matrix';
+    const court = document.getElementById('dossier-court')?.value.trim() || 'IN THE SUPREME COURT OF INDIA';
+    const title = document.getElementById('dossier-title')?.value.trim();
+    const query = document.getElementById('dossier-query')?.value.trim();
+    const facts = document.getElementById('dossier-facts')?.value.trim();
     const btn = document.getElementById('btn-export-pdf');
+
+    if (!title || DOSSIER_DUMMY_STRINGS.includes(title.toLowerCase()) ||
+        !query || DOSSIER_DUMMY_STRINGS.includes(query.toLowerCase()) ||
+        !facts || DOSSIER_DUMMY_STRINGS.includes(facts.toLowerCase())) {
+        alert('Cannot generate PDF: Please enter genuine Case Name, Legal Proposition, and Factual Matrix before downloading.');
+        if (!title || DOSSIER_DUMMY_STRINGS.includes(title.toLowerCase())) document.getElementById('dossier-title')?.focus();
+        else if (!query || DOSSIER_DUMMY_STRINGS.includes(query.toLowerCase())) document.getElementById('dossier-query')?.focus();
+        else document.getElementById('dossier-facts')?.focus();
+        return;
+    }
 
     try {
         if (btn) btn.disabled = true;
@@ -3375,16 +3588,22 @@ window.exportDossierToPdf = async function() {
                 query: query,
                 answer: facts,
                 court: court,
-                citations: ['(2024) INSC 595', '(2022) 10 SCC 51']
+                citations: [],
+                brief_text: state.lastCompiledDossier?.full_brief_text || null
             })
         });
 
-        if (!res.ok) throw new Error(`Export failed (HTTP ${res.status})`);
+        if (!res.ok) {
+            const errJson = await res.json().catch(() => ({}));
+            throw new Error(errJson.detail || `Export failed (HTTP ${res.status})`);
+        }
+
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `LegalMind_Court_Brief_${Date.now()}.pdf`;
+        const sanitizedTitle = title.replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 30);
+        a.download = `Court_Brief_${sanitizedTitle}_${Date.now()}.pdf`;
         a.click();
         URL.revokeObjectURL(url);
     } catch (e) {
@@ -3398,435 +3617,6 @@ window.exportDossierToPdf = async function() {
     }
 };
 
-
-/* ── 6. New AI Suite Handlers ────────────────────────────── */
-
-window.runTemporalConvert = async function() {
-    const d = document.getElementById('temp-date')?.value || '';
-    const a = document.getElementById('temp-act')?.value || 'ipc';
-    const s = document.getElementById('temp-sections')?.value || '';
-    const resDiv = document.getElementById('temporal-results');
-    if (!resDiv) return;
-
-    if (!d.trim()) {
-        resDiv.innerHTML = '<p style="color:var(--danger)"><i class="ri-error-warning-line"></i> Please select the date of the alleged offense.</p>';
-        return;
-    }
-    const secList = s.split(',').map(x => x.trim()).filter(x => x);
-    if (!secList.length) {
-        resDiv.innerHTML = '<p style="color:var(--danger)"><i class="ri-error-warning-line"></i> Please enter at least one section number (e.g. 420, 506).</p>';
-        return;
-    }
-
-    try {
-        resDiv.innerHTML = '<p><i class="ri-loader-4-line spin"></i> Converting provisions across temporal cutoff...</p>';
-        const res = await api('/api/temporal/convert', {
-            method: 'POST',
-            body: JSON.stringify({
-                offense_date: d,
-                act: a,
-                sections: secList
-            })
-        });
-        
-        let html = `<h3>${escapeHtml(res.regime)}</h3><p><strong>Rationale:</strong> ${escapeHtml(res.regime_rationale)}</p>`;
-        if (res.temporal_warning) html += `<div style="color:var(--danger); margin:10px 0;">${escapeHtml(res.temporal_warning)}</div>`;
-        html += `<table class="paper-table"><thead><tr><th>Original</th><th>New Section</th><th>Status</th><th>Notes</th></tr></thead><tbody>`;
-        (res.section_mappings || []).forEach(m => {
-            html += `<tr><td>${escapeHtml(m.original_section)}</td><td>${escapeHtml(m.new_section)}</td><td>${escapeHtml(m.status)}</td><td>${escapeHtml(m.change_summary)}</td></tr>`;
-        });
-        html += `</tbody></table>`;
-        resDiv.innerHTML = html;
-    } catch (e) {
-        resDiv.innerHTML = `<p style="color:var(--danger)">Error: ${escapeHtml(e.message)}</p>`;
-    }
-};
-
-window.runBailMatrix = async function() {
-    const cat = document.getElementById('bail-category')?.value || 'Economic Offence';
-    const sp = !!document.getElementById('bail-special-act')?.checked;
-    const custRaw = parseInt(document.getElementById('bail-custody')?.value, 10);
-    const cust = Number.isFinite(custRaw) && custRaw > 0 ? custRaw : 0;
-    const chg = !!document.getElementById('bail-chargesheet')?.checked;
-    const resDiv = document.getElementById('bail-results');
-    if (!resDiv) return;
-    const list = items => (items || []).map(x => `<li>${escapeHtml(x)}</li>`).join('') || '<li>None</li>';
-
-    try {
-        resDiv.innerHTML = '<p><i class="ri-loader-4-line spin"></i> Assessing statutory bail feasibility...</p>';
-        const res = await api('/api/bail/assess', {
-            method: 'POST',
-            body: JSON.stringify({
-                offense_category: cat,
-                is_special_act: sp,
-                custody_days: cust,
-                chargesheet_filed: chg
-            })
-        });
-        const d = res.assessment;
-        let html = `<h3>Verdict: ${escapeHtml(d.verdict)} (Score: ${escapeHtml(d.bail_score)}/100)</h3>`;
-        html += `<h4>Positive Factors</h4><ul>${list(d.positive_factors)}</ul>`;
-        html += `<h4>Risk Factors</h4><ul>${list(d.risk_factors)}</ul>`;
-        html += `<h4>Precedents</h4><ul>${list(d.relevant_precedents)}</ul>`;
-        resDiv.innerHTML = html;
-    } catch (e) {
-        resDiv.innerHTML = `<p style="color:var(--danger)">Error: ${escapeHtml(e.message)}</p>`;
-    }
-};
-
-window.runFirAudit = async function() {
-    const text = document.getElementById('fir-text')?.value || '';
-    const arr = !!document.getElementById('fir-arrest')?.checked;
-    const pmla = !!document.getElementById('fir-pmla')?.checked;
-    const resDiv = document.getElementById('fir-results');
-    if (!resDiv) return;
-
-    if (!text.trim()) {
-        resDiv.innerHTML = '<p style="color:var(--danger)"><i class="ri-error-warning-line"></i> Error: FIR text cannot be empty. Please enter or paste the FIR narrative.</p>';
-        return;
-    }
-    
-    try {
-        resDiv.innerHTML = '<p><i class="ri-loader-4-line spin"></i> Performing procedural screening...</p>';
-        const res = await api('/api/fir/audit', {
-            method: 'POST',
-            body: JSON.stringify({ fir_text: text, arrest_made: arr, is_pmla: pmla })
-        });
-        const d = res ? (res.audit_report || res) : null;
-        const esc = (t) => { const n = document.createElement('div'); n.textContent = t == null ? '' : String(t); return n.innerHTML; };
-
-        if (!d || d.status === 'error') {
-            resDiv.innerHTML = `<p style="color:var(--danger)">${esc(d ? d.message || d.error : 'Error running procedural screening.')}</p>`;
-            return;
-        }
-
-        if (d.status === 'insufficient_input') {
-            resDiv.innerHTML = `
-                <div style="background: rgba(245, 158, 11, 0.12); border-left: 4px solid var(--warning, #f59e0b); padding: 12px 16px; border-radius: 6px; margin-bottom: 14px;">
-                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--warning, #f59e0b);">Screening Status</div>
-                    <div style="font-size: 16px; font-weight: 700; margin-top: 2px;">${esc(d.overall_status || 'Insufficient Information')}</div>
-                    <p style="font-size: 13px; margin-top: 6px; opacity: 0.9;">${esc(d.message)}</p>
-                </div>
-                ${d.documents_required ? `<h4>Recommended Material to Supply:</h4><ul>${d.documents_required.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
-            `;
-            return;
-        }
-
-        const rf = d.read_from_fir || {};
-        let html = `<h3>${esc(d.screening_header || 'Preliminary Procedural Screening')}</h3>`;
-
-        // Overall status badge
-        const isAmber = (d.overall_status || '').includes('Potential') || (d.overall_status || '').includes('Significant');
-        const statusColor = isAmber ? 'var(--warning, #f59e0b)' : 'var(--accent, #38bdf8)';
-        html += `
-            <div style="background: rgba(245, 158, 11, 0.08); border-left: 4px solid ${statusColor}; padding: 12px 16px; border-radius: 6px; margin: 12px 0 16px 0;">
-                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: ${statusColor};">Overall Status</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 2px; color: ${statusColor};">${esc(d.overall_status)}</div>
-                <div style="font-size: 13px; margin-top: 6px; opacity: 0.9; line-height: 1.4;">${esc(d.status_explanation || '')}</div>
-            </div>
-        `;
-
-        // Applicable provision
-        html += `
-            <div style="margin-bottom: 16px; font-size: 13px; background: rgba(255, 255, 255, 0.04); padding: 10px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
-                <strong style="color:var(--text-muted, #94a3b8); font-size: 11px; text-transform: uppercase;">Applicable Provision</strong><br>
-                <div style="color: var(--accent); font-weight: 600; margin-top: 3px; white-space: pre-line;">${esc(d.applicable_provision)}</div>
-            </div>
-        `;
-
-        // Read from this FIR
-        html += `<h4>Read from this FIR</h4>`;
-        html += `<ul style="list-style-type: none; padding-left: 0; margin-bottom: 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px;">`;
-        html += `<li style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; font-size: 12px;"><strong>• Alleged occurrence:</strong> ${esc(rf.alleged_occurrence)}</li>`;
-        html += `<li style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; font-size: 12px;"><strong>• FIR registered:</strong> ${esc(rf.fir_registered)}</li>`;
-        html += `<li style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; font-size: 12px;"><strong>• Registration delay:</strong> ${esc(rf.registration_delay)}</li>`;
-        html += `<li style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; font-size: 12px;"><strong>• Reason for delay:</strong> ${esc(rf.delay_reason)}</li>`;
-        html += `<li style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; font-size: 12px;"><strong>• Sections invoked:</strong> ${esc(rf.sections_invoked)}</li>`;
-        html += `<li style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; font-size: 12px;"><strong>• Alleged offences:</strong> ${esc(rf.alleged_offences || 'None specified')}</li>`;
-        html += `<li style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; font-size: 12px;"><strong>• Accused:</strong> ${esc(rf.accused || rf.accused_count || 'Not stated')}</li>`;
-        html += `<li style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; font-size: 12px;"><strong>• Arrest:</strong> ${esc(rf.arrest)}</li>`;
-        html += `<li style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; font-size: 12px;"><strong>• Special statute:</strong> ${esc(rf.special_statute)}</li>`;
-        html += `<li style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; font-size: 12px;"><strong>• Property/ownership dispute:</strong> ${esc(rf.property_dispute || 'Not mentioned')}</li>`;
-        html += `<li style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; font-size: 12px;"><strong>• Contractual dispute:</strong> ${esc(rf.contractual_dispute)}</li>`;
-        html += `<li style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 4px; font-size: 12px;"><strong>• Settlement/repayment:</strong> ${esc(rf.settlement_repayment)}</li>`;
-        html += `</ul>`;
-
-        // Procedural Findings
-        html += `<h4>Procedural Findings</h4>`;
-        if (!(d.procedural_findings || []).length) {
-            html += `<p style="font-size: 13px; opacity: 0.8;">No apparent procedural defect identified from supplied material.</p>`;
-        } else {
-            html += `<div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">` + d.procedural_findings.map((x, idx) => {
-                const st = (x.status || '').toUpperCase();
-                let badgeColor = 'var(--accent, #38bdf8)';
-                let badgeBg = 'rgba(56, 189, 248, 0.12)';
-                if (st.includes('POTENTIAL') || st.includes('AMBER')) {
-                    badgeColor = 'var(--warning, #f59e0b)';
-                    badgeBg = 'rgba(245, 158, 11, 0.12)';
-                } else if (st.includes('VERIFICATION')) {
-                    badgeColor = '#fb923c';
-                    badgeBg = 'rgba(251, 146, 60, 0.12)';
-                } else if (st.includes('NOT_APPLICABLE') || st.includes('NOT APPLICABLE')) {
-                    badgeColor = 'var(--text-muted, #94a3b8)';
-                    badgeBg = 'rgba(148, 163, 184, 0.12)';
-                } else if (st.includes('COMPLIANCE')) {
-                    badgeColor = 'var(--success, #10b981)';
-                    badgeBg = 'rgba(16, 185, 129, 0.12)';
-                }
-                const verStr = Array.isArray(x.verification_required) ? x.verification_required.join(', ') : (x.verification_required || '');
-                return `
-                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 6px; padding: 12px 14px;">
-                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
-                            <div style="font-weight: 700; font-size: 14px;">${idx + 1}. ${esc(x.title)}</div>
-                            <span style="background: ${badgeBg}; color: ${badgeColor}; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;">${esc(x.status)}</span>
-                        </div>
-                        <div style="font-size: 12px; margin-top: 4px; background: rgba(0,0,0,0.15); padding: 6px 10px; border-radius: 4px;"><strong>Read from FIR:</strong> "${esc(x.read_from_fir)}"</div>
-                        <div style="font-size: 12px; margin-top: 6px; opacity: 0.9;"><strong>Legal principle:</strong> ${esc(x.legal_principle)}</div>
-                        ${x.authority ? `<div style="font-size: 12px; margin-top: 4px; color: var(--accent);"><strong>Authority:</strong> ${esc(x.authority)}</div>` : ''}
-                        <div style="font-size: 12px; margin-top: 4px; opacity: 0.9;"><strong>Assessment:</strong> ${esc(x.assessment)}</div>
-                        ${verStr ? `<div style="font-size: 12px; margin-top: 4px; opacity: 0.85;"><strong>Verification required:</strong> ${esc(verStr)}</div>` : ''}
-                        <div style="font-size: 11px; margin-top: 6px; opacity: 0.7;"><strong>Confidence:</strong> ${esc(x.confidence)} ${x.confidence_explanation ? `(${esc(x.confidence_explanation)})` : ''}</div>
-                    </div>
-                `;
-            }).join('') + `</div>`;
-        }
-
-        // Ingredient Analysis
-        if ((d.ingredient_analysis || []).length) {
-            html += `<h4>Offence Ingredient Analysis</h4>`;
-            html += `<div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">` + d.ingredient_analysis.map(off => `
-                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 10px 14px;">
-                    <div style="font-weight: 700; font-size: 13px; color: var(--accent); margin-bottom: 6px;">
-                        ${esc(off.offence_name)} <span style="opacity: 0.75; font-weight: normal;">(${esc(off.invoked_section)} → ${esc(off.corresponding_bns)})</span>
-                    </div>
-                    <ul style="padding-left: 18px; margin: 6px 0; font-size: 12px;">
-                        ${(off.ingredients || []).map(ing => `
-                            <li style="margin-bottom: 4px;">
-                                <strong>Ingredient ${ing.ingredient_number}:</strong> ${esc(ing.ingredient_text)}<br>
-                                <span style="opacity: 0.85;">FIR Support: ${esc(ing.fir_support)}</span> — 
-                                <span style="font-weight: 600; color: ${ing.status === 'Stated' ? 'var(--success, #10b981)' : 'var(--warning, #f59e0b)'};">[${esc(ing.status)}]</span>
-                            </li>
-                        `).join('')}
-                    </ul>
-                    <div style="font-size: 11px; opacity: 0.8; font-style: italic; margin-top: 4px;">${esc(off.ingredient_assessment)}</div>
-                </div>
-            `).join('') + `</div>`;
-        }
-
-        // Potential Inherent-Powers / Quashing-Relevant Issues
-        if ((d.quashing_issues || []).length) {
-            html += `<h4>Potential Inherent-Powers / Quashing-Relevant Issues</h4><ul style="font-size: 13px; line-height: 1.5; margin-bottom: 18px;">` +
-                d.quashing_issues.map(qi => `<li>${esc(qi)}</li>`).join('') + `</ul>`;
-        }
-
-        // Material Information Not Established
-        if ((d.material_not_established || []).length) {
-            html += `<h4>Material Information Not Established</h4><ul style="font-size: 12px; line-height: 1.5; margin-bottom: 18px; opacity: 0.85;">` +
-                d.material_not_established.map(m => `<li>${esc(m)}</li>`).join('') + `</ul>`;
-        }
-
-        // Documents recommended for verification
-        if ((d.documents_recommended || []).length) {
-            html += `<h4>Documents Recommended for Verification</h4><ul style="font-size: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 4px; padding-left: 18px; margin-bottom: 18px;">` +
-                d.documents_recommended.map(doc => `<li>${esc(doc)}</li>`).join('') + `</ul>`;
-        }
-
-        // Deduplicated retrieved sources
-        if ((d.retrieved_sources || []).length) {
-            html += `<h4>Authoritative Sources Retrieved</h4>`;
-            html += `<div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px;">` + d.retrieved_sources.map(s => `
-                <div style="background: rgba(255, 255, 255, 0.02); border-left: 3px solid var(--accent); padding: 8px 12px; border-radius: 4px; font-size: 12px;">
-                    <div style="font-weight: 700;">${esc(s.title || 'Legal Authority')} ${s.citation ? `<span style="font-weight: normal; opacity: 0.85;">— <em>${esc(s.citation)}</em></span>` : ''}</div>
-                    <div style="font-size: 11px; opacity: 0.8; margin-top: 2px;"><strong>Authority:</strong> ${esc(s.court_or_authority)} | <strong>Provision:</strong> ${esc(s.relevant_section)}</div>
-                    <div style="font-size: 12px; margin-top: 4px; opacity: 0.9;"><strong>Proposition:</strong> ${esc(s.legal_proposition)}</div>
-                    <div style="font-size: 11px; color: var(--accent); opacity: 0.9; margin-top: 2px;"><strong>Relevance:</strong> ${esc(s.relevance_reason)}</div>
-                </div>
-            `).join('') + `</div>`;
-        }
-
-        // Cautionary disclaimer
-        html += `<div style="font-size: 11px; opacity: 0.7; margin-top: 18px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; line-height: 1.4;"><i class="ri-shield-check-line"></i> ${esc(d.disclaimer || '')}</div>`;
-
-        resDiv.innerHTML = html;
-    } catch (e) {
-        const esc = (t) => { const n = document.createElement('div'); n.textContent = t == null ? '' : String(t); return n.innerHTML; };
-        const msg = (e.message === 'Failed to fetch' || (e.message && e.message.includes('fetch')))
-            ? 'Connection error or server temporarily unavailable. Please retry in a moment.'
-            : e.message;
-        resDiv.innerHTML = `<p style="color:var(--danger)"><i class="ri-error-warning-line"></i> Error: ${esc(msg)}</p>`;
-    }
-};
-
-window.runCitationCheck = async function() {
-    const text = document.getElementById('cit-text')?.value || '';
-    const resDiv = document.getElementById('citcheck-results');
-    if (!resDiv) return;
-
-    if (!text.trim()) {
-        resDiv.innerHTML = '<p style="color:var(--danger)"><i class="ri-error-warning-line"></i> Please enter or paste text containing citations or case names.</p>';
-        return;
-    }
-    
-    try {
-        resDiv.innerHTML = '<p><i class="ri-loader-4-line spin"></i> Validating citation authority against Supreme Court database...</p>';
-        const res = await api('/api/citations/validate', {
-            method: 'POST',
-            body: JSON.stringify({ text: text })
-        });
-        let html = `<div style="margin-bottom: 20px;">
-            <h4>Input:</h4>
-            <div style="padding: 10px; background: rgba(0,0,0,0.05); border-left: 3px solid var(--accent);">${escapeHtml(res.input_text || '')}</div>
-            <h4 style="margin-top:10px;">Extracted Citations:</h4>
-            <ul>${(res.extracted_citations || []).map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ul>
-        </div>`;
-        
-        (res.validations || []).forEach((v, idx) => {
-            let color = 'var(--text)';
-            if (v.status === 'VERIFIED') color = 'var(--accent)';
-            else if (v.status === 'PARTIALLY VERIFIED') color = 'var(--warning)';
-            else if (v.status === 'UNVERIFIED' || v.status === 'NOT FOUND' || v.status === 'INVALID') color = 'var(--danger)';
-            
-            html += `<div class="glass-panel" style="margin-bottom: 20px;">
-                <h3 style="margin-bottom: 10px;">${idx + 1}. ${escapeHtml(v.exact_citation)}</h3>
-                <table class="paper-table" style="width: 100%; text-align: left;">
-                    <tbody>
-                        <tr><th style="width: 25%;">Status</th><td style="color:${color}; font-weight:bold;">${escapeHtml(v.status)}</td></tr>
-                        <tr><th>Matched Authority</th><td>${escapeHtml(v.case_or_statute)}</td></tr>
-                        <tr><th>Court / Source</th><td>${escapeHtml(v.court)}</td></tr>
-                        <tr><th>Citation Details</th><td>Year: ${escapeHtml(v.year)}, Reporter: ${escapeHtml(v.reporter_reference)}</td></tr>
-                        <tr><th>Explanation</th><td>${escapeHtml(v.explanation)}</td></tr>
-                        <tr><th>Source ID</th><td>${escapeHtml(v.source_id)}</td></tr>
-                    </tbody>
-                </table>
-                <div style="margin-top: 10px; padding: 10px; background: rgba(240,230,216,0.1); border-left: 3px solid ${color};">
-                    <strong>Evidence:</strong>
-                    <p style="font-size: 0.9em; margin-top: 5px;">${escapeHtml(v.evidence)}</p>
-                </div>
-            </div>`;
-        });
-        resDiv.innerHTML = html;
-    } catch (e) {
-        resDiv.innerHTML = `<p style="color:var(--danger)">Error: ${escapeHtml(e.message)}</p>`;
-    }
-};
-
-window.runLimitation = async function() {
-    const t = document.getElementById('lim-type')?.value || 'money_suit';
-    const d = document.getElementById('lim-date')?.value || '';
-    const excRaw = parseInt(document.getElementById('lim-exclude')?.value, 10);
-    const exc = Number.isFinite(excRaw) && excRaw >= 0 ? excRaw : 0;
-    const resDiv = document.getElementById('limitation-results');
-    if (!resDiv) return;
-
-    if (!d.trim()) {
-        resDiv.innerHTML = '<p style="color:var(--danger)"><i class="ri-error-warning-line"></i> Please select the date when the cause of action arose or impugned order was passed.</p>';
-        return;
-    }
-    
-    try {
-        resDiv.innerHTML = '<p><i class="ri-loader-4-line spin"></i> Calculating statutory limitation deadline...</p>';
-        const res = await api('/api/limitation/calculate', {
-            method: 'POST',
-            body: JSON.stringify({ suit_type: t, cause_of_action_date: d, exclude_days: exc })
-        });
-        const data = res.limitation_report;
-        let color = data.status === 'EXPIRED' ? 'var(--danger)' : 'var(--accent)';
-        let html = `<h3>Status: <span style="color:${color}">${escapeHtml(data.status)}</span></h3>`;
-        html += `<p><strong>Statutory Deadline:</strong> ${escapeHtml(data.expiry_date)} (${escapeHtml(data.period_statute)})</p>`;
-        if (data.status === 'EXPIRED') html += `<p><strong>Delay:</strong> ${escapeHtml(data.days_delayed)} days</p>`;
-        else html += `<p><strong>Days Remaining:</strong> ${escapeHtml(data.days_remaining)} days</p>`;
-        if (data.condonation_advice) html += `<div style="padding:10px; background:rgba(240,230,216,0.05); margin-top:10px; border-left: 3px solid var(--warning);">${escapeHtml(data.condonation_advice)}</div>`;
-        resDiv.innerHTML = html;
-    } catch (e) {
-        resDiv.innerHTML = `<p style="color:var(--danger)">Error: ${escapeHtml(e.message)}</p>`;
-    }
-};
-window.runLimitationCalc = window.runLimitation;
-
-
-window.runPleading = async function() {
-    const t = document.getElementById('pleading-type')?.value || 'bail';
-    const txt = document.getElementById('pleading-text')?.value || '';
-    const resDiv = document.getElementById('pleading-results');
-    if (!resDiv) return;
-
-    if (!txt.trim()) {
-        resDiv.innerHTML = '<p style="color:var(--danger)"><i class="ri-error-warning-line"></i> Please dictate or enter case facts and lawyer notes to format.</p>';
-        return;
-    }
-    
-    try {
-        resDiv.innerHTML = '<p><i class="ri-loader-4-line spin"></i> Formatting Pleading into formal Court draft...</p>';
-        const res = await api('/api/pleading/format', {
-            method: 'POST',
-            body: JSON.stringify({ pleading_type: t, raw_text: txt })
-        });
-        const draftText = res.pleading_draft ? res.pleading_draft.formatted_draft : '';
-        const html = `<div class="paper-text-body" style="white-space: pre-wrap; font-family: 'Times New Roman', serif; background: var(--bg-surface); border: 1px solid var(--border-glass); padding: 20px; border-radius: 8px;">${escapeHtml(draftText)}</div>`;
-        resDiv.innerHTML = html;
-    } catch (e) {
-        resDiv.innerHTML = `<p style="color:var(--danger)">Error: ${escapeHtml(e.message)}</p>`;
-    }
-};
-
-let pleadingRecognition = null;
-window.togglePleadingDictation = function() {
-    const btn = document.getElementById('pleading-mic-btn');
-    const label = document.getElementById('pleading-mic-text');
-    const textarea = document.getElementById('pleading-text');
-    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (!SpeechRec) {
-        alert('Voice dictation requires browser SpeechRecognition (e.g. Chrome or Edge).');
-        return;
-    }
-
-    if (pleadingRecognition) {
-        pleadingRecognition.stop();
-        pleadingRecognition = null;
-        if (btn) btn.classList.remove('recording');
-        if (label) label.innerText = 'Start Dictation';
-        return;
-    }
-
-    try {
-        pleadingRecognition = new SpeechRec();
-        pleadingRecognition.continuous = true;
-        pleadingRecognition.interimResults = true;
-        pleadingRecognition.lang = 'en-IN';
-
-        pleadingRecognition.onstart = () => {
-            if (btn) btn.classList.add('recording');
-            if (label) label.innerText = 'Listening... (Click to stop)';
-        };
-
-        pleadingRecognition.onresult = (e) => {
-            let transcript = '';
-            for (let i = 0; i < e.results.length; i++) {
-                transcript += e.results[i][0].transcript + ' ';
-            }
-            if (textarea) textarea.value = transcript.trim();
-        };
-
-        pleadingRecognition.onerror = (err) => {
-            console.error('Dictation error:', err);
-            if (btn) btn.classList.remove('recording');
-            if (label) label.innerText = 'Start Dictation';
-            pleadingRecognition = null;
-        };
-
-        pleadingRecognition.onend = () => {
-            if (btn) btn.classList.remove('recording');
-            if (label) label.innerText = 'Start Dictation';
-            pleadingRecognition = null;
-        };
-
-        pleadingRecognition.start();
-    } catch (err) {
-        console.error('Voice dictation failed to start:', err);
-        alert(`Microphone dictation error: ${err.message}`);
-    }
-};
 
 /* ── 7. Theme Switching (Light / Dark Court Modes) ───────────── */
 window.toggleTheme = function() {
@@ -3853,15 +3643,18 @@ function updateThemeIcon(theme) {
     }
 }
 
-// Initialize theme icon on load
+// Initialize theme icon and reset dossier state on load
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         const theme = document.documentElement.getAttribute('data-theme') || 'light';
         updateThemeIcon(theme);
+        if (window.resetDossier) window.resetDossier();
     });
 } else {
     const theme = document.documentElement.getAttribute('data-theme') || 'light';
     updateThemeIcon(theme);
+    if (window.resetDossier) window.resetDossier();
 }
+
 
 

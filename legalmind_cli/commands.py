@@ -269,58 +269,6 @@ def handle_health(client: LegalMindClient) -> None:
 def handle_version() -> None:
     console.print(f"[bold cyan]LegalMindAI CLI[/bold cyan] version [bold white]{__version__}[/bold white]")
 
-def handle_temporal(client: LegalMindClient, sections: str) -> None:
-    try:
-        render_info(f"Checking temporal application for sections: [bold]{sections}[/bold]...")
-        res = client._post("/api/temporal/convert", {"offense_date": "2024-08-01", "sections": [s.strip() for s in sections.split(",")], "act": "auto"})
-        console.print(f"\n[bold cyan]Temporal Assessment:[/bold cyan] {res.get('regime')}")
-        console.print(f"[dim]{res.get('regime_rationale')}[/dim]")
-        for m in res.get('section_mappings', []):
-            color = "green" if m['status'] == "mapped" else "red"
-            console.print(f"  • {m['original_section']} -> [{color}]{m['new_section']}[/{color}] ({m['change_summary']})")
-    except ClientError as e:
-        render_error(e.message)
-
-def handle_bail(client: LegalMindClient, cat: str) -> None:
-    try:
-        render_info(f"Assessing bail feasibility for: [bold]{cat}[/bold]...")
-        res = client._post("/api/bail/assess", {"offense_category": cat, "is_special_act": False, "custody_days": 100, "chargesheet_filed": True})
-        d = res.get('assessment', {})
-        console.print(f"\n[bold cyan]Bail Verdict:[/bold cyan] {d.get('verdict')} (Score: {d.get('bail_score')}/100)")
-        for f in d.get('positive_factors', []):
-            console.print(f"  [green]✓[/green] {f}")
-    except ClientError as e:
-        render_error(e.message)
-
-def handle_fir(client: LegalMindClient, text: str) -> None:
-    try:
-        render_info("Auditing FIR for flaws...")
-        res = client._post("/api/fir/audit", {"fir_text": text, "arrest_made": True, "is_pmla": False})
-        d = res.get('audit_report', {})
-        console.print(f"\n[bold cyan]Quashing Feasibility:[/bold cyan] {d.get('verdict')} ({d.get('quashing_feasibility_score')}/100)")
-        for f in d.get('fatal_flaws', []):
-            console.print(f"  [red]✗[/red] {f}")
-    except ClientError as e:
-        render_error(e.message)
-
-def handle_citcheck(client: LegalMindClient, text: str) -> None:
-    try:
-        render_info("Validating citations...")
-        res = client._post("/api/citations/validate", {"text": text})
-        for v in res.get('validations', []):
-            color = "red" if "OVERRULED" in v['status'] else "green"
-            console.print(f"  • {v['citation_text']}: [{color}]{v['status']}[/{color}] - {v['treatment_note']}")
-    except ClientError as e:
-        render_error(e.message)
-
-def handle_pleading(client: LegalMindClient, text: str) -> None:
-    try:
-        render_info("Formatting pleading from dictation...")
-        res = client._post("/api/pleading/format", {"raw_text": text, "pleading_type": "bail"})
-        console.print(f"\n[bold cyan]Formatted Pleading Draft:[/bold cyan]\n")
-        console.print(res.get('pleading_draft', {}).get('formatted_draft'))
-    except ClientError as e:
-        render_error(e.message)
 
 
 def handle_chat(client: LegalMindClient) -> None:
@@ -437,36 +385,6 @@ def handle_chat(client: LegalMindClient) -> None:
                 handle_dossier(client, case_title=title, query="Right to speedy trial and bail under Article 21")
                 continue
 
-            # Temporal Law Bridge Command
-            if user_input.startswith("/temporal"):
-                sec = user_input[9:].strip() or "302, 34"
-                handle_temporal(client, sections=sec)
-                continue
-
-            # Bail Matrix Command
-            if user_input.startswith("/bail"):
-                cat = user_input[5:].strip() or "Economic Offence"
-                handle_bail(client, cat=cat)
-                continue
-
-            # FIR Auditor Command
-            if user_input.startswith("/fir"):
-                text = user_input[4:].strip() or "The accused committed breach of contract after a gap of 2 years."
-                handle_fir(client, text=text)
-                continue
-
-            # Citation Check Command
-            if user_input.startswith("/citcheck"):
-                text = user_input[9:].strip() or "ADM Jabalpur v. Shivkant Shukla"
-                handle_citcheck(client, text=text)
-                continue
-
-
-            # Voice Pleading Command
-            if user_input.startswith("/pleading"):
-                text = user_input[9:].strip() or "The applicant is innocent. FIR registered after 5 days."
-                handle_pleading(client, text=text)
-                continue
 
             # Document Attach Command
             if user_input.startswith("/doc "):

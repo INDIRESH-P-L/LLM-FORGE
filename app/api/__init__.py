@@ -12,14 +12,6 @@ from app.api.precedents import router as precedents_router
 from app.api.drafter import router as drafter_router
 from app.api.moot import router as moot_router
 from app.api.dossier import router as dossier_router
-
-from app.api.temporal import router as temporal_router
-from app.api.bail import router as bail_router
-from app.api.fir_audit import router as fir_audit_router
-from app.api.citation_check import router as citation_check_router
-from app.api.pleading import router as pleading_router
-
-
 __all__ = [
     "speech_router",
     "images_router",
@@ -29,9 +21,4 @@ __all__ = [
     "drafter_router",
     "moot_router",
     "dossier_router",
-    "temporal_router",
-    "bail_router",
-    "fir_audit_router",
-    "citation_check_router",
-    "pleading_router",
 ]

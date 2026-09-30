@@ -44,6 +44,8 @@ class LegalMindClient:
                 if res.status_code == 200:
                     data = res.json()
                     data["backend_connected"] = True
+                    data.setdefault("model_loaded", data.get("model_loaded", False))
+                    data.setdefault("retriever_loaded", data.get("retriever_loaded", False))
                     return data
                 return {
                     "backend_connected": False,

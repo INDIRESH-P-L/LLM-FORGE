@@ -326,6 +326,7 @@ h1, h2, h3, h4 {
     box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;
+    overscroll-behavior: contain;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
@@ -498,26 +499,17 @@ h1, h2, h3, h4 {
 }
 
 .sidebar-list {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    overflow-x: hidden;
+    flex: none;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     gap: 2px;
-    min-height: 160px;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    width: 100%;
 }
 
 .sidebar-list[hidden],
 [hidden] {
     display: none !important;
-}
-
-.sidebar-list::-webkit-scrollbar { width: 4px; }
-.sidebar-list::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.15);
-    border-radius: 4px;
 }
 
 .sidebar-group {
@@ -3354,7 +3346,7 @@ textarea::placeholder {
    -------------------------------------------------------------------------- */
 .dossier-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
     gap: 20px;
     align-items: start;
     width: 100%;
@@ -3362,7 +3354,260 @@ textarea::placeholder {
 
 @media (max-width: 1024px) {
     .dossier-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.dossier-input-card,
+.dossier-preview-card {
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+/* Dossier Preset Chips Bar */
+.dossier-presets-bar {
+    margin-bottom: 16px;
+    padding: 12px 14px;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md, 8px);
+}
+
+[data-theme="dark"] .dossier-presets-bar {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.dossier-presets-label {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.dossier-presets-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.dossier-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-main);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-pill, 9999px);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+.dossier-chip:hover {
+    border-color: var(--primary, #800020);
+    color: var(--primary, #800020);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.dossier-chip.active {
+    background: var(--primary, #800020);
+    color: #ffffff;
+    border-color: var(--primary, #800020);
+    box-shadow: 0 2px 10px rgba(128, 0, 32, 0.3);
+}
+
+[data-theme="dark"] .dossier-chip.active {
+    background: #991b1b;
+    border-color: #ef4444;
+    color: #ffffff;
+}
+
+/* Paper Facsimile Toolbar */
+.dossier-paper-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md, 8px);
+}
+
+.paper-toolbar-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.paper-toolbar-status .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+.paper-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.paper-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-main);
+    background: transparent;
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md, 6px);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.paper-action-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: var(--border-subtle);
+}
+
+[data-theme="dark"] .paper-action-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.paper-action-btn.primary {
+    background: var(--primary, #800020);
+    color: #ffffff;
+    border-color: var(--primary, #800020);
+}
+
+.paper-action-btn.primary:hover {
+    background: color-mix(in srgb, var(--primary) 85%, black);
+    border-color: color-mix(in srgb, var(--primary) 85%, black);
+}
+
+/* Paper Docket Stamp Header */
+.paper-docket-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.68rem;
+    font-family: var(--font-mono, monospace);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #64748b;
+    border-bottom: 1px dashed #cbd5e1;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+}
+
+[data-theme="dark"] .paper-docket-header {
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+    color: #94a3b8;
+}
+
+.docket-copy {
+    display: inline-block;
+    padding: 2px 6px;
+    border: 1px solid #94a3b8;
+    border-radius: 2px;
+    font-weight: 600;
+}
+
+/* Synthesized Brief Structured Typography */
+.dossier-sub-section {
+    margin-top: 14px;
+    margin-bottom: 14px;
+}
+
+.dossier-sub-heading {
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--heading-accent, #800020);
+    border-bottom: 1px solid var(--border-glass, #cbd5e1);
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+}
+
+[data-theme="dark"] .dossier-sub-heading {
+    color: #fca5a5;
+    border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+
+.dossier-para {
+    font-size: 0.92rem;
+    line-height: 1.65;
+    margin-bottom: 8px;
+    text-align: justify;
+}
+
+.dossier-bullet-item {
+    margin-left: 8px;
+    margin-bottom: 6px;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.dossier-bullet-item strong {
+    color: var(--heading-accent, #800020);
+}
+
+[data-theme="dark"] .dossier-bullet-item strong {
+    color: #fca5a5;
+}
+
+/* Print Styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #workspace-dossier,
+    #workspace-dossier .dossier-paper,
+    #workspace-dossier .dossier-paper * {
+        visibility: visible;
+    }
+    #workspace-dossier .dossier-grid {
+        display: block !important;
+    }
+    #workspace-dossier .dossier-input-card,
+    #workspace-dossier .dossier-paper-toolbar,
+    #workspace-dossier .workspace-header,
+    .top-header,
+    .sidebar {
+        display: none !important;
+    }
+    #workspace-dossier .dossier-preview-card {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+    #workspace-dossier .dossier-paper {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100% !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
     }
 }
 
@@ -3373,6 +3618,38 @@ textarea::placeholder {
     background: var(--bg-surface);
 }
 
+.btn-sample-data {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary, #800020);
+    background: rgba(128, 0, 32, 0.08);
+    border: 1px solid rgba(128, 0, 32, 0.25);
+    border-radius: var(--radius-md, 6px);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-sample-data:hover {
+    background: rgba(128, 0, 32, 0.16);
+    border-color: var(--primary, #800020);
+    transform: translateY(-1px);
+}
+
+[data-theme="dark"] .btn-sample-data {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+[data-theme="dark"] .btn-sample-data:hover {
+    background: rgba(239, 68, 68, 0.22);
+    border-color: #f87171;
+}
+
 .dossier-preview-card {
     padding: 16px;
     border-radius: var(--radius-lg);
@@ -3381,6 +3658,41 @@ textarea::placeholder {
     overflow-x: auto;
     width: 100%;
     box-sizing: border-box;
+}
+
+.dossier-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 440px;
+    padding: 48px 32px;
+    text-align: center;
+    border: 2px dashed var(--border-glass, rgba(200, 200, 200, 0.3));
+    border-radius: var(--radius-lg, 12px);
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.dossier-empty-state i {
+    font-size: 3.5rem;
+    color: var(--text-muted, #94a3b8);
+    margin-bottom: 16px;
+    opacity: 0.7;
+}
+
+.dossier-empty-state h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary, #1e293b);
+    margin-bottom: 8px;
+}
+
+.dossier-empty-state p {
+    font-size: 0.92rem;
+    color: var(--text-secondary, #64748b);
+    max-width: 420px;
+    line-height: 1.6;
+    margin: 0;
 }
 
 .dossier-paper {
@@ -4662,11 +4974,9 @@ input[type="text"]:focus, input[type="search"]:focus, input[type="date"]:focus, 
 }
 :root[data-theme] ::-webkit-scrollbar-thumb:hover { background: var(--brass, #B88945); background-clip: content-box; }
 :root[data-theme] .sidebar,
-:root[data-theme] .sidebar-list,
 :root[data-theme] .court-dialogue-feed,
 :root[data-theme] .moot-sidebar-container { scrollbar-color: var(--brass-soft, rgba(184, 137, 69, 0.5)) transparent; }
 :root[data-theme] .sidebar::-webkit-scrollbar-thumb,
-:root[data-theme] .sidebar-list::-webkit-scrollbar-thumb,
 :root[data-theme] .court-dialogue-feed::-webkit-scrollbar-thumb,
 :root[data-theme] .moot-sidebar-container::-webkit-scrollbar-thumb { background-color: var(--brass-soft, rgba(184, 137, 69, 0.5)); }
 
@@ -5300,6 +5610,7 @@ input[type="text"]:focus, input[type="search"]:focus, input[type="date"]:focus, 
     border-right: 1px solid var(--border-glass);
     overflow-y: auto;
     overflow-x: hidden;
+    overscroll-behavior: contain;
 }
 :root[data-theme] .container {
     max-width: none; margin: 0; padding: 0;
@@ -5370,7 +5681,7 @@ input[type="text"]:focus, input[type="search"]:focus, input[type="date"]:focus, 
 :root[data-theme] .sidebar-group { padding: 8px 12px 4px; }
 :root[data-theme] .sidebar-empty { padding: 8px 12px; font-size: 13px; line-height: 1.5; }
 :root[data-theme] .sidebar-foot { padding: var(--space-1h) 12px 0; font-size: 11.5px; line-height: 1.5; }
-:root[data-theme] .sidebar-list { min-height: 160px; flex: 1 1 auto; }
+:root[data-theme] .sidebar-list { min-height: auto; flex: none; overflow: visible; }
 
 /* ── Hero / empty state ─────────────────────────────────────────────────── */
 :root[data-theme] #workspace-research .hero {

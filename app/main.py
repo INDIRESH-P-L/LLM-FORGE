@@ -314,6 +314,7 @@ async def lifespan(app: FastAPI):
     # and history stays browsable regardless.
     app.state.infer = _run_inference if _model is not None else None
     app.state.infer_stream = _run_inference_stream if _model is not None else None
+    app.state.model = _model
     # Other services (e.g. the FIR auditor) ground their findings in the same
     # corpus the chat endpoint uses.
     app.state.retriever = _retriever
@@ -353,11 +354,6 @@ from app.api import (
     drafter_router,
     moot_router,
     dossier_router,
-    temporal_router,
-    bail_router,
-    fir_audit_router,
-    citation_check_router,
-    pleading_router,
     precedents_router,
 )
 app.include_router(speech_router)
@@ -367,8 +363,7 @@ app.include_router(audio_router)
 app.include_router(drafter_router)
 app.include_router(moot_router)
 app.include_router(dossier_router)
-app.include_router(temporal_router)
-app.include_router(bail_router)
+app.include_router(precedents_router)
 
 # Enable CORS middleware so cross-origin, IP-based, and LAN requests
 # (e.g. https://192.168.4.99:8443) never fail preflight OPTIONS checks or get blocked.
@@ -393,11 +388,17 @@ else:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    log.info("CORS enabled with permissive origin regex for LAN/local clients")
-app.include_router(fir_audit_router)
-app.include_router(citation_check_router)
-app.include_router(pleading_router)
-app.include_router(precedents_router)
+
+@app.middleware("http")
+async def add_no_cache_headers(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    if path == "/" or path.startswith("/static/"):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
+
 
 
 # ---------------------------------------------------------------------------
